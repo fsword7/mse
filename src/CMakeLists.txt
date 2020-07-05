@@ -1,4 +1,5 @@
 set(MSE_CPP_SRCS
+	emu/command.cpp
 	emu/console.cpp
 	emu/delegate.cpp
 	emu/device.cpp
@@ -8,6 +9,7 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
+	emu/command.h
 	emu/console.h
 	emu/core.h
 	emu/delegate.h
