@@ -9,11 +9,11 @@
 
 #include "emu/delegate.h"
 
-class device_t : public Delegate
+class Device : public Delegate
 {
 public:
-	device_t() = default;
-	~device_t() = default;
+	Device() = default;
+	~Device() = default;
 
 	// Getter function calls
 	inline tag_t getFullName() const  { return fullName; }
@@ -24,3 +24,5 @@ private:
 	tag_t shortName = nullptr;
 
 };
+
+typedef Device device_t;
