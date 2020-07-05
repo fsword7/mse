@@ -5,6 +5,6 @@
  *      Author: Tim Stark
  */
 
-#include "main/core.h"
+#include "emu/core.h"
 #include "emu/device.h"
 

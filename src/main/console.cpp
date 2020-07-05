@@ -5,7 +5,6 @@
  *      Author: Tim Stark
  */
 
-#include "console.h"
-
-
+#include "emu/core.h"
+#include "main/console.h"
 

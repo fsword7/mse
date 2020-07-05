@@ -19,3 +19,4 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
+typedef const char * tag_t;

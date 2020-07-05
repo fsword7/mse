@@ -5,7 +5,7 @@
  *      Author: Tim Stark
  */
 
-#include "main/core.h"
+#include "emu/core.h"
 
 int main(int argc, char **argv)
 {
