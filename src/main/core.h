@@ -13,6 +13,8 @@
 
 #include <vector>
 
+#include <fmt/printf.h>
+
 using namespace std;
 
 namespace fs = std::filesystem;

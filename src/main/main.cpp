@@ -9,7 +9,7 @@
 
 int main(int argc, char **argv)
 {
-	cout << "Multi-System Emulator System" << endl;
+	cout << fmt::sprintf("Multi-System Emulator System\n");
 
 	exit(0);
 }

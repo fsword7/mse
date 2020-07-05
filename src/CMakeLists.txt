@@ -12,3 +12,6 @@ set(MSE_H_SRCS
 )
 
 add_executable(mse ${MSE_CPP_SRCS} ${MSE_H_SRCS})
+target_link_libraries(mse
+	fmt::fmt
+)
