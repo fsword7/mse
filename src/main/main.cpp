@@ -6,10 +6,15 @@
  */
 
 #include "emu/core.h"
+#include "emu/console.h"
 
 int main(int argc, char **argv)
 {
-	cout << fmt::sprintf("Multi-System Emulator System\n");
+	Console cty;
+
+	cout << fmt::sprintf("Multi-System Emulator System\n\n");
+
+	cty.prompt();
 
 	exit(0);
 }

@@ -14,5 +14,6 @@ public:
 	Console() = default;
 	~Console() = default;
 
+	void prompt();
 
 };
