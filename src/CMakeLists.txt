@@ -3,6 +3,7 @@ set(MSE_CPP_SRCS
 	emu/console.cpp
 	emu/delegate.cpp
 	emu/device.cpp
+	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
 	main/main.cpp
@@ -15,6 +16,7 @@ set(MSE_H_SRCS
 	emu/delegate.h
 	emu/device.h
 	emu/driver.h
+	emu/sysconfig.h
 	emu/syslist.h
 )
 
