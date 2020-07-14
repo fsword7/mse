@@ -40,18 +40,18 @@ auto device_tag_func()
 class BaseDeviceType
 {
 private:
-	typedef Device *(*create_func)();
+	typedef Device *(*create_func)(const SystemConfig &config, const BaseDeviceType &type);
 
 	template <typename SystemClass>
-	static Device *createSystem()
+	static Device *createSystem(const SystemConfig &config, const BaseDeviceType &type)
 	{
-		return new SystemClass();
+		return new SystemClass(config, type);
 	}
 
 	template <typename DeviceClass>
-	static Device *createDevice()
+	static Device *createDevice(const SystemConfig &config, const BaseDeviceType &type)
 	{
-		return new DeviceClass();
+		return new DeviceClass(config, type);
 	}
 
 public:
@@ -75,10 +75,10 @@ public:
 	  creator(&createDevice<DeviceClass>)
 	{}
 
-	Device *create()
+	Device *create(const SystemConfig &config)
 	{
 		assert(creator != nullptr);
-		return creator();
+		return creator(config, *this);
 	}
 
 	// Getter function calls
@@ -131,16 +131,18 @@ constexpr auto deviceCreator = &device_tag_func<DeviceClass, shortName, fullName
 class Device : public Delegate
 {
 public:
-	Device() = default;
 	~Device() = default;
 
 	// Getter function calls
-	inline tag_t *getFullName() const  { return fullName; }
-	inline tag_t *getShortName() const { return shortName; }
+	inline tag_t *getFullName() const   { return type.getFullName(); }
+	inline tag_t *getShortName() const  { return type.getShortName(); }
+	inline tag_t *getSourceName() const { return type.getSourceName(); }
+
+protected:
+	Device(const SystemConfig &config, const BaseDeviceType &type);
 
 private:
-	tag_t *fullName = nullptr;
-	tag_t *shortName = nullptr;
+	const BaseDeviceType &type;
 
 };
 
