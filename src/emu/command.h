@@ -35,5 +35,8 @@ public:
 	CommandStatus execute(Console *cty, string cmdLine);
 
 private:
+	int split(const string &cmdLine, args_t &args);
+
+private:
 	static command_t mseCommands[];
 };

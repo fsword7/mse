@@ -10,16 +10,35 @@
 
 // Command Handler
 
+int CommandHandler::split(const string &cmdLine, args_t &args)
+{
+	istringstream line(cmdLine);
+
+	while (line) {
+		string word;
+
+		line >> word;
+		if (!word.empty())
+			args.push_back(word);
+	}
+	return args.size();
+}
+
 CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 {
 	command_t *cmdList;
 	int    argc = 0;
 	args_t args;
 
-	cmdList = mseCommands;
+	// Split command line into words
+	args.clear();
+	argc = split(cmdLine, args);
+	if (args.empty())
+		return cmdOk;
 
+	cmdList = mseCommands;
 	for (int idx = 0; cmdList[idx].name; idx++)
-		if (cmdList[idx].name == cmdLine)
+		if (cmdList[idx].name == args[0])
 			return cmdList[idx].func(cty, argc, args);
 
 	// Command not found
