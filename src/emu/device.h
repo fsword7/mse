@@ -9,6 +9,7 @@
 
 #include "emu/delegate.h"
 
+class SystemConfig;
 class Device;
 
 template <class SystemClass, tag_t *shortName, tag_t *fullName, tag_t *fileName>
