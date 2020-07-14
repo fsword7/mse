@@ -9,7 +9,7 @@
 #include "emu/sysconfig.h"
 #include "emu/device.h"
 
-Device::Device(const SystemConfig &config, const BaseDeviceType &type)
+Device::Device(const SystemConfig &config, const DeviceType &type)
 : type(type)
 {
 
