@@ -7,6 +7,7 @@ set(MSE_CPP_SRCS
 	emu/syslist.cpp
 	emu/systems.cpp
 	main/main.cpp
+	system/dec/vax/mv3900.cpp
 )
 
 set(MSE_H_SRCS
@@ -18,6 +19,7 @@ set(MSE_H_SRCS
 	emu/driver.h
 	emu/sysconfig.h
 	emu/syslist.h
+	system/dec/vax/mv3900.h
 )
 
 add_executable(mse ${MSE_CPP_SRCS} ${MSE_H_SRCS})
