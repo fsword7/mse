@@ -15,6 +15,8 @@ public:
 	SystemList() = default;
 	~SystemList() = default;
 
+	void list(ostream &out);
+
 private:
 	static const SystemDriver *sysList[];
 };
