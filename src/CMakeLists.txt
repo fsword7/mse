@@ -1,4 +1,5 @@
 set(MSE_CPP_SRCS
+	emu/map/addrmap.cpp
 	emu/command.cpp
 	emu/console.cpp
 	emu/delegate.cpp
@@ -13,6 +14,7 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
+	emu/map/addrmap.h
 	emu/command.h
 	emu/console.h
 	emu/core.h
