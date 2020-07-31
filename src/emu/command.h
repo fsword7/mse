@@ -22,8 +22,9 @@ typedef CommandStatus (*cmdFunc_t)(Console *, int, args_t &);
 
 struct command_t
 {
-	const char *name;
-	cmdFunc_t   func;
+	const char	*name;
+	cmdFunc_t	func;
+	command_t	*ext;
 };
 
 class CommandHandler {
@@ -39,4 +40,7 @@ private:
 
 private:
 	static command_t mseCommands[];
+	static command_t mseListCommands[];
+	static command_t mseSetCommands[];
+	static command_t mseShowCommands[];
 };

@@ -37,9 +37,26 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 		return cmdOk;
 
 	cmdList = mseCommands;
-	for (int idx = 0; cmdList[idx].name; idx++)
-		if (cmdList[idx].name == args[0])
-			return cmdList[idx].func(cty, argc, args);
+	for (int idx = 0; cmdList[idx].name; idx++) {
+		if (cmdList[idx].name == args[0]) {
+			if (cmdList[idx].ext != nullptr) {
+				if (args.size() < 2) {
+					cout << fmt::sprintf("Usage: %s <options> [arguments...]\n", args[0]);
+					return cmdOk;
+				}
+				command_t *optList = cmdList[idx].ext;
+				for (int idx2 = 0; optList[idx2].name; idx2++) {
+					if (optList[idx2].name == args[1]) {
+						assert(optList[idx2].func != nullptr);
+						return optList[idx2].func(cty, argc, args);
+					}
+				}
+			} else {
+				assert(cmdList[idx].func != nullptr);
+				return cmdList[idx].func(cty, argc, args);
+			}
+		}
+	}
 
 	// Command not found
 	return cmdNotFound;
