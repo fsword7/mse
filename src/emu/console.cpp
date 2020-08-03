@@ -19,26 +19,27 @@ int CommandHandler::split(const string &cmdLine, args_t &args)
 
 		line >> word;
 		if (!word.empty())
-			args.push_back(word);
+			args.add(word);
 	}
+
 	return args.size();
 }
 
 CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 {
 	command_t *cmdList;
-	int    argc = 0;
 	args_t args;
 
 	// Split command line into words
 	args.clear();
-	argc = split(cmdLine, args);
+	split(cmdLine, args);
 	if (args.empty())
 		return cmdOk;
 
 	cmdList = mseCommands;
 	for (int idx = 0; cmdList[idx].name; idx++) {
-		if (cmdList[idx].name == args[0]) {
+		if (cmdList[idx].name == args.current()) {
+			args.next();
 			if (cmdList[idx].ext != nullptr) {
 				if (args.size() < 2) {
 					cout << fmt::sprintf("Usage: %s <options> [arguments...]\n", args[0]);
@@ -46,14 +47,15 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 				}
 				command_t *optList = cmdList[idx].ext;
 				for (int idx2 = 0; optList[idx2].name; idx2++) {
-					if (optList[idx2].name == args[1]) {
+					if (optList[idx2].name == args.current()) {
+						args.next();
 						assert(optList[idx2].func != nullptr);
-						return optList[idx2].func(cty, argc, args);
+						return optList[idx2].func(cty, args);
 					}
 				}
 			} else {
 				assert(cmdList[idx].func != nullptr);
-				return cmdList[idx].func(cty, argc, args);
+				return cmdList[idx].func(cty, args);
 			}
 		}
 	}

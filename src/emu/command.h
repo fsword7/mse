@@ -17,8 +17,30 @@ enum CommandStatus
 	cmdShutdown
 };
 
-typedef vector<string> args_t;
-typedef CommandStatus (*cmdFunc_t)(Console *, int, args_t &);
+class args_t
+{
+public:
+	args_t() = default;
+	~args_t() = default;
+
+	using args = vector<string>;
+
+	inline void clear() { count = 0; index = 0; params.clear(); }
+	inline bool empty() { return (count == 0); }
+	inline int  size()  { return count; }
+	inline void next()  { index++; }
+
+	inline string operator [](int idx) { return (idx < count) ? params[idx] : ""; }
+	inline void add(string arg)        { params.push_back(arg); count++; }
+	inline string current()            { return (index < count) ? params[index] : ""; }
+
+private:
+	int	 count = 0;
+	int	 index = 0;
+	args params;
+};
+
+typedef CommandStatus (*cmdFunc_t)(Console *, args_t &);
 
 struct command_t
 {

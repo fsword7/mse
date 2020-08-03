@@ -9,19 +9,19 @@
 #include "emu/console.h"
 #include "emu/syslist.h"
 
-CommandStatus cmdCreate(Console *, int argc, args_t &args)
+CommandStatus cmdCreate(Console *, args_t &args)
 {
 	SystemList sysList;
 
 	return cmdOk;
 }
 
-CommandStatus cmdExit(Console *, int argc, args_t &args)
+CommandStatus cmdExit(Console *, args_t &args)
 {
 	return cmdShutdown;
 }
 
-CommandStatus cmdListSystem(Console *, int argc, args_t &args)
+CommandStatus cmdListSystem(Console *, args_t &args)
 {
 	SystemList sysList;
 
