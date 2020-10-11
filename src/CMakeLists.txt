@@ -6,6 +6,7 @@ set(MSE_CPP_SRCS
 	emu/device.cpp
 	emu/devsys.cpp
 	emu/engine.cpp
+	emu/machine.cpp
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
@@ -24,6 +25,7 @@ set(MSE_H_SRCS
 	emu/devsys.h
 	emu/driver.h
 	emu/engine.h
+	emu/machine.h
 	emu/sysconfig.h
 	emu/syslist.h
 	system/dec/vax/ka650.h
