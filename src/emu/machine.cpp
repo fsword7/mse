@@ -17,3 +17,9 @@ Machine::Machine(const SystemConfig &config)
 Machine::~Machine()
 {
 }
+
+Machine *Machine::create(ostream &out, const SystemDriver *driver, const string devName)
+{
+
+	return nullptr;
+}

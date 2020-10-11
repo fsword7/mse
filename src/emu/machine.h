@@ -15,6 +15,8 @@ public:
 	Machine(const SystemConfig &config);
 	~Machine();
 
+	static Machine *create(ostream &out, const SystemDriver *driver, const string devName);
+
 private:
 	const SystemConfig &config;
 };

@@ -8,6 +8,18 @@
 #include "emu/core.h"
 #include "emu/syslist.h"
 
+const SystemDriver *SystemList::find(const string name)
+{
+	for (int idx = 0; sysList[idx]; idx++)
+	{
+		const SystemDriver *driver = sysList[idx];
+		if (string(driver->name) == name)
+			return driver;
+	}
+
+	return nullptr;
+}
+
 void SystemList::list(ostream &out)
 {
 	const SystemDriver *model;

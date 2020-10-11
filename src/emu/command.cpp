@@ -7,11 +7,15 @@
 
 #include "emu/core.h"
 #include "emu/console.h"
+#include "emu/engine.h"
 #include "emu/syslist.h"
 
 CommandStatus cmdCreate(Console *, args_t &args)
 {
 	SystemList sysList;
+	SystemEngine engine;
+
+	engine.create(cout, args);
 
 	return cmdOk;
 }

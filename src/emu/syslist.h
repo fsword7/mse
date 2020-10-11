@@ -15,6 +15,8 @@ public:
 	SystemList() = default;
 	~SystemList() = default;
 
+	const SystemDriver *find(const string name);
+
 	void list(ostream &out);
 
 private:

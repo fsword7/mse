@@ -34,6 +34,8 @@ public:
 	inline void add(string arg)        { params.push_back(arg); count++; }
 	inline string current()            { return (index < count) ? params[index] : ""; }
 
+	inline string getNext() { string arg = current(); next(); return arg; }
+
 private:
 	int	 count = 0;
 	int	 index = 0;
