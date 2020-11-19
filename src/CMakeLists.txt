@@ -4,6 +4,7 @@ set(MSE_CPP_SRCS
 	emu/console.cpp
 	emu/delegate.cpp
 	emu/device.cpp
+	emu/devproc.cpp
 	emu/devsys.cpp
 	emu/engine.cpp
 	emu/machine.cpp
@@ -22,6 +23,7 @@ set(MSE_H_SRCS
 	emu/core.h
 	emu/delegate.h
 	emu/device.h
+	emu/devproc.h
 	emu/devsys.h
 	emu/driver.h
 	emu/engine.h
