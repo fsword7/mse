@@ -82,7 +82,7 @@ public:
 	  creator(&createDevice<DeviceClass>)
 	{}
 
-	Device *create(const SystemConfig &config)
+	Device *create(const SystemConfig &config, tag_t *tag, Device *owner, uint64_t clock) const
 	{
 		assert(creator != nullptr);
 		return creator(config, *this);

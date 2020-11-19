@@ -7,12 +7,14 @@
 
 #pragma once
 
+#include "emu/device.h"
+
 struct SystemDriver
 {
 	const char			*name;
 	const char			*parent;
 	const char			*section;
-//	const DeviceType	&type;
+	const DeviceType	&type;
 
 	const char   *description;
 	const char   *source;		// source file name
@@ -45,6 +47,7 @@ struct SystemDriver
 		#Name, \
 		#Parent, \
 		#Section, \
+		SYSTEM_TYPE(Name, Class), \
 		Description, \
 		__FILE__ \
 	};

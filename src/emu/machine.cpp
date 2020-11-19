@@ -20,6 +20,11 @@ Machine::~Machine()
 
 Machine *Machine::create(ostream &out, const SystemDriver *driver, const string devName)
 {
+	SystemConfig *config = nullptr;
+	Machine *sys = nullptr;
+
+	config = new SystemConfig(*driver);
+	sys = new Machine(*config);
 
 	return nullptr;
 }
