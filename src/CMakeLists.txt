@@ -1,4 +1,5 @@
 set(MSE_CPP_SRCS
+	devices/cpu/alpha/axp.cpp
 	emu/map/addrmap.cpp
 	emu/command.cpp
 	emu/console.cpp
@@ -17,6 +18,8 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
+	devices/cpu/alpha/axp.h
+	devices/cpu/alpha/opcode.h
 	emu/map/addrmap.h
 	emu/command.h
 	emu/console.h
