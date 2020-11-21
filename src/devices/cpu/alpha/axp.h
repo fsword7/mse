@@ -93,10 +93,23 @@ public:
 	AlphaProcessor(const SystemConfig &config, const DeviceType &type);
 	~AlphaProcessor() = default;
 
+	void init();
+	void execute();
+
+	inline void nextPC()
+	{
+		state.vpcReg += 4;
+		state.ppcReg += 4;
+	}
+
 protected:
-	// Register definitions
-	uint64_t iRegs[AXP_NIREGS];	// General purpose registers
-	uint64_t fRegs[AXP_NFREGS]; // Floating registers
-	uint64_t pcReg;             // Program counter register
+
+	// Register definitions (state file package)
+	struct stateFile {
+		uint64_t iRegs[AXP_NIREGS*2];	// Integer registers  (0-31 - regular, 32-63 - shadow)
+		uint64_t fRegs[AXP_NFREGS*2];	// Floating registers (0-31 - regular, 32-63 - shadow)
+		uint64_t vpcReg;            	// Virtual program counter register
+		uint64_t ppcReg;				// Physical program counter register
+	} state;
 
 };
