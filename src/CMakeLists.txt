@@ -1,5 +1,6 @@
 set(MSE_CPP_SRCS
 	devices/cpu/alpha/axp.cpp
+	devices/cpu/alpha/debug.cpp
 	devices/cpu/alpha/execute.cpp
 	emu/map/addrmap.cpp
 	emu/command.cpp
@@ -20,6 +21,7 @@ set(MSE_CPP_SRCS
 
 set(MSE_H_SRCS
 	devices/cpu/alpha/axp.h
+	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h
 	emu/map/addrmap.h
 	emu/command.h
