@@ -47,19 +47,19 @@ void AlphaProcessor::execute()
 	case OPC_STW:		// 0D - STW instruction
 	case OPC_STB:		// 0E - STB instruction
 	case OPC_STQ_U:		// OF - STQ_U instruction
-	case OPC_INTA:		// 10 - INTA instruction
-	case OPC_INTL:		// 11 - INTL instruction
-	case OPC_INTS:		// 12 - INTS instruction
-	case OPC_INTM:		// 13 - INTM instruction
-	case OPC_ITFP:		// 14 - ITFP instruction
-	case OPC_FLTV:		// 15 - FLTV instruction
-	case OPC_FLTI:		// 16 - FLTI instruction
+	case OPC_INTA:		// 10 - Arithmetic instructions
+	case OPC_INTL:		// 11 - Logical instructions
+	case OPC_INTS:		// 12 - Shift instructions
+	case OPC_INTM:		// 13 - Multiply instructions
+	case OPC_ITFP:		// 14 - Integer/Floating instructions
+	case OPC_FLTV:		// 15 - Floating VAX instructions
+	case OPC_FLTI:		// 16 - Floating IEEE instructions
 	case OPC_FLTL:		// 17 - FLTL instruction
-	case OPC_MISC:		// 18 - MISC instruction
+	case OPC_MISC:		// 18 - Miscellaneous instructions
 	case OPC_HW_MFPR:	// 19 - HW_MFPR instruction
 	case OPC_JSR:		// 1A - JSR instruction
 	case OPC_HW_LD:		// 1B - HW_LD instruction
-	case OPC_FPTI:		// 1C - FPTI instruction
+	case OPC_FPTI:		// 1C - Floating/Integer instructions
 	case OPC_HW_MTPR:	// 1D - HW_MTPR instruction
 	case OPC_RET:		// 1E - RET instruction
 	case OPC_HW_ST:		// 1F - HW_ST instruction
