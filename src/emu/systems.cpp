@@ -8,11 +8,16 @@
 #include "emu/core.h"
 #include "emu/syslist.h"
 
+#include "system/dec/axp/externs.h"
 #include "system/dec/vax/externs.h"
 
 const SystemDriver *SystemList::sysList[] =
 {
 		// Digital Electric Corporation (DEC)
+		// AXP family series
+		&SYSTEM_NAME(es40),
+
+		// VAX family series
 		&SYSTEM_NAME(mv3900),
 		&SYSTEM_NAME(mv3900x),
 

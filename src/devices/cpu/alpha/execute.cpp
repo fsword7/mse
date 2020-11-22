@@ -9,10 +9,10 @@
 #include "emu/sysconfig.h"
 #include "emu/device.h"
 #include "devices/cpu/alpha/axp.h"
-#include "devices/cpu/alpha/opcode.h"
 #include "devices/cpu/alpha/debug.h"
+#include "devices/cpu/alpha/opcode.h"
 
-// instructions function defines
+// Instruction defines
 #include "devices/cpu/alpha/axp_arith.h"
 #include "devices/cpu/alpha/axp_branch.h"
 #include "devices/cpu/alpha/axp_mem.h"
