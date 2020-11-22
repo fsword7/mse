@@ -37,11 +37,8 @@
 #define OPP_CODE   26
 #define OPM_CODE   0x3F
 #define OPP_RA     21
-#define OPM_RA     0x1F
 #define OPP_RB     16
-#define OPM_RB     0x1F
 #define OPP_RC     0
-#define OPM_RC     0x1F
 #define OPP_MDSP   0
 #define OPM_MDSP   0xFFFF
 #define OPP_BDSP   0
@@ -62,30 +59,47 @@
 #define OPP_FTRP   13
 #define OPM_FTRP   0x7
 
-#define OP_GETCD(x)   (((x) >> OPP_CODE) & OPM_CODE)
-#define OP_GETRA(x)   (((x) >> OPP_RA) & OPM_RA)
-#define OP_GETRB(x)   (((x) >> OPP_RB) & OPM_RB)
-#define OP_GETRC(x)   (((x) >> OPP_RC) & OPM_RC)
-#define OP_GETPAL(x)  (((x) >> OPP_PALCD) & OPM_PALCD)
-#define OP_GETIFNC(x) (((x) >> OPP_IFNC) & OPM_IFNC)
-#define OP_GETFFNC(x) (((x) >> OPP_FFNC) & OPM_FFNC)
-#define OP_GETFRND(x) (((x) >> OPP_FRND) & OPM_FRND)
-#define OP_GETLIT8(x) (((x) >> OPP_LIT8) & OPM_LIT8)
-#define OP_GETMDSP(x) (((x) >> OPP_MDSP) & OPM_MDSP)
-#define OP_GETBDSP(x) (((x) >> OPP_BDSP) & OPM_BDSP)
+#define OP_GETCD(op)   (((op) >> OPP_CODE) & OPM_CODE)
+#define OP_GETRA(op)   ((op) >> OPP_RA)
+#define OP_GETRB(op)   ((op) >> OPP_RB)
+#define OP_GETRC(op)   ((op) >> OPP_RC)
+#define OP_GETPAL(op)  (((op) >> OPP_PALCD) & OPM_PALCD)
+#define OP_GETIFNC(op) (((op) >> OPP_IFNC) & OPM_IFNC)
+#define OP_GETFFNC(op) (((op) >> OPP_FFNC) & OPM_FFNC)
+#define OP_GETFRND(op) (((op) >> OPP_FRND) & OPM_FRND)
+#define OP_GETLIT8(op) (((op) >> OPP_LIT8) & OPM_LIT8)
+#define OP_GETMDSP(op) (((op) >> OPP_MDSP) & OPM_MDSP)
+#define OP_GETBDSP(op) (((op) >> OPP_BDSP) & OPM_BDSP)
 
 // PALcode Mode
-#define PAL_UNDF   0  // Undefined
-#define PAL_VMS    1  // VMS
-#define PAL_UNIX   2  // UNIX
-#define PAL_NT     3  // Windows NT
+#define PAL_UNDF	0	// Undefined
+#define PAL_VMS		1	// VMS
+#define PAL_UNIX	2	// UNIX
+#define PAL_NT		3	// Windows NT
 
 // Access Mode
-#define ACC_K      0  // Kernel
-#define ACC_E      1  // Executive
-#define ACC_S      2  // Supervisor
-#define ACC_U      3  // User
+#define ACC_KERNEL		0	// Kernel
+#define ACC_EXECUTIVE	1	// Executive
+#define ACC_SUPERVISOR	2	// Supervisor
+#define ACC_USER		3	// User
 
+// PC field definition
+#define PC_PAL_MODE		1	// PC PAL mode field
+
+// Register determination definitions
+#define REG_MASK	0x1F
+#define RREG(reg)	((reg) & REG_MASK))
+//#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
+
+// executing instruction definitions
+#define RA		RREG(OP_GETRA(inst))
+#define RB		RREG(OP_GETRB(inst))
+#define RC		RREG(OP_GETRC(inst))
+#define RAV		state.rReg[RA]
+#define RBV		state.rReg[RB]
+#define RCV		state.rReg[RC]
+#define DISP16	SXTW(inst)
+#define DISP21	SXT21(inst)
 
 class AlphaProcessor : public ProcessorDevice
 {
@@ -110,6 +124,8 @@ protected:
 		uint64_t fRegs[AXP_NFREGS*2];	// Floating registers (0-31 - regular, 32-63 - shadow)
 		uint64_t vpcReg;            	// Virtual program counter register
 		uint64_t ppcReg;				// Physical program counter register
+
+		bool sde; // Shadow register enable
 	} state;
 
 };
