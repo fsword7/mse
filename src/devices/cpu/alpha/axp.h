@@ -15,22 +15,28 @@
 // PALcode Format
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |   opcode  |                     Number                        |
-// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-+
 //
 // Branch Format
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |   opcode  |    RA   |              Displacement               |
-// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-+
 //
 // Memory Format
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |   opcode  |    RA   |    RB   |          Displacement         |
-// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// +-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-+
 //
 // Operate Format
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // |   opcode  |    RA   |    RB   |       Function      |    RC   |
+// +-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-+
+//  3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
+//  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+//
 // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// |   opcode  |    RA   |       LIT     |1|   Function  |    RC   |
+// +-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-^-+-+-+-+
 //  3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
 //  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
 
@@ -45,7 +51,7 @@
 #define OPM_BDSP   0x1FFFFF
 #define OPP_LIT8   13
 #define OPM_LIT8   0xFF
-#define OPP_ILIT   12
+#define OPM_LIT    0x1000
 
 #define OPP_IFNC   5
 #define OPM_IFNC   0x3F
@@ -88,18 +94,25 @@
 
 // Register determination definitions
 #define REG_MASK	0x1F
-#define RREG(reg)	((reg) & REG_MASK))
+#define RREG(reg)	((reg) & REG_MASK)
 //#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
 
 // executing instruction definitions
 #define RA		RREG(OP_GETRA(inst))
 #define RB		RREG(OP_GETRB(inst))
 #define RC		RREG(OP_GETRC(inst))
-#define RAV		state.rReg[RA]
-#define RBV		state.rReg[RB]
-#define RCV		state.rReg[RC]
+#define RAV		state.iRegs[RA]
+#define RBV		state.iRegs[RB]
+#define RBVL	((inst & OPM_LIT) ? OP_GETLIT8(inst) : state.iRegs[RB])
+#define RCV		state.iRegs[RC]
 #define DISP16	SXTW(inst)
-#define DISP21	SXT21(inst)
+#define DISP21	0 //SXT21(inst)
+
+
+#define READV(vAddr, size, value)
+#define READVL(vAddr, size, value)
+#define WRITEV(vAddr, size, value)
+#define WRITEVC(vAddr, size, value)
 
 class AlphaProcessor : public ProcessorDevice
 {
@@ -109,6 +122,9 @@ public:
 
 	void init();
 	void execute();
+
+	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
+	inline void addPC(uint64_t disp) { state.vpcReg += disp; }
 
 	inline void nextPC()
 	{

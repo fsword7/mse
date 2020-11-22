@@ -21,6 +21,9 @@ set(MSE_CPP_SRCS
 
 set(MSE_H_SRCS
 	devices/cpu/alpha/axp.h
+	devices/cpu/alpha/axp_arith.h
+	devices/cpu/alpha/axp_branch.h
+	devices/cpu/alpha/axp_mem.h
 	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h
 	emu/map/addrmap.h

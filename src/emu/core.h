@@ -24,13 +24,13 @@ namespace fs = std::filesystem;
 
 typedef const char tag_t;
 
-// extended signed definition
-#define SXTB(val)	sint8_t(val)
-#define SXTW(val)	sint16_t(val)
-#define SXTL(val)	sint32_t(val)
-#define SXTQ(val)	sint64_t(val)
+// sign extension definition
+#define SXTB(val)	int8_t(val)
+#define SXTW(val)	int16_t(val)
+#define SXTL(val)	int32_t(val)
+#define SXTQ(val)	int64_t(val)
 
-// extended unsigned definition
+// zero extension definition
 #define ZXTB(val)	uint8_t(val)
 #define ZXTW(val)	uint16_t(val)
 #define ZXTL(val)	uint32_t(val)

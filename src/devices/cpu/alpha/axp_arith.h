@@ -8,30 +8,30 @@
 #pragma once
 
 // Addition instructions
-#define DO_ADDL		RCV = SXTL(RAV + RBV)
-#define DO_S4ADDL	RCV = SXTL((RAV * 4) + RBV)
-#define DO_S8ADDL	RCV = SXTL((RAV * 8) + RBV)
+#define DOPC_ADDL		RCV = SXTL(RAV + RBVL)
+#define DOPC_S4ADDL		RCV = SXTL((RAV * 4) + RBVL)
+#define DOPC_S8ADDL		RCV = SXTL((RAV * 8) + RBVL)
 
-#define DO_ADDQ		RCV = RAV + RBV
-#define DO_S4ADDQ	RCV = (RAV * 4) + RBV
-#define DO_S8ADDQ	RCV = (RAV * 8) + RBV
+#define DOPC_ADDQ		RCV = RAV + RBVL
+#define DOPC_S4ADDQ		RCV = (RAV * 4) + RBVL
+#define DOPC_S8ADDQ		RCV = (RAV * 8) + RBVL
 
 // Subtract instructions
-#define DO_SUBL		RCV = SXTL(RAV - RBV)
-#define DO_S4SUBL	RCV = SXTL((RAV * 4) - RBV)
-#define DO_S8SUBL	RCV = SXTL((RAV * 8) - RBV)
+#define DOPC_SUBL		RCV = SXTL(RAV - RBVL)
+#define DOPC_S4SUBL		RCV = SXTL((RAV * 4) - RBVL)
+#define DOPC_S8SUBL		RCV = SXTL((RAV * 8) - RBVL)
 
-#define DO_SUBQ		RCV = RAV - RBV
-#define DO_S4SUBQ	RCV = (RAV * 4) - RBV
-#define DO_S8SUBQ	RCV = (RAV * 8) - RBV
+#define DOPC_SUBQ		RCV = RAV - RBVL
+#define DOPC_S4SUBQ		RCV = (RAV * 4) - RBVL
+#define DOPC_S8SUBQ		RCV = (RAV * 8) - RBVL
 
 // Multiply instructions
-#define DO_MULL		RCV = SXTL(SXTL(RAV) * SXTL(RBV))
-#define DO_MULQ		RCV = RAV * RBV
+#define DOPC_MULL		RCV = SXTL(SXTL(RAV) * SXTL(RBVL))
+#define DOPC_MULQ		RCV = RAV * RBVL
 
 // Comparison instructions
-#define DO_CMPEQ	RVC = (RAV == RBV) ? 1 : 0
-#define DO_CMPULE	RVC = (ZXTQ(RAV) < ZXTQ(RBV)) ? 1 : 0
-#define DO_CMPULT	RVC = (ZXTQ(RAV) <= ZXTQ(RBV)) ? 1 : 0
-#define DO_CMPLT	RVC = (SXTQ(RAV) < SXTQ(RBV)) ? 1 : 0
-#define DO_CMPLE	RVC = (SXTQ(RAV) <= SXTQ(RBV)) ? 1 : 0
+#define DOPC_CMPEQ		RCV = (RAV == RBVL) ? 1 : 0
+#define DOPC_CMPULE		RCV = (ZXTQ(RAV) < ZXTQ(RBVL)) ? 1 : 0
+#define DOPC_CMPULT		RCV = (ZXTQ(RAV) <= ZXTQ(RBVL)) ? 1 : 0
+#define DOPC_CMPLT		RCV = (SXTQ(RAV) < SXTQ(RBVL)) ? 1 : 0
+#define DOPC_CMPLE		RCV = (SXTQ(RAV) <= SXTQ(RBVL)) ? 1 : 0
