@@ -30,6 +30,9 @@ void SystemEngine::gexit()
 
 Machine *SystemEngine::find(const string sysName)
 {
+	for (auto mach : machines)
+		if (sysName == mach->getDeviceName())
+			return mach;
 	return nullptr;
 }
 
