@@ -8,6 +8,7 @@
 #pragma once
 
 #include "emu/delegate.h"
+#include "emu/list.h"
 
 class SystemConfig;
 class Device;
@@ -130,15 +131,26 @@ public:
 
 // *************************************************************
 
-class Device : public Delegate
+class DeviceInterface;
+class diExecute;
+class diMemory;
+class diDebug;
+
+class Device
+: public Delegate,
+  public List<Device>
 {
 public:
-	~Device() = default;
+	virtual ~Device() = default;
 
 	// Getter function calls
 	inline tag_t *getFullName() const   { return type.getFullName(); }
 	inline tag_t *getShortName() const  { return type.getShortName(); }
 	inline tag_t *getSourceName() const { return type.getSourceName(); }
+
+	inline bool hasExecutionInterface() const { return ifExecute != nullptr; }
+	inline bool hasMemoryInterface() const    { return ifMemory != nullptr; }
+	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
 
 protected:
 	Device(const SystemConfig &config, const DeviceType &type);
@@ -146,6 +158,29 @@ protected:
 private:
 	const DeviceType &type;
 
+	// device interface section
+	vector<DeviceInterface *> ifList;
+
+	diExecute *ifExecute = nullptr;
+	diMemory  *ifMemory  = nullptr;
+	diDebug   *ifDebug   = nullptr;
+
 };
 
 typedef Device device_t;
+
+// *************************************************************
+
+class DeviceInterface
+{
+public:
+	DeviceInterface(device_t *dev, tag_t *name);
+	virtual ~DeviceInterface() = default;
+
+	inline device_t *getDevice() const { return owner; }
+	inline const tag_t *getName() const { return tagName; }
+
+private:
+	device_t    *owner   = nullptr;
+	const tag_t *tagName = nullptr;
+};

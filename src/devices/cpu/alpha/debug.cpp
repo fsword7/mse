@@ -6,8 +6,6 @@
  */
 
 #include "emu/core.h"
-#include "emu/sysconfig.h"
-#include "emu/device.h"
 #include "devices/cpu/alpha/axp.h"
 #include "devices/cpu/alpha/debug.h"
 

@@ -9,6 +9,9 @@ set(MSE_CPP_SRCS
 	emu/device.cpp
 	emu/devproc.cpp
 	emu/devsys.cpp
+	emu/didebug.cpp
+	emu/diexec.cpp
+	emu/dimem.cpp
 	emu/engine.cpp
 	emu/machine.cpp
 	emu/sysconfig.cpp
@@ -35,8 +38,12 @@ set(MSE_H_SRCS
 	emu/device.h
 	emu/devproc.h
 	emu/devsys.h
+	emu/didebug.h
+	emu/diexec.h
+	emu/dimem.h
 	emu/driver.h
 	emu/engine.h
+	emu/list.h
 	emu/machine.h
 	emu/sysconfig.h
 	emu/syslist.h

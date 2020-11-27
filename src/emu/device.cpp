@@ -6,11 +6,15 @@
  */
 
 #include "emu/core.h"
-#include "emu/sysconfig.h"
-#include "emu/device.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type)
 : type(type)
+{
+	ifList.clear();
+}
+
+DeviceInterface::DeviceInterface(device_t *owner, const tag_t *name)
+: owner(owner), tagName(name)
 {
 
 }

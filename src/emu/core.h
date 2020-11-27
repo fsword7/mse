@@ -24,6 +24,10 @@ namespace fs = std::filesystem;
 
 typedef const char tag_t;
 
+// Common include packages
+#include "emu/sysconfig.h"
+#include "emu/device.h"
+
 // sign extension definition
 #define SXTB(val)	int8_t(val)
 #define SXTW(val)	int16_t(val)

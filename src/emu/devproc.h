@@ -7,7 +7,15 @@
 
 #pragma once
 
-class ProcessorDevice : public Device
+#include "emu/diexec.h"
+#include "emu/dimem.h"
+#include "emu/didebug.h"
+
+class ProcessorDevice
+: public Device,
+  public diExecute,
+  public diMemory,
+  public diDebug
 {
 public:
 	ProcessorDevice(const SystemConfig &config, const DeviceType &type);

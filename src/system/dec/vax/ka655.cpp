@@ -7,8 +7,6 @@
 
 
 #include "emu/core.h"
-#include "emu/sysconfig.h"
-#include "emu/device.h"
 #include "emu/devsys.h"
 #include "emu/driver.h"
 
