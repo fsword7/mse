@@ -13,8 +13,23 @@ Device::Device(const SystemConfig &config, const DeviceType &type)
 	ifList.clear();
 }
 
+// Complete final device configuration
+void Device::completeConfig()
+{
+
+	for (auto *iface : ifList)
+	{
+		fmt::printf("%s: completeing %s interface...\n", getShortName(), iface->getName());
+		iface->completeConfig();
+	}
+}
+
 DeviceInterface::DeviceInterface(device_t *owner, const tag_t *name)
 : owner(owner), tagName(name)
 {
+	Device::ifList_t list = owner->getInterfaces();
 
+	if (list.size() > 0)
+		list.back()->next = this;
+	list.push_back(this);
 }

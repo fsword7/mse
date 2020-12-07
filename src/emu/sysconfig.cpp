@@ -13,7 +13,9 @@ SystemConfig::SystemConfig(const SystemDriver &driver)
 : sysDriver(driver)
 {
 	// Create root of system device
-	addDeviceType(driver.name, driver.type, 0);
+	systemDevice = addDeviceType(driver.name, driver.type, 0);
+
+	systemDevice->completeConfig();
 }
 
 device_t *SystemConfig::addDeviceType(tag_t *tag, const DeviceType &type, uint64_t clock)

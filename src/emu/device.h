@@ -141,6 +141,8 @@ class Device
   public List<Device>
 {
 public:
+	using ifList_t = vector<DeviceInterface *>;
+
 	virtual ~Device() = default;
 
 	// Getter function calls
@@ -152,6 +154,10 @@ public:
 	inline bool hasMemoryInterface() const    { return ifMemory != nullptr; }
 	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
 
+	inline ifList_t getInterfaces() { return ifList; }
+
+	void completeConfig(); // complete final configuration
+
 protected:
 	Device(const SystemConfig &config, const DeviceType &type);
 
@@ -159,7 +165,7 @@ private:
 	const DeviceType &type;
 
 	// device interface section
-	vector<DeviceInterface *> ifList;
+	ifList_t ifList;
 
 	diExecute *ifExecute = nullptr;
 	diMemory  *ifMemory  = nullptr;
@@ -180,7 +186,11 @@ public:
 	inline device_t *getDevice() const { return owner; }
 	inline const tag_t *getName() const { return tagName; }
 
+	// virtual function calls
+	virtual void completeConfig() {}
+
 private:
-	device_t    *owner   = nullptr;
-	const tag_t *tagName = nullptr;
+	DeviceInterface *next = nullptr;
+	device_t *owner       = nullptr;
+	const tag_t *tagName  = nullptr;
 };
