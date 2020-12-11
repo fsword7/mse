@@ -8,9 +8,18 @@
 #include "emu/core.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type)
-: type(type)
+: sysConfig(config), type(type)
 {
 	ifList.clear();
+}
+
+void Device::configure(SystemConfig &config)
+{
+	assert(&config == &sysConfig);
+
+	// device initialization
+	config.begin(this);
+	devConfigure(config);
 }
 
 // Complete final device configuration

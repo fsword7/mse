@@ -11,10 +11,13 @@
 
 struct SystemDriver
 {
+	typedef void (*sysConfigure)(SystemConfig &config, Device &owner);
+
 	const char			*name;
 	const char			*parent;
 	const char			*section;
 	const DeviceType	&type;
+	sysConfigure	     configure;
 
 	const char   *description;
 	const char   *source;		// source file name
@@ -40,7 +43,7 @@ struct SystemDriver
 		(SYSTEM_TRAITS_NAME(Name)::fullName),		\
 		(SYSTEM_TRAITS_NAME(Name)::fileName)>
 
-#define COMP(Name, Parent, Section, Type, Class, Create, Init, Company, Description) \
+#define COMP(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description) \
 	SYSTEM_TRAITS(Name, Description) \
 	extern const SystemDriver SYSTEM_NAME(Name) = \
 	{ \
@@ -48,6 +51,7 @@ struct SystemDriver
 		#Parent, \
 		#Section, \
 		SYSTEM_TYPE(Name, Class), \
+		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
 		Description, \
 		__FILE__ \
 	};

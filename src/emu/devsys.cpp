@@ -9,8 +9,15 @@
 #include "emu/devsys.h"
 
 SystemDevice::SystemDevice(const SystemConfig &config, const DeviceType &type)
-: Device(config, type)
+: Device(config, type), driver(config.getSystemDriver())
 {
 
 }
 
+void SystemDevice::devConfigure(SystemConfig &config)
+{
+	assert(&config == &getSystemConfig());
+
+	// system-specific initialization
+	driver.configure(config, *this);
+}

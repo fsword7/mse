@@ -15,12 +15,39 @@ class SystemConfig
 public:
 	SystemConfig(const SystemDriver &driver);
 
-	inline device_t *getSystemDevice() const { return systemDevice; }
+	inline Device *getSystemDevice() const { return systemDevice; }
+	inline Device *getConfigDevice() const { return configDevice; }
 
-	device_t *addDeviceType(tag_t *tag, const DeviceType &type, uint64_t clock);
+	Device *addDeviceType(tag_t *tag, const DeviceType &type, uint64_t clock);
+	Device *addDevice(Device *dev, Device *owner);
+
+	const SystemDriver &getSystemDriver() const { return systemDriver; }
+
+	void begin(Device *dev);
+
+protected:
+	class ConfigDeviceStack
+	{
+	public:
+		ConfigDeviceStack(SystemConfig &config)
+		: host(config), device(config.configDevice)
+		{
+			host.configDevice = nullptr;
+		}
+
+		~ConfigDeviceStack()
+		{
+			host.configDevice = device;
+		}
+
+	private:
+		SystemConfig &host;
+		Device *device = nullptr;
+	};
 
 private:
-	const SystemDriver &sysDriver;
+	const SystemDriver &systemDriver;
 
-	device_t *systemDevice = nullptr;
+	Device *systemDevice = nullptr;
+	Device *configDevice = nullptr;
 };

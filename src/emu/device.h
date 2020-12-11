@@ -150,11 +150,20 @@ public:
 	inline tag_t *getShortName() const  { return type.getShortName(); }
 	inline tag_t *getSourceName() const { return type.getSourceName(); }
 
+	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
+
 	inline bool hasExecutionInterface() const { return ifExecute != nullptr; }
 	inline bool hasMemoryInterface() const    { return ifMemory != nullptr; }
 	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
 
 	inline ifList_t getInterfaces() { return ifList; }
+
+	// local device function calls
+	void configure(SystemConfig &config);
+
+	// device-specific virtual device function calls
+	//   do nothing by default
+	virtual void devConfigure(SystemConfig &config) {}
 
 	void completeConfig(); // complete final configuration
 
@@ -162,7 +171,8 @@ protected:
 	Device(const SystemConfig &config, const DeviceType &type);
 
 private:
-	const DeviceType &type;
+	const DeviceType   &type;
+	const SystemConfig &sysConfig;
 
 	// device interface section
 	ifList_t ifList;
