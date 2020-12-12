@@ -44,7 +44,6 @@ auto device_tag_func()
 template <class DeviceClass, tag_t *shortName, tag_t *fullName, tag_t *fileName>
 constexpr auto deviceCreator = &device_tag_func<DeviceClass, shortName, fullName, fileName>;
 
-
 class DeviceType
 {
 private:
@@ -104,6 +103,15 @@ private:
 	tag_t *fileName  = nullptr;	// Name of source file
 };
 
+//template <class DeviceClass>
+//class SystemCreator : public DeviceType
+//{
+//public:
+//	using DeviceType::DeviceType;
+//	using DeviceType::create;
+//
+//};
+
 template <class DeviceClass>
 class DeviceCreator : public DeviceType
 {
@@ -111,22 +119,23 @@ public:
 	using DeviceType::DeviceType;
 	using DeviceType::create;
 
+	template <typename... Args>
+	DeviceClass *operator ()(SystemConfig &config, const string &devName, const tag_t *tag, Args&&... args) const;
 };
 
-
 #define DECLARE_DEVICE_TYPE(Type, Class) \
-	extern DeviceType<Class> const &Type;
+	extern DeviceCreator<Class> const &Type;
 
 #define DEFINE_DEVICE_TYPE(Type, Class, ShortName, FullName)	\
 	struct Class##_device_traits {								\
-		static constexpr tag_t *shortName[] = ShortName;		\
-		static constexpr tag_t *fullName[]  = FullName;			\
-		static constexpr tag_t *fileName[]  = __FILE__;			\
+		static constexpr tag_t shortName[] = ShortName;			\
+		static constexpr tag_t fullName[]  = FullName;			\
+		static constexpr tag_t fileName[]  = __FILE__;			\
 	};															\
 	constexpr tag_t Class##_device_traits::shortName[];			\
 	constexpr tag_t Class##_device_traits::fullName[];			\
 	constexpr tag_t Class##_device_traits::fileName[];			\
-	DeviceType<Class> const &Type = deviceCreator<Class, (Class##_device_traits::shortName), \
+	DeviceCreator<Class> const &Type = deviceCreator<Class, (Class##_device_traits::shortName), \
 		(Class##_device_traits::fullName), (Class##_device_traits::fileName)>;
 
 // *************************************************************
