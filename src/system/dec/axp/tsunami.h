@@ -7,6 +7,8 @@
 
 #pragma once
 
+#define ES40_NCPU	4
+
 class tsunami_device : public SystemDevice
 {
 public:
@@ -21,4 +23,7 @@ public:
 
 	// Model-specific system initialize routines
 	static void es40_init();
+
+private:
+	AlphaProcessor *cpu[ES40_NCPU];
 };

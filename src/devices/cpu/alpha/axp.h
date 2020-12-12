@@ -5,6 +5,8 @@
  *      Author: Tim Stark
  */
 
+#pragma once
+
 #include "emu/devproc.h"
 
 #define AXP_NIREGS 32  // 32 general purpose registers

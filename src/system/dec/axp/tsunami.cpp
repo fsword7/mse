@@ -9,16 +9,21 @@
 #include "emu/devsys.h"
 #include "emu/driver.h"
 
+#include "devices/cpu/alpha/axp.h"
+#include "devices/cpu/alpha/21264cb.h"
 #include "system/dec/axp/tsunami.h"
 
 // Create system routines
 void tsunami_device::es40(SystemConfig &config)
 {
 
-//	cpu = AXP21264CB(config, "21264CB", 0);
-//	cpu->setAddressMap(AS_PROGRAM, &ka650_device::mv3900_mem);
-//	cpu->setDeviceName("cpu");
-//
+//	for (int idx = 0; idx < 1 /* ES40_NCPU */; idx++)
+//	{
+//		string devName = fmt::sprintf("cpu%d", idx);
+//		cpu[idx] = axp21264cb(config, devName, 0);
+//		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_mem);
+//	}
+
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);
 //	cmctl = CMCTL(config, "cmctl", 0);

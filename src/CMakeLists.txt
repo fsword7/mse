@@ -1,4 +1,5 @@
 set(MSE_CPP_SRCS
+	devices/cpu/alpha/21264cb.cpp
 	devices/cpu/alpha/axp.cpp
 	devices/cpu/alpha/debug.cpp
 	devices/cpu/alpha/execute.cpp
@@ -24,6 +25,7 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
+	devices/cpu/alpha/21264cb.h
 	devices/cpu/alpha/axp.h
 	devices/cpu/alpha/axp_arith.h
 	devices/cpu/alpha/axp_branch.h
