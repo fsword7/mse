@@ -18,6 +18,12 @@ class ProcessorDevice
   public diDebug
 {
 public:
-	ProcessorDevice(const SystemConfig &config, const DeviceType &type);
+
+protected:
+	ProcessorDevice(const SystemConfig &config, const DeviceType &type,
+			const string &tagName, Device *owner, uint64_t clock);
+
+public:
+	virtual ~ProcessorDevice() = default;
 
 };

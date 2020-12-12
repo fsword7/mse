@@ -17,12 +17,12 @@
 void tsunami_device::es40(SystemConfig &config)
 {
 
-//	for (int idx = 0; idx < 1 /* ES40_NCPU */; idx++)
-//	{
-//		string devName = fmt::sprintf("cpu%d", idx);
-//		cpu[idx] = axp21264cb(config, devName, 0);
+	for (int idx = 0; idx < ES40_NCPU; idx++)
+	{
+		string tagName = fmt::sprintf("cpu%d", idx);
+		cpu[idx] = axp21264cb(config, tagName, 0);
 //		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_mem);
-//	}
+	}
 
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);

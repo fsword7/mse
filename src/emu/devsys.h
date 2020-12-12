@@ -10,7 +10,7 @@
 class SystemDevice : public Device
 {
 public:
-	SystemDevice(const SystemConfig &config, const DeviceType &type);
+	SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
 
 	// Virtual device function calls
 	void devConfigure(SystemConfig &config);

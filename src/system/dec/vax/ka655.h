@@ -124,8 +124,8 @@
 class ka655_device : public SystemDevice
 {
 public:
-	ka655_device(const SystemConfig &config, const DeviceType &type)
-	: SystemDevice(config, type)
+	ka655_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+	: SystemDevice(config, type, tagName, clock)
 	{
 
 	}

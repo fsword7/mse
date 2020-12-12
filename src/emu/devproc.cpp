@@ -8,8 +8,9 @@
 #include "emu/core.h"
 #include "emu/devproc.h"
 
-ProcessorDevice::ProcessorDevice(const SystemConfig &config, const DeviceType &type)
-: Device(config, type),
+ProcessorDevice::ProcessorDevice(const SystemConfig &config, const DeviceType &type,
+		const string &tagName, Device *owner, uint64_t clock)
+: Device(config, type, tagName, owner, clock),
   diExecute(this),
   diMemory(this),
   diDebug(this)

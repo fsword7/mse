@@ -14,8 +14,8 @@
 class axp21264cb_device : public AlphaProcessor
 {
 public:
-	axp21264cb_device(const SystemConfig &config, const DeviceType &type); // tag_t *tag, device_t *owner, uint64_t clock);
-	~axp21264cb_device();
+	axp21264cb_device(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
+	~axp21264cb_device() = default;
 
 	void run();
 };

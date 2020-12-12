@@ -12,11 +12,12 @@
 class tsunami_device : public SystemDevice
 {
 public:
-	tsunami_device(const SystemConfig &config, const DeviceType &type)
-	: SystemDevice(config, type)
+	tsunami_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+	: SystemDevice(config, type, tagName, clock)
 	{
 
 	}
+	~tsunami_device() = default;
 
 	// System creator routines
 	void es40(SystemConfig &config);

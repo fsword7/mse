@@ -9,20 +9,22 @@
 #include "emu/driver.h"
 #include "emu/sysconfig.h"
 
-SystemConfig::SystemConfig(const SystemDriver &driver)
+SystemConfig::SystemConfig(const SystemDriver &driver, cstag_t &tagName)
 : systemDriver(driver)
 {
 	// Create root of system device
-	addDeviceType(driver.name, driver.type, 0);
+	addDeviceType(tagName, driver.type, 0);
 
 	systemDevice->completeConfig();
 }
 
-device_t *SystemConfig::addDeviceType(tag_t *tag, const DeviceType &type, uint64_t clock)
+Device *SystemConfig::addDeviceType(cstag_t &tagName, const DeviceType &type, uint64_t clock)
 {
 	Device *owner = nullptr;
 
-	device_t *sys = type.create(*this, tag, nullptr, clock);
+	fmt::printf("%s: Creating %s system...\n", tagName, type.getShortName());
+
+	device_t *sys = type.create(*this, tagName, nullptr, clock);
 
 	return addDevice(sys, owner);
 }
@@ -32,7 +34,7 @@ Device *SystemConfig::addDevice(Device *dev, Device *owner)
 	const ConfigDeviceStack context(*this);
 
 	if (owner != nullptr) {
-
+//		fmt::printf("%s: Owner %s(%s) device\n", dev->getDeviceName(), owner->getDeviceName(), owner->getShortName());
 	} else {
 		// System device
 		assert(systemDevice == nullptr);

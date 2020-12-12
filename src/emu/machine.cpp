@@ -8,24 +8,22 @@
 #include "emu/core.h"
 #include "emu/machine.h"
 
-Machine::Machine(const SystemConfig &config, tag_t *devName)
-: config(config), devName(strdup(devName))
+Machine::Machine(const SystemConfig &config, cstag_t &tagName)
+: config(config), devName(tagName)
 {
 }
 
 Machine::~Machine()
 {
-	if (devName != nullptr)
-		delete devName;
 }
 
-Machine *Machine::create(ostream &out, const SystemDriver *driver, const string devName)
+Machine *Machine::create(ostream &out, const SystemDriver *driver, cstag_t &tagName)
 {
 	SystemConfig *config = nullptr;
 	Machine *machine = nullptr;
 
-	config  = new SystemConfig(*driver);
-	machine = new Machine(*config, devName.c_str());
+	config  = new SystemConfig(*driver, tagName);
+	machine = new Machine(*config, tagName);
 
 	return machine;
 }

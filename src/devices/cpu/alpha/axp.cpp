@@ -10,8 +10,9 @@
 #include "emu/sysconfig.h"
 #include "devices/cpu/alpha/axp.h"
 
-AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &type)
-: ProcessorDevice(config, type)
+AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &type,
+	const string &tagName, Device *owner, uint64_t clock)
+: ProcessorDevice(config, type, tagName, owner, clock)
 {
 
 }
