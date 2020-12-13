@@ -4,6 +4,7 @@ set(MSE_CPP_SRCS
 	devices/cpu/alpha/debug.cpp
 	devices/cpu/alpha/execute.cpp
 	emu/map/addrmap.cpp
+	emu/map/map.cpp
 	emu/command.cpp
 	emu/console.cpp
 	emu/delegate.cpp
@@ -33,6 +34,7 @@ set(MSE_H_SRCS
 	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h
 	emu/map/addrmap.h
+	emu/map/map.h
 	emu/command.h
 	emu/console.h
 	emu/core.h
@@ -47,6 +49,7 @@ set(MSE_H_SRCS
 	emu/engine.h
 	emu/list.h
 	emu/machine.h
+	emu/templates.h
 	emu/sysconfig.h
 	emu/syslist.h
 	system/dec/axp/externs.h

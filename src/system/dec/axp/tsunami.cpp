@@ -6,6 +6,7 @@
  */
 
 #include "emu/core.h"
+#include "emu/map/map.h"
 #include "emu/devsys.h"
 #include "emu/driver.h"
 

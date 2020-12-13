@@ -27,4 +27,5 @@ public:
 
 private:
 	AlphaProcessor *cpu[ES40_NCPU];
+
 };

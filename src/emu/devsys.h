@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "emu/map/map.h"
+
 class SystemDevice : public Device
 {
 public:
@@ -17,4 +19,6 @@ public:
 
 private:
 	const SystemDriver &driver;
+
+//	mapAddressSpace space; // mapping system bus
 };
