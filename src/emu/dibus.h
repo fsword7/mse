@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "emu/map/map.h"
+
 class diBus : public DeviceInterface
 {
 public:
@@ -14,4 +16,6 @@ public:
 	~diBus() = default;
 
 private:
+	vector<const mapAddressConfig *> mapConfig;
+	vector<mapAddressSpace *> mapSpace;
 };

@@ -11,4 +11,6 @@
 diBus::diBus(device_t *owner)
 : DeviceInterface(owner, "bus")
 {
+	mapConfig.clear();
+	mapSpace.clear();
 }

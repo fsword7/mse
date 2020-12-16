@@ -12,6 +12,9 @@
 #define AS_DATA		1	// Data address space
 #define AS_IO		2	// I/O port address space
 
+//using offs_t = uint64_t;
+typedef uint64_t offs_t;
+
 class ProcessorDevice;
 
 class mapAddressConfig
@@ -45,8 +48,6 @@ private:
 class mapAddressSpace
 {
 public:
-	using offs_t = uint64_t;
-
 	mapAddressSpace() = default;
 	virtual ~mapAddressSpace() = default;
 
@@ -76,4 +77,26 @@ public:
 
 protected:
 	mapAddressConfig &config;
+};
+
+class mapMemoryBlock
+{
+public:
+	mapMemoryBlock(mapAddressSpace &space, offs_t sAddr, offs_t eAddr, void *base = nullptr);
+	~mapMemoryBlock() = default;
+
+	inline offs_t getStartAddress() const { return addrStart; }
+	inline offs_t getEndAddress() const   { return addrEnd; }
+	inline uint8_t *getData() const       { return dataBase; }
+	inline offs_t getSize() const         { return dataSize; }
+
+private:
+	mapAddressSpace &space;
+
+	offs_t   addrStart;
+	offs_t   addrEnd;
+	uint8_t *dataBase;
+	offs_t   dataSize;
+
+	vector<uint8_t> allocated;
 };
