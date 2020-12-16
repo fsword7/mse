@@ -13,8 +13,5 @@ public:
 	diMemory(device_t *owner);
 	~diMemory() = default;
 
-	// Abstract function calls
-	virtual void run() = 0;
-
 private:
 };
