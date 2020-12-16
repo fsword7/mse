@@ -8,8 +8,11 @@
 #pragma once
 
 #include "emu/map/map.h"
+#include "emu/dibus.h"
 
-class SystemDevice : public Device
+class SystemDevice
+: public Device,
+  public diBus
 {
 public:
 	SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);

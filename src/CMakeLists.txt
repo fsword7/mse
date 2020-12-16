@@ -11,6 +11,7 @@ set(MSE_CPP_SRCS
 	emu/device.cpp
 	emu/devproc.cpp
 	emu/devsys.cpp
+	emu/dibus.cpp
 	emu/didebug.cpp
 	emu/diexec.cpp
 	emu/dimem.cpp
@@ -43,6 +44,7 @@ set(MSE_H_SRCS
 	emu/devproc.h
 	emu/devsys.h
 	emu/didebug.h
+	emu/dibus.h
 	emu/diexec.h
 	emu/dimem.h
 	emu/driver.h

@@ -144,6 +144,7 @@ public:
 // *************************************************************
 
 class DeviceInterface;
+class diBus;
 class diExecute;
 class diMemory;
 class diDebug;
@@ -165,6 +166,7 @@ public:
 
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
 
+	inline bool hasBusInterface() const       { return ifBus != nullptr; }
 	inline bool hasExecutionInterface() const { return ifExecute != nullptr; }
 	inline bool hasMemoryInterface() const    { return ifMemory != nullptr; }
 	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
@@ -192,6 +194,7 @@ private:
 	// device interface section
 	ifList_t ifList;
 
+	diBus     *ifBus	 = nullptr;
 	diExecute *ifExecute = nullptr;
 	diMemory  *ifMemory  = nullptr;
 	diDebug   *ifDebug   = nullptr;

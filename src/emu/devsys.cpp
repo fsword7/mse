@@ -6,11 +6,13 @@
  */
 
 #include "emu/core.h"
+#include "emu/dibus.h"
 #include "emu/devsys.h"
 
 SystemDevice::SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 : Device(config, type, tagName, nullptr, clock),
-  driver(config.getSystemDriver())
+  driver(config.getSystemDriver()),
+  diBus(this)
 {
 
 }
