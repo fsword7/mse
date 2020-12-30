@@ -11,5 +11,5 @@
 diExecute::diExecute(device_t *owner)
 : DeviceInterface(owner, "execute")
 {
-
+	owner->ifExecute = this;
 }

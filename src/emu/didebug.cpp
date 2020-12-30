@@ -11,7 +11,7 @@
 diDebug::diDebug(device_t *owner)
 : DeviceInterface(owner, "debug")
 {
-
+	owner->ifDebug = this;
 }
 
 

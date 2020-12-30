@@ -194,11 +194,16 @@ private:
 	// device interface section
 	ifList_t ifList;
 
+protected:
+	friend class diBus;
+	friend class diExecute;
+	friend class diMemory;
+	friend class diDebug;
+
 	diBus     *ifBus	 = nullptr;
 	diExecute *ifExecute = nullptr;
 	diMemory  *ifMemory  = nullptr;
 	diDebug   *ifDebug   = nullptr;
-
 };
 
 typedef Device device_t;

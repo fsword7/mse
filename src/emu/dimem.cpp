@@ -11,5 +11,5 @@
 diMemory::diMemory(device_t *owner)
 : DeviceInterface(owner, "memory")
 {
-
+	owner->ifMemory = this;
 }

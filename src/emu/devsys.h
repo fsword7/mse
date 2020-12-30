@@ -9,10 +9,12 @@
 
 #include "emu/map/map.h"
 #include "emu/dibus.h"
+#include "emu/didebug.h"
 
 class SystemDevice
 : public Device,
-  public diBus
+  public diBus,
+  public diDebug
 {
 public:
 	SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
