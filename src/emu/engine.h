@@ -23,6 +23,7 @@ public:
 	Machine *find(const string sysName);
 
 	CommandStatus create(ostream &out, args_t args);
+	CommandStatus dump(ostream &out, args_t args);
 
 private:
 	// Machines

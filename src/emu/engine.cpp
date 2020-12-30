@@ -68,3 +68,25 @@ CommandStatus SystemEngine::create(ostream &out, args_t args)
 	machines.push_back(sys);
 	return CommandStatus::cmdOk;
 }
+
+CommandStatus SystemEngine::dump(ostream &out, args_t args)
+{
+	string devName = args.getNext();
+
+	Machine *sys = find(devName);
+	if (sys == nullptr)
+	{
+		fmt::fprintf(out, "%s: system not found\n", devName);
+		return CommandStatus::cmdOk;
+	}
+
+	Device *dev = sys->getSystemDevice();
+	if (!dev->hasBusInterface())
+	{
+		fmt::fprintf(out, "%s: do not have bus interface\n", devName);
+		return CommandStatus::cmdOk;
+	}
+
+
+	return CommandStatus::cmdOk;
+}

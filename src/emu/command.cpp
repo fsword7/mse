@@ -24,7 +24,7 @@ CommandStatus cmdDump(Console *, args_t &args)
 {
 	SystemEngine engine;
 
-//	engime.dump(cout, args);
+	engine.dump(cout, args);
 
 	return cmdOk;
 }
