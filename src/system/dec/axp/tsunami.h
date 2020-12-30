@@ -25,9 +25,6 @@ public:
 	// Model-specific system initialize routines
 	static void es40_init();
 
-	uint8_t read8(offs_t addr);
-	void write8(offs_t addr, uint8_t data);
-
 private:
 	AlphaProcessor *cpu[ES40_NCPU];
 

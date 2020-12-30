@@ -30,9 +30,4 @@ private:
 	vector<const mapAddressConfig *> mapConfig;
 	vector<mapAddressSpace *> mapSpace;
 	vector<mapMemory *> mapMemories;
-
-protected:
-	// main memory access
-	uint8_t *memData = nullptr;;
-	uint64_t memSize = 0;
 };
