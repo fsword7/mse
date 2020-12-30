@@ -20,6 +20,15 @@ CommandStatus cmdCreate(Console *, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus cmdDump(Console *, args_t &args)
+{
+	SystemEngine engine;
+
+//	engime.dump(cout, args);
+
+	return cmdOk;
+}
+
 CommandStatus cmdExit(Console *, args_t &args)
 {
 	return cmdShutdown;
@@ -38,6 +47,7 @@ CommandStatus cmdListSystem(Console *, args_t &args)
 command_t CommandHandler::mseCommands[] =
 {
 		{ "create",		cmdCreate,	nullptr },
+		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		nullptr,	CommandHandler::mseListCommands },
 		{ "set",		nullptr,	CommandHandler::mseSetCommands },
