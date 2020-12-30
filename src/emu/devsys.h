@@ -24,4 +24,5 @@ private:
 	const SystemDriver &driver;
 
 //	mapAddressSpace space; // mapping system bus
+	BusManager busManager; // system bus manager for all devices
 };

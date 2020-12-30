@@ -34,6 +34,35 @@ public:
 	inline int16_t  getAddrShift() const { return addrShift; }
 	inline int16_t  getPageShift() const { return pageShift; }
 
+	inline offs_t convertAddresstoByte(offs_t address) const
+	{
+		return (addrShift < 0)
+			? (address << -addrShift)
+			: (address >> addrShift);
+	}
+
+	inline offs_t convertBytetoAddress(offs_t address) const
+	{
+		return (addrShift > 0)
+			? (address << addrShift)
+			: (address >> -addrShift);
+	}
+
+	inline offs_t convertAddresstoByteEnd(offs_t address) const
+	{
+		return (addrShift < 0)
+			? ((address << -addrShift) | ((1 << -addrShift) - 1))
+			: (address >> addrShift);
+	}
+
+	inline offs_t convertBytetoAddressEnd(offs_t address) const
+	{
+		return (addrShift > 0)
+			? ((address << addrShift) | ((1 << addrShift) - 1))
+			: (address >> -addrShift);
+	}
+
+
 private:
 	ctag_t *name = nullptr;
 
@@ -50,6 +79,8 @@ class mapAddressSpace
 public:
 	mapAddressSpace() = default;
 	virtual ~mapAddressSpace() = default;
+
+	inline mapAddressConfig &getConfig() { return config; }
 
 	inline uint16_t getDataWidth() const { return config.getDataWidth(); }
 	inline uint16_t getDataRadix() const { return config.getDataRadix(); }
@@ -82,7 +113,7 @@ protected:
 class mapMemoryBlock
 {
 public:
-	mapMemoryBlock(mapAddressSpace &space, offs_t sAddr, offs_t eAddr, void *base = nullptr);
+	mapMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
 	~mapMemoryBlock() = default;
 
 	inline offs_t getStartAddress() const { return addrStart; }
@@ -90,13 +121,31 @@ public:
 	inline uint8_t *getData() const       { return dataBase; }
 	inline offs_t getSize() const         { return dataSize; }
 
+	void reserve(offs_t size);
+
 private:
-	mapAddressSpace &space;
+	mapAddressConfig &config;
 
 	offs_t   addrStart;
 	offs_t   addrEnd;
 	uint8_t *dataBase;
 	offs_t   dataSize;
+	offs_t   maxSize;
 
 	vector<uint8_t> allocated;
+};
+
+using BlockList = vector<mapMemoryBlock *>;
+
+class BusManager
+{
+public:
+	BusManager() = default;
+	~BusManager() = default;
+
+	inline BlockList &getBlockList() { return blocks; }
+
+private:
+	BlockList blocks;
+
 };
