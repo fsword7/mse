@@ -30,4 +30,6 @@ public:
 
 private:
 	AlphaProcessor *cpu[ES40_NCPU];
+
+	mapAddressSpace *space = nullptr; // program space
 };

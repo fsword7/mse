@@ -26,11 +26,6 @@ public:
 
 	void registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio);
 
-	uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
-	uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
-	uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
-	uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
-
 private:
 	vector<const mapAddressConfig *> mapConfig;
 	vector<mapAddressSpace *> mapSpace;

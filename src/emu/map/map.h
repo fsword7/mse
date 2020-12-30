@@ -90,24 +90,31 @@ public:
 	inline int16_t  getPageShift() const { return config.getPageShift(); }
 
 	// Virtual function calls
-	virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-	virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+	virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
+	virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
 
-	virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
-	virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
+	virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+	virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+
+	// Be removed later
+	void createMainMemory(offs_t length);
 
 protected:
 	mapAddressConfig &config;
+
+	// main memory access - be removed later
+	uint8_t *memData = nullptr;;
+	uint64_t memSize = 0;
 };
 
 class mapMemoryBlock

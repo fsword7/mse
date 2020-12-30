@@ -5,6 +5,7 @@ set(MSE_CPP_SRCS
 	devices/cpu/alpha/execute.cpp
 	emu/map/addrmap.cpp
 	emu/map/map.cpp
+	emu/map/space.cpp
 	emu/command.cpp
 	emu/console.cpp
 	emu/delegate.cpp

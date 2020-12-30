@@ -18,9 +18,7 @@
 void tsunami_device::es40(SystemConfig &config)
 {
 	// Initialize memory (removed later)
-	memSize = 19u << 1; // 512 MB memory space
-	memData = new uint8_t[memSize];
-	memset(memData, 0, memSize);
+	space->createMainMemory(19u << 1);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{

@@ -86,6 +86,7 @@ CommandStatus SystemEngine::dump(ostream &out, args_t args)
 		fmt::fprintf(out, "%s: do not have bus interface\n", devName);
 		return CommandStatus::cmdOk;
 	}
+//	mapAddressSpace &space = dev->getAddressSpace();
 
 
 	return CommandStatus::cmdOk;
