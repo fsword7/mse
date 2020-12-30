@@ -17,6 +17,10 @@
 // Create system routines
 void tsunami_device::es40(SystemConfig &config)
 {
+	// Initialize memory (removed later)
+	memSize = 19u << 1; // 512 MB memory space
+	memData = new uint8_t[memSize];
+	memset(memData, 0, memSize);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{
@@ -42,6 +46,19 @@ void tsunami_device::es40(SystemConfig &config)
 void tsunami_device::es40_init()
 {
 
+}
+
+uint8_t tsunami_device::read8(offs_t addr)
+{
+	if (addr < memSize)
+		return memData[addr];
+	return 0;
+}
+
+void tsunami_device::write8(offs_t addr, uint8_t data)
+{
+	if (addr < memSize)
+		memData[addr] = data;
 }
 
 COMP(es40,  nullptr, axp, ES40, tsunami_device, es40,  es40_init,  "DEC", "AlphaServer ES40")
