@@ -13,7 +13,8 @@ class tsunami_device : public SystemDevice
 {
 public:
 	tsunami_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
-	: SystemDevice(config, type, tagName, clock)
+	: SystemDevice(config, type, tagName, clock),
+	  config("system", LittleEndian, 64, 44, 0)
 	{
 
 	}
@@ -28,5 +29,6 @@ public:
 private:
 	AlphaProcessor *cpu[ES40_NCPU];
 
+	mapAddressConfig config;
 	mapAddressSpace *space = nullptr; // program space
 };

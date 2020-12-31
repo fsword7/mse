@@ -21,7 +21,7 @@ class mapAddressConfig
 {
 public:
 	mapAddressConfig() = default;
-	mapAddressConfig(ctag_t *name, uint16_t dWidth, uint16_t aWidth, int16_t aShift);
+	mapAddressConfig(ctag_t *name, endian_t eType, uint16_t dWidth, uint16_t aWidth, int16_t aShift);
 	~mapAddressConfig() = default;
 
 	// Getter function calls
@@ -66,12 +66,13 @@ public:
 private:
 	ctag_t *name = nullptr;
 
-	uint16_t dataWidth = 0;
-	uint16_t dataRadix = 0;
-	uint16_t addrWidth = 0;
-	uint16_t addrRadix = 0;
-	int16_t  addrShift = 0;
-	int16_t  pageShift = 0;
+	endian_t endianType = LittleEndian;
+	uint16_t dataWidth  = 0;
+	uint16_t dataRadix  = 0;
+	uint16_t addrWidth  = 0;
+	uint16_t addrRadix  = 0;
+	int16_t  addrShift  = 0;
+	int16_t  pageShift  = 0;
 };
 
 class mapAddressSpace

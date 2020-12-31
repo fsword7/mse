@@ -27,6 +27,9 @@ typedef const char ctag_t;
 typedef string stag_t;
 typedef const string cstag_t;
 
+// Endianess type (little or big)
+enum endian_t { LittleEndian, BigEndian };
+
 // Common include packages
 #include "emu/sysconfig.h"
 #include "emu/device.h"
