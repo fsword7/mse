@@ -7,20 +7,24 @@
 
 #pragma once
 
-template <typename node>
+template <typename T>
 class List
 {
 public:
 	List() { list.clear(); }
 	~List() = default;
 
-	inline node *getNode(int index) { return index < list.size() ? list[index] : nullptr; }
-	inline node *getFirst() { cidx = 0; return list[cidx++]; }
-	inline node *getNext() { return cidx < list.size() ? list[cidx++] : nullptr; }
+	inline void addNode(T *node) { list.push_back(node); }
+
+	inline T *getNode(int index) { return index < list.size() ? list[index] : nullptr; }
+	inline T *getFirst() { cidx = 0; return list[cidx++]; }
+	inline T *getNext() { return cidx < list.size() ? list[cidx++] : nullptr; }
 
 	inline void reset() { cidx = 0; }
 
+	vector<T *> getList() { return list; }
+
 private:
-	vector<node *> list;
+	vector<T *> list;
 	int cidx = 0;
 };

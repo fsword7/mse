@@ -173,6 +173,7 @@ public:
 
 	// local device function calls
 	void configure(SystemConfig &config);
+	void addInterface(DeviceInterface *iface);
 
 	// device-specific virtual device function calls
 	//   do nothing by default
@@ -208,6 +209,8 @@ typedef Device device_t;
 
 class DeviceInterface
 {
+	friend class Device;
+
 public:
 	DeviceInterface(device_t *dev, tag_t *name);
 	virtual ~DeviceInterface() = default;
@@ -222,4 +225,16 @@ private:
 	DeviceInterface *next = nullptr;
 	device_t *owner       = nullptr;
 	const tag_t *tagName  = nullptr;
+};
+
+// *************************************************************
+
+class DeviceIterator
+{
+public:
+	DeviceIterator(Device &dev) : devRoot(dev) {}
+
+
+private:
+	Device &devRoot;
 };

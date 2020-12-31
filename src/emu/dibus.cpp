@@ -37,7 +37,7 @@ void diExternalBus::completeConfig()
 	for (const auto &entry : list)
 	{
 		if (entry.type >= mapConfig.size())
-			mapConfig.resize(entry.type);
+			mapConfig.resize(entry.type + 1);
 		mapConfig[entry.type] = entry.config;
 	}
 }

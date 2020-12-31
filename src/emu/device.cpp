@@ -13,6 +13,13 @@ Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name
 	ifList.clear();
 }
 
+void Device::addInterface(DeviceInterface *iface)
+{
+	if (ifList.size() > 0)
+		ifList.back()->next = iface;
+	ifList.push_back(iface);
+}
+
 void Device::configure(SystemConfig &config)
 {
 	assert(&config == &sysConfig);
@@ -25,10 +32,12 @@ void Device::configure(SystemConfig &config)
 // Complete final device configuration
 void Device::completeConfig()
 {
-
+//	fmt::printf("%s: Total %d interfaces\n", getDeviceName(), ifList.size());
+//	cout << flush;
 	for (auto *iface : ifList)
 	{
-		fmt::printf("%s: completeing %s interface...\n", getShortName(), iface->getName());
+//		fmt::printf("%s: completeing %s interface...\n", getShortName(), iface->getName());
+//		cout << flush;
 		iface->completeConfig();
 	}
 }
@@ -36,9 +45,5 @@ void Device::completeConfig()
 DeviceInterface::DeviceInterface(device_t *owner, const tag_t *name)
 : owner(owner), tagName(name)
 {
-	Device::ifList_t list = owner->getInterfaces();
-
-	if (list.size() > 0)
-		list.back()->next = this;
-	list.push_back(this);
+	owner->addInterface(this);
 }
