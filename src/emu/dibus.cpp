@@ -24,6 +24,29 @@ diExternalBus::~diExternalBus()
 //	for (int idx = 0; idx < mapMemories.size(); idx++)
 //		delete mapMemories[idx];
 //	mapMemories.clear();
+
+	// Release all addressing configurations and spaces
+	mapConfig.clear();
+	mapSpace.clear();
+}
+
+void diExternalBus::completeConfig()
+{
+	mapConfigList list = getAddressConfigList();
+
+	for (const auto &entry : list)
+	{
+		if (entry.type >= mapConfig.size())
+			mapConfig.resize(entry.type);
+		mapConfig[entry.type] = entry.config;
+	}
+}
+
+const mapAddressConfig *diExternalBus::getAddressConfig(mapSpaceType type)
+{
+	if (type >= 0 && type < mapConfig.size())
+		return mapConfig[type];
+	return nullptr;
 }
 
 //void diBus::registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio)

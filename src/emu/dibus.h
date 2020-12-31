@@ -28,6 +28,10 @@ public:
 
 	virtual mapConfigList getAddressConfigList() const = 0;
 
+	const mapAddressConfig *getAddressConfig(mapSpaceType type);
+
+	void completeConfig();
+
 private:
 	vector<const mapAddressConfig *> mapConfig;
 	vector<mapAddressSpace *> mapSpace;
