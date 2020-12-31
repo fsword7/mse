@@ -18,16 +18,18 @@ struct mapMemory
 	int       prio = 0;
 };
 
-class diBus : public DeviceInterface
+class diExternalBus : public DeviceInterface
 {
 public:
-	diBus(device_t *owner);
-	~diBus();
+	diExternalBus(device_t *owner, ctag_t *name);
+	virtual ~diExternalBus();
 
-	void registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio);
+//	void registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio);
+
+	virtual mapConfigList getAddressConfigList() const = 0;
 
 private:
 	vector<const mapAddressConfig *> mapConfig;
 	vector<mapAddressSpace *> mapSpace;
-	vector<mapMemory *> mapMemories;
+//	vector<mapMemory *> mapMemories;
 };

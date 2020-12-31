@@ -18,7 +18,7 @@
 void tsunami_device::es40(SystemConfig &config)
 {
 	// Initialize memory (removed later)
-	space->createMainMemory(19u << 1);
+//	space->createMainMemory(19u << 1);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{

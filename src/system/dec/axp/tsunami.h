@@ -14,7 +14,7 @@ class tsunami_device : public SystemDevice
 public:
 	tsunami_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 	: SystemDevice(config, type, tagName, clock),
-	  config("system", LittleEndian, 64, 44, 0)
+	  config("system", LittleEndian, 64, 16, 8, 44, 16, 0)
 	{
 
 	}

@@ -11,10 +11,7 @@
 #include "emu/dibus.h"
 #include "emu/didebug.h"
 
-class SystemDevice
-: public Device,
-  public diBus,
-  public diDebug
+class SystemDevice : public Device
 {
 public:
 	SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
@@ -25,6 +22,5 @@ public:
 private:
 	const SystemDriver &driver;
 
-//	mapAddressSpace space; // mapping system bus
 	BusManager busManager; // system bus manager for all devices
 };

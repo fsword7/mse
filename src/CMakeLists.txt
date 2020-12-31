@@ -15,7 +15,6 @@ set(MSE_CPP_SRCS
 	emu/dibus.cpp
 	emu/didebug.cpp
 	emu/diexec.cpp
-	emu/dimem.cpp
 	emu/engine.cpp
 	emu/machine.cpp
 	emu/sysconfig.cpp
@@ -47,7 +46,6 @@ set(MSE_H_SRCS
 	emu/didebug.h
 	emu/dibus.h
 	emu/diexec.h
-	emu/dimem.h
 	emu/driver.h
 	emu/engine.h
 	emu/list.h

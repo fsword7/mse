@@ -144,9 +144,8 @@ public:
 // *************************************************************
 
 class DeviceInterface;
-class diBus;
+class diExternalBus;
 class diExecute;
-class diMemory;
 class diDebug;
 
 class Device
@@ -168,7 +167,6 @@ public:
 
 	inline bool hasBusInterface() const       { return ifBus != nullptr; }
 	inline bool hasExecutionInterface() const { return ifExecute != nullptr; }
-	inline bool hasMemoryInterface() const    { return ifMemory != nullptr; }
 	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
 
 	inline ifList_t getInterfaces() { return ifList; }
@@ -195,15 +193,13 @@ private:
 	ifList_t ifList;
 
 protected:
-	friend class diBus;
+	friend class diExternalBus;
 	friend class diExecute;
-	friend class diMemory;
 	friend class diDebug;
 
-	diBus     *ifBus	 = nullptr;
-	diExecute *ifExecute = nullptr;
-	diMemory  *ifMemory  = nullptr;
-	diDebug   *ifDebug   = nullptr;
+	diExternalBus *ifBus     = nullptr;
+	diExecute     *ifExecute = nullptr;
+	diDebug       *ifDebug   = nullptr;
 };
 
 typedef Device device_t;

@@ -12,6 +12,13 @@
 #define AS_DATA		1	// Data address space
 #define AS_IO		2	// I/O port address space
 
+enum mapSpaceType
+{
+	asProgram = 0,	// Program address space
+	asData,			// Data address space
+	asPort			// I/O port address space
+};
+
 //using offs_t = uint64_t;
 typedef uint64_t offs_t;
 
@@ -21,7 +28,9 @@ class mapAddressConfig
 {
 public:
 	mapAddressConfig() = default;
-	mapAddressConfig(ctag_t *name, endian_t eType, uint16_t dWidth, uint16_t aWidth, int16_t aShift);
+	mapAddressConfig(ctag_t *name, endian_t eType,
+		uint16_t dWidth, uint16_t dRadix, uint16_t bWidth,
+		uint16_t aWidth, uint16_t aRadix, int16_t aShift);
 	~mapAddressConfig() = default;
 
 	// Getter function calls
@@ -29,6 +38,7 @@ public:
 
 	inline uint16_t getDataWidth() const { return dataWidth; }
 	inline uint16_t getDataRadix() const { return dataRadix; }
+	inline uint16_t getByteWidth() const { return byteWidth; }
 	inline uint16_t getAddrWidth() const { return addrWidth; }
 	inline uint16_t getAddrRadix() const { return addrRadix; }
 	inline int16_t  getAddrShift() const { return addrShift; }
@@ -69,11 +79,19 @@ private:
 	endian_t endianType = LittleEndian;
 	uint16_t dataWidth  = 0;
 	uint16_t dataRadix  = 0;
+	uint16_t byteWidth  = 0;
 	uint16_t addrWidth  = 0;
 	uint16_t addrRadix  = 0;
 	int16_t  addrShift  = 0;
 	int16_t  pageShift  = 0;
 };
+
+struct mapConfigEntry
+{
+	const mapSpaceType      type;
+	const mapAddressConfig *config;
+};
+using mapConfigList = vector<mapConfigEntry>;
 
 class mapAddressSpace
 {

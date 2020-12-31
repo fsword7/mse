@@ -7,22 +7,22 @@
 
 #pragma once
 
+#include "emu/map/map.h"
 #include "emu/diexec.h"
-#include "emu/dimem.h"
+#include "emu/dibus.h"
 #include "emu/didebug.h"
 
 class ProcessorDevice
 : public Device,
   public diExecute,
-  public diMemory,
+  public diExternalBus,
   public diDebug
 {
 public:
 
 protected:
 	ProcessorDevice(const SystemConfig &config, const DeviceType &type,
-			const string &tagName, Device *owner, uint64_t clock, endian_t eType,
-			int dWidth, int dRadix, int aWidth, int aRadix, int aShift);
+			const string &tagName, Device *owner, uint64_t clock);
 
 public:
 	virtual ~ProcessorDevice() = default;

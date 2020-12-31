@@ -11,9 +11,7 @@
 
 SystemDevice::SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 : Device(config, type, tagName, nullptr, clock),
-  driver(config.getSystemDriver()),
-  diBus(this),
-  diDebug(this)
+  driver(config.getSystemDriver())
 {
 
 }

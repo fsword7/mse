@@ -147,6 +147,8 @@ public:
 		state.ppcReg += 4;
 	}
 
+	mapConfigList getAddressConfigList() const;
+
 protected:
 
 	// Register definitions (state file package)
@@ -158,5 +160,7 @@ protected:
 
 		bool sde; // Shadow register enable
 	} state;
+
+	mapAddressConfig mapProgramConfig;
 
 };
