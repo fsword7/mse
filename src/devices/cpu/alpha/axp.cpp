@@ -11,8 +11,8 @@
 #include "devices/cpu/alpha/axp.h"
 
 AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &type,
-	const string &tagName, Device *owner, uint64_t clock)
-: ProcessorDevice(config, type, tagName, owner, clock)
+	const string &tagName, Device *owner, uint64_t clock, int aWidth)
+: ProcessorDevice(config, type, tagName, owner, clock, LittleEndian, 64, 16, aWidth, 16, 0)
 {
 
 }

@@ -21,7 +21,8 @@ public:
 
 protected:
 	ProcessorDevice(const SystemConfig &config, const DeviceType &type,
-			const string &tagName, Device *owner, uint64_t clock);
+			const string &tagName, Device *owner, uint64_t clock, endian_t eType,
+			int dWidth, int dRadix, int aWidth, int aRadix, int aShift);
 
 public:
 	virtual ~ProcessorDevice() = default;

@@ -132,7 +132,7 @@ class AlphaProcessor : public ProcessorDevice
 {
 public:
 	AlphaProcessor(const SystemConfig &config, const DeviceType &type,
-		const string &tagName, Device *owner, uint64_t clock);
+		const string &tagName, Device *owner, uint64_t clock, int aWidth);
 	~AlphaProcessor() = default;
 
 	void init();

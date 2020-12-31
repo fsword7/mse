@@ -12,7 +12,7 @@ DEFINE_DEVICE_TYPE(axp21264cb, axp21264cb_device, "21264CB", "DEC 21264CB Alpha 
 
 axp21264cb_device::axp21264cb_device(const SystemConfig &config,
 		cstag_t &tagName, Device *owner, uint64_t clock)
-: AlphaProcessor(config, axp21264cb, tagName, owner, clock)
+: AlphaProcessor(config, axp21264cb, tagName, owner, clock, 44)
 {
 }
 
