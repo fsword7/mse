@@ -97,13 +97,13 @@ namespace map
 
 	using ConfigList = vector<ConfigEntry>;
 
-	class AddressSpace
+	class AddressSpaceBase
 	{
 	public:
-		AddressSpace() = default;
-		virtual ~AddressSpace() = default;
+		AddressSpaceBase(const AddressConfig &config) : config(config) {}
+		virtual ~AddressSpaceBase() = default;
 
-		inline AddressConfig &getConfig() { return config; }
+		inline const AddressConfig &getConfig() { return config; }
 
 		inline uint16_t getDataWidth() const { return config.getDataWidth(); }
 		inline uint16_t getDataRadix() const { return config.getDataRadix(); }
@@ -113,28 +113,52 @@ namespace map
 		inline int16_t  getPageShift() const { return config.getPageShift(); }
 
 		// Virtual function calls
-		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
-		virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
 
-		virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
-		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
+
+	protected:
+		const AddressConfig &config;
+	};
+
+	class AddressSpace : public AddressSpaceBase
+	{
+	public:
+		AddressSpace(const AddressConfig &config) : AddressSpaceBase(config) {}
+
+		// read/write function calls
+		uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
+		uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
+
+		void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
+		void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+		void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+		void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+		void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+		void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+		void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
 
 		// Be removed later
 		void createMainMemory(offs_t length);
 
-	protected:
-		AddressConfig &config;
-
+	private:
 		// main memory access - be removed later
 		uint8_t *memData = nullptr;;
 		uint64_t memSize = 0;
@@ -189,3 +213,4 @@ using mapAddressConfig = map::AddressConfig;
 using mapAddressSpace  = map::AddressSpace;
 using mapMemoryBlock   = map::MemoryBlock;
 using mapBusManager    = map::BusManager;
+
