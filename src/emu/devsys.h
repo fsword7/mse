@@ -22,5 +22,6 @@ public:
 private:
 	const SystemDriver &driver;
 
-	BusManager busManager; // system bus manager for all devices
+protected:
+	mapBusManager busManager; // system-wide bus manager for all devices
 };

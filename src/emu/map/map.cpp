@@ -9,7 +9,9 @@
 #include "emu/map/addrmap.h"
 #include "emu/map/map.h"
 
-mapAddressConfig::mapAddressConfig(ctag_t *tagName, endian_t eType,
+using namespace map;
+
+AddressConfig::AddressConfig(ctag_t *tagName, endian_t eType,
 	uint16_t dWidth, uint16_t dRadix, uint16_t bWidth,
 	uint16_t aWidth, uint16_t aRadix, int16_t aShift)
 : name(tagName), endianType(eType),
@@ -21,7 +23,7 @@ mapAddressConfig::mapAddressConfig(ctag_t *tagName, endian_t eType,
 
 // **********************************************************************
 
-mapMemoryBlock::mapMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base)
+MemoryBlock::MemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base)
 : config(config), addrStart(sAddr), addrEnd(eAddr),
   dataBase(reinterpret_cast<uint8_t *>(base))
 {
@@ -37,7 +39,7 @@ mapMemoryBlock::mapMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eA
 	}
 }
 
-void mapMemoryBlock::reserve(offs_t size)
+void MemoryBlock::reserve(offs_t size)
 {
 	if (size > maxSize)
 		size = maxSize;

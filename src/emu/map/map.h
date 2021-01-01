@@ -12,166 +12,180 @@
 #define AS_DATA		1	// Data address space
 #define AS_IO		2	// I/O port address space
 
-enum mapSpaceType
-{
-	asProgram = 0,	// Program address space
-	asData,			// Data address space
-	asPort			// I/O port address space
-};
 
 //using offs_t = uint64_t;
 typedef uint64_t offs_t;
 
 class ProcessorDevice;
 
-class mapAddressConfig
+namespace map
 {
-public:
-	mapAddressConfig() = default;
-	mapAddressConfig(ctag_t *name, endian_t eType,
-		uint16_t dWidth, uint16_t dRadix, uint16_t bWidth,
-		uint16_t aWidth, uint16_t aRadix, int16_t aShift);
-	~mapAddressConfig() = default;
-
-	// Getter function calls
-	inline ctag_t *getName() const { return name; }
-
-	inline uint16_t getDataWidth() const { return dataWidth; }
-	inline uint16_t getDataRadix() const { return dataRadix; }
-	inline uint16_t getByteWidth() const { return byteWidth; }
-	inline uint16_t getAddrWidth() const { return addrWidth; }
-	inline uint16_t getAddrRadix() const { return addrRadix; }
-	inline int16_t  getAddrShift() const { return addrShift; }
-	inline int16_t  getPageShift() const { return pageShift; }
-
-	inline offs_t convertAddresstoByte(offs_t address) const
+	enum SpaceType
 	{
-		return (addrShift < 0)
-			? (address << -addrShift)
-			: (address >> addrShift);
-	}
+		asProgram = 0,	// Program address space
+		asData,			// Data address space
+		asPort			// I/O port address space
+	};
 
-	inline offs_t convertBytetoAddress(offs_t address) const
+	class AddressConfig
 	{
-		return (addrShift > 0)
-			? (address << addrShift)
-			: (address >> -addrShift);
-	}
+	public:
+		AddressConfig() = default;
+		AddressConfig(ctag_t *name, endian_t eType,
+			uint16_t dWidth, uint16_t dRadix, uint16_t bWidth,
+			uint16_t aWidth, uint16_t aRadix, int16_t aShift);
+		~AddressConfig() = default;
 
-	inline offs_t convertAddresstoByteEnd(offs_t address) const
+		// Getter function calls
+		inline ctag_t *getName() const { return name; }
+
+		inline uint16_t getDataWidth() const { return dataWidth; }
+		inline uint16_t getDataRadix() const { return dataRadix; }
+		inline uint16_t getByteWidth() const { return byteWidth; }
+		inline uint16_t getAddrWidth() const { return addrWidth; }
+		inline uint16_t getAddrRadix() const { return addrRadix; }
+		inline int16_t  getAddrShift() const { return addrShift; }
+		inline int16_t  getPageShift() const { return pageShift; }
+
+		inline offs_t convertAddresstoByte(offs_t address) const
+		{
+			return (addrShift < 0)
+				? (address << -addrShift)
+				: (address >> addrShift);
+		}
+
+		inline offs_t convertBytetoAddress(offs_t address) const
+		{
+			return (addrShift > 0)
+				? (address << addrShift)
+				: (address >> -addrShift);
+		}
+
+		inline offs_t convertAddresstoByteEnd(offs_t address) const
+		{
+			return (addrShift < 0)
+				? ((address << -addrShift) | ((1 << -addrShift) - 1))
+				: (address >> addrShift);
+		}
+
+		inline offs_t convertBytetoAddressEnd(offs_t address) const
+		{
+			return (addrShift > 0)
+				? ((address << addrShift) | ((1 << addrShift) - 1))
+				: (address >> -addrShift);
+		}
+
+
+	private:
+		ctag_t *name = nullptr;
+
+		endian_t endianType = LittleEndian;
+		uint16_t dataWidth  = 0;
+		uint16_t dataRadix  = 0;
+		uint16_t byteWidth  = 0;
+		uint16_t addrWidth  = 0;
+		uint16_t addrRadix  = 0;
+		int16_t  addrShift  = 0;
+		int16_t  pageShift  = 0;
+	};
+
+	struct ConfigEntry
 	{
-		return (addrShift < 0)
-			? ((address << -addrShift) | ((1 << -addrShift) - 1))
-			: (address >> addrShift);
-	}
+		const SpaceType      type;
+		const AddressConfig *config;
+	};
 
-	inline offs_t convertBytetoAddressEnd(offs_t address) const
+	using ConfigList = vector<ConfigEntry>;
+
+	class AddressSpace
 	{
-		return (addrShift > 0)
-			? ((address << addrShift) | ((1 << addrShift) - 1))
-			: (address >> -addrShift);
-	}
+	public:
+		AddressSpace() = default;
+		virtual ~AddressSpace() = default;
 
+		inline AddressConfig &getConfig() { return config; }
 
-private:
-	ctag_t *name = nullptr;
+		inline uint16_t getDataWidth() const { return config.getDataWidth(); }
+		inline uint16_t getDataRadix() const { return config.getDataRadix(); }
+		inline uint16_t getAddrWidth() const { return config.getAddrWidth(); }
+		inline uint16_t getAddrRadix() const { return config.getAddrRadix(); }
+		inline int16_t  getAddrShift() const { return config.getAddrShift(); }
+		inline int16_t  getPageShift() const { return config.getPageShift(); }
 
-	endian_t endianType = LittleEndian;
-	uint16_t dataWidth  = 0;
-	uint16_t dataRadix  = 0;
-	uint16_t byteWidth  = 0;
-	uint16_t addrWidth  = 0;
-	uint16_t addrRadix  = 0;
-	int16_t  addrShift  = 0;
-	int16_t  pageShift  = 0;
-};
+		// Virtual function calls
+		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
+		virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
 
-struct mapConfigEntry
-{
-	const mapSpaceType      type;
-	const mapAddressConfig *config;
-};
-using mapConfigList = vector<mapConfigEntry>;
+		virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
 
-class mapAddressSpace
-{
-public:
-	mapAddressSpace() = default;
-	virtual ~mapAddressSpace() = default;
+		// Be removed later
+		void createMainMemory(offs_t length);
 
-	inline mapAddressConfig &getConfig() { return config; }
+	protected:
+		AddressConfig &config;
 
-	inline uint16_t getDataWidth() const { return config.getDataWidth(); }
-	inline uint16_t getDataRadix() const { return config.getDataRadix(); }
-	inline uint16_t getAddrWidth() const { return config.getAddrWidth(); }
-	inline uint16_t getAddrRadix() const { return config.getAddrRadix(); }
-	inline int16_t  getAddrShift() const { return config.getAddrShift(); }
-	inline int16_t  getPageShift() const { return config.getPageShift(); }
+		// main memory access - be removed later
+		uint8_t *memData = nullptr;;
+		uint64_t memSize = 0;
+	};
 
-	// Virtual function calls
-	virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
-	virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
+	class MemoryBlock
+	{
+	public:
+		MemoryBlock(AddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
+		~MemoryBlock() = default;
 
-	virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
-	virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
+		inline offs_t getStartAddress() const { return addrStart; }
+		inline offs_t getEndAddress() const   { return addrEnd; }
+		inline uint8_t *getData() const       { return dataBase; }
+		inline offs_t getSize() const         { return dataSize; }
 
-	// Be removed later
-	void createMainMemory(offs_t length);
+		void reserve(offs_t size);
 
-protected:
-	mapAddressConfig &config;
+	private:
+		AddressConfig &config;
 
-	// main memory access - be removed later
-	uint8_t *memData = nullptr;;
-	uint64_t memSize = 0;
-};
+		offs_t   addrStart;
+		offs_t   addrEnd;
+		uint8_t *dataBase;
+		offs_t   dataSize;
+		offs_t   maxSize;
 
-class mapMemoryBlock
-{
-public:
-	mapMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
-	~mapMemoryBlock() = default;
+		vector<uint8_t> allocated;
+	};
 
-	inline offs_t getStartAddress() const { return addrStart; }
-	inline offs_t getEndAddress() const   { return addrEnd; }
-	inline uint8_t *getData() const       { return dataBase; }
-	inline offs_t getSize() const         { return dataSize; }
+	using BlockList = vector<MemoryBlock *>;
 
-	void reserve(offs_t size);
+	class BusManager
+	{
+	public:
+		BusManager() = default;
+		~BusManager() = default;
 
-private:
-	mapAddressConfig &config;
+		inline BlockList &getBlockList() { return blocks; }
 
-	offs_t   addrStart;
-	offs_t   addrEnd;
-	uint8_t *dataBase;
-	offs_t   dataSize;
-	offs_t   maxSize;
+	private:
+		BlockList blocks;
 
-	vector<uint8_t> allocated;
-};
+	};
+}
 
-using BlockList = vector<mapMemoryBlock *>;
+using mapSpaceType     = map::SpaceType;
+using mapConfigEntry   = map::ConfigEntry;
+using mapConfigList    = map::ConfigList;
 
-class BusManager
-{
-public:
-	BusManager() = default;
-	~BusManager() = default;
-
-	inline BlockList &getBlockList() { return blocks; }
-
-private:
-	BlockList blocks;
-
-};
+using mapAddressConfig = map::AddressConfig;
+using mapAddressSpace  = map::AddressSpace;
+using mapMemoryBlock   = map::MemoryBlock;
+using mapBusManager    = map::BusManager;

@@ -10,6 +10,8 @@
 #include "emu/map/map.h"
 #include "emu/devproc.h"
 
+using namespace map;
+
 void mapAddressSpace::createMainMemory(offs_t size)
 {
 	memData = new uint8_t[size];
