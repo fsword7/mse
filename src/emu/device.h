@@ -165,19 +165,27 @@ public:
 
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
 
-	inline bool hasBusInterface() const       { return ifBus != nullptr; }
-	inline bool hasExecutionInterface() const { return ifExecute != nullptr; }
-	inline bool hasDebugInterface() const     { return ifDebug != nullptr; }
+	inline bool hasInterface(diExternalBus *&iface) { return (iface = ifBus) != nullptr; }
+	inline bool hasInterface(diExecute *&iface)     { return (iface = ifExecute) != nullptr; }
+	inline bool hasInterface(diDebug *&iface)       { return (iface = ifDebug) != nullptr; }
 
+	void addInterface(DeviceInterface *iface);
 	inline ifList_t getInterfaces() { return ifList; }
+
+	inline bool isStarted() const { return flagStarted; }
 
 	// local device function calls
 	void configure(SystemConfig &config);
-	void addInterface(DeviceInterface *iface);
+	void start();
+	void stop();
+	void reset();
 
 	// device-specific virtual device function calls
 	//   do nothing by default
 	virtual void devConfigure(SystemConfig &config) {}
+	virtual void devStart() {}
+	virtual void devStop() {}
+	virtual void devReset() {}
 
 	void completeConfig(); // complete final configuration
 
@@ -187,6 +195,8 @@ protected:
 private:
 	const DeviceType   &type;
 	const SystemConfig &sysConfig;
+
+	bool flagStarted = false;
 
 	cstag_t devName;
 

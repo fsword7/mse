@@ -13,13 +13,7 @@ Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name
 	ifList.clear();
 }
 
-void Device::addInterface(DeviceInterface *iface)
-{
-	if (ifList.size() > 0)
-		ifList.back()->next = iface;
-	ifList.push_back(iface);
-}
-
+// Local device function calls
 void Device::configure(SystemConfig &config)
 {
 	assert(&config == &sysConfig);
@@ -27,6 +21,31 @@ void Device::configure(SystemConfig &config)
 	// device initialization
 	config.begin(this);
 	devConfigure(config);
+}
+
+void Device::start()
+{
+	devStart();
+	flagStarted = true;
+}
+
+void Device::stop()
+{
+	devStop();
+	flagStarted = false;
+}
+
+void Device::reset()
+{
+	devReset();
+}
+
+
+void Device::addInterface(DeviceInterface *iface)
+{
+	if (ifList.size() > 0)
+		ifList.back()->next = iface;
+	ifList.push_back(iface);
 }
 
 // Complete final device configuration
@@ -41,6 +60,8 @@ void Device::completeConfig()
 		iface->completeConfig();
 	}
 }
+
+// ************************************************
 
 DeviceInterface::DeviceInterface(device_t *owner, const tag_t *name)
 : owner(owner), tagName(name)

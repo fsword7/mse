@@ -81,9 +81,10 @@ CommandStatus SystemEngine::dump(ostream &out, args_t args)
 	}
 
 	Device *dev = sys->getSystemDevice();
-	if (!dev->hasBusInterface())
+	diExternalBus *mem;;
+	if (!dev->hasInterface(mem))
 	{
-		fmt::fprintf(out, "%s: do not have bus interface\n", devName);
+		fmt::fprintf(out, "%s: do not have external bus interface\n", devName);
 		return CommandStatus::cmdOk;
 	}
 //	mapAddressSpace &space = dev->getAddressSpace();
