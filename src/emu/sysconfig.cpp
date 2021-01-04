@@ -16,11 +16,10 @@ SystemConfig::SystemConfig(const SystemDriver &driver, cstag_t &tagName)
 	addDeviceType(tagName, driver.type, 0);
 
 	// Complete final configuration
-	systemDevice->completeConfig();
-//	fmt::printf("%s: Total %d devices\n", systemDevice->getDeviceName(), systemDevice->getList().size());
-	for (auto *dev : systemDevice->getList()) {
-		fmt::printf("%s: Completing final configuration\n", dev->getDeviceName());
-		dev->completeConfig();
+	for (auto &dev : DeviceIterator(*systemDevice))
+	{
+		fmt::printf("%s: Completing final configuration\n", dev.getDeviceName());
+		dev.completeConfig();
 	}
 }
 

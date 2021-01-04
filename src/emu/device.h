@@ -173,6 +173,7 @@ public:
 	inline ifList_t getInterfaces() { return ifList; }
 
 	inline bool isStarted() const { return flagStarted; }
+	inline Device *getOwner() const { return ownDevice; }
 
 	// local device function calls
 	void configure(SystemConfig &config);
@@ -196,6 +197,7 @@ private:
 	const DeviceType   &type;
 	const SystemConfig &sysConfig;
 
+	Device *ownDevice = nullptr;
 	bool flagStarted = false;
 
 	cstag_t devName;
@@ -244,6 +246,66 @@ class DeviceIterator
 public:
 	DeviceIterator(Device &dev) : devRoot(dev) {}
 
+	class iterator
+	{
+	public:
+		iterator(Device *device) : curDevice(device) {}
+
+		// Required operator function calls
+		bool operator == (const iterator &iter) { return curDevice == iter.curDevice; }
+		bool operator != (const iterator &iter) { return curDevice != iter.curDevice; }
+		iterator operator ++ () { advance(); return *this; }
+		iterator operator ++ (int) { const iterator result(*this); ++*this; return result; }
+		Device &operator * () { assert(curDevice != nullptr); return *curDevice; }
+		Device *operator -> () { return curDevice; }
+
+	private:
+		void advance()
+		{
+			if (curDevice == nullptr)
+				return;
+
+			if (curDevice->hasChildren())
+			{
+				ownDevice = curDevice;
+				curDevice = ownDevice->getFirst();
+				depth++;
+
+//				fmt::printf("Iterator: Start of list - %d children\n", ownDevice->size());
+//				fmt::printf("Iterator: Depth=%d Name=%s\n", depth, curDevice->getDeviceName());
+//				cout << flush;
+
+				return;
+			}
+
+			while (depth > 0 && ownDevice != nullptr)
+			{
+				curDevice = ownDevice->getNext();
+				if (curDevice != nullptr) {
+//					fmt::printf("Iterator: Depth=%d Name=%s\n", depth, curDevice->getDeviceName());
+//					cout << flush;
+					return;
+				}
+
+				curDevice = ownDevice;
+				ownDevice = ownDevice->getOwner();
+				depth--;
+
+//				fmt::printf("Iterator: End of list - back to %s\n", curDevice->getDeviceName());
+//				cout << flush;
+			}
+
+			curDevice = nullptr;
+//			fmt::printf("Iterator: End of iterator - all done\n");
+		}
+
+		Device *curDevice;
+		Device *ownDevice = nullptr;
+		int depth = 0;
+	};
+
+	iterator begin() { return iterator(&devRoot); }
+	iterator end()   { return iterator(nullptr); }
 
 private:
 	Device &devRoot;

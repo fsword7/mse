@@ -16,6 +16,9 @@ public:
 
 	inline void addNode(T *node) { list.push_back(node); }
 
+	inline bool hasChildren() { return list.size() > 0; }
+	inline int  size() { return list.size(); }
+
 	inline T *getNode(int index) { return index < list.size() ? list[index] : nullptr; }
 	inline T *getFirst() { cidx = 0; return list[cidx++]; }
 	inline T *getNext() { return cidx < list.size() ? list[cidx++] : nullptr; }

@@ -8,7 +8,7 @@
 #include "emu/core.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name, Device *owner, uint64_t clock)
-: sysConfig(config), type(type), devName(name)
+: sysConfig(config), type(type), devName(name), ownDevice(owner)
 {
 	ifList.clear();
 }
