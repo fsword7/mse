@@ -199,6 +199,9 @@ namespace map
 
 		inline BlockList &getBlockList() { return blocks; }
 
+		// Executed from start command
+		void init(Console *cty);
+
 	private:
 		BlockList blocks;
 

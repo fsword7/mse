@@ -6,11 +6,13 @@
  */
 
 #include "emu/core.h"
+#include "emu/map/map.h"
 #include "emu/machine.h"
 
 Machine::Machine(const SystemConfig &config, cstag_t &tagName)
 : config(config), devName(tagName)
 {
+	sysDevice = dynamic_cast<SystemDevice *>(config.getSystemDevice());
 }
 
 Machine::~Machine()
@@ -26,4 +28,18 @@ Machine *Machine::create(ostream &out, const SystemDriver *driver, cstag_t &tagN
 	machine = new Machine(*config, tagName);
 
 	return machine;
+}
+
+void Machine::reset(Console *cty)
+{
+}
+
+void Machine::start(Console *cty)
+{
+	assert(sysDevice != nullptr);
+	busManager.init(cty);
+}
+
+void Machine::stop(Console *cty)
+{
 }

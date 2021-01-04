@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include "emu/map/map.h"
 #include "emu/sysconfig.h"
+#include "emu/devsys.h"
 
 class Machine
 {
@@ -16,12 +18,21 @@ public:
 	~Machine();
 
 	inline cstag_t  &getDeviceName() const   { return devName; }
-	inline device_t *getSystemDevice() const { return config.getSystemDevice(); }
+	inline device_t *getSystemDevice() const { return sysDevice; }
 
 	static Machine *create(ostream &out, const SystemDriver *driver, cstag_t &devName);
 
+	// Command function calls
+	void reset(Console *cty);
+	void start(Console *cty);
+	void stop(Console *cty);
+
 private:
 	const SystemConfig &config;
+	SystemDevice *sysDevice = nullptr;
 
 	cstag_t devName;
+
+	// External bus manager
+	map::BusManager busManager;
 };

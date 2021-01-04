@@ -4,6 +4,7 @@ set(MSE_CPP_SRCS
 	devices/cpu/alpha/debug.cpp
 	devices/cpu/alpha/execute.cpp
 	emu/map/addrmap.cpp
+	emu/map/busmgr.cpp
 	emu/map/map.cpp
 	emu/map/space.cpp
 	emu/command.cpp
