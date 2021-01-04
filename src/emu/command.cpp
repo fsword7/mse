@@ -10,9 +10,8 @@
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
-CommandStatus cmdCreate(Console *, args_t &args)
+CommandStatus cmdCreate(Console *cty, args_t &args)
 {
-	SystemList sysList;
 	SystemEngine engine;
 
 	engine.create(cout, args);
@@ -20,7 +19,7 @@ CommandStatus cmdCreate(Console *, args_t &args)
 	return cmdOk;
 }
 
-CommandStatus cmdDump(Console *, args_t &args)
+CommandStatus cmdDump(Console *cty, args_t &args)
 {
 	SystemEngine engine;
 
@@ -34,11 +33,36 @@ CommandStatus cmdExit(Console *, args_t &args)
 	return cmdShutdown;
 }
 
-CommandStatus cmdListSystem(Console *, args_t &args)
+CommandStatus cmdReset(Console *, args_t &args)
+{
+	return cmdOk;
+}
+
+CommandStatus cmdStart(Console *, args_t &args)
+{
+	return cmdOk;
+}
+
+CommandStatus cmdStop(Console *, args_t &args)
+{
+	return cmdOk;
+}
+
+
+CommandStatus cmdListSystem(Console *cty, args_t &args)
 {
 	SystemList sysList;
 
 	sysList.list(cout);
+
+	return cmdOk;
+}
+
+CommandStatus cmdShowDevices(Console *cty, args_t &args)
+{
+	SystemEngine engine;
+
+	engine.showDevices(cty, args);
 
 	return cmdOk;
 }
@@ -50,8 +74,11 @@ command_t CommandHandler::mseCommands[] =
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		nullptr,	CommandHandler::mseListCommands },
+		{ "reset",		cmdReset,	nullptr },
 		{ "set",		nullptr,	CommandHandler::mseSetCommands },
 		{ "show",		nullptr,	CommandHandler::mseShowCommands },
+		{ "start",		cmdStart,	nullptr },
+		{ "stop",		cmdStop,	nullptr },
 		{ "quit",		cmdExit,	nullptr },
 		// Terminator
 		nullptr
@@ -73,6 +100,7 @@ command_t CommandHandler::mseSetCommands[] =
 
 command_t CommandHandler::mseShowCommands[] =
 {
+		{ "devices",	cmdShowDevices,		nullptr },
 		// Terminator
 		nullptr
 };

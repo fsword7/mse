@@ -24,6 +24,7 @@ public:
 
 	CommandStatus create(ostream &out, args_t args);
 	CommandStatus dump(ostream &out, args_t args);
+	CommandStatus showDevices(Console *cty, args_t args);
 
 private:
 	// Machines

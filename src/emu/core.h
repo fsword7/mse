@@ -31,6 +31,7 @@ typedef const string cstag_t;
 enum endian_t { LittleEndian, BigEndian };
 
 // Common include packages
+#include "emu/console.h"
 #include "emu/sysconfig.h"
 #include "emu/device.h"
 

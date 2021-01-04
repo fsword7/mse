@@ -92,3 +92,17 @@ CommandStatus SystemEngine::dump(ostream &out, args_t args)
 
 	return CommandStatus::cmdOk;
 }
+
+CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
+{
+	if (machines.size() <= 0)
+		return CommandStatus::cmdOk;
+	Machine *sys = machines[0];
+
+	for (Device &dev : DeviceIterator(*sys->getSystemDevice()))
+	{
+		fmt::printf("%s\n", dev.getDeviceName());
+	}
+
+	return CommandStatus::cmdOk;
+}
