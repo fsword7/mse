@@ -259,7 +259,7 @@ public:
 		Device &operator * () { assert(curDevice != nullptr); return *curDevice; }
 		Device *operator -> () { return curDevice; }
 
-	private:
+	protected:
 		void advance()
 		{
 			if (curDevice == nullptr)
@@ -302,6 +302,44 @@ public:
 		Device *curDevice;
 		Device *ownDevice = nullptr;
 		int depth = 0;
+	};
+
+	iterator begin() { return iterator(&devRoot); }
+	iterator end()   { return iterator(nullptr); }
+
+private:
+	Device &devRoot;
+};
+
+template<class InterfaceType>
+class InterfaceIterator
+{
+public:
+	InterfaceIterator(Device &dev) : devRoot(dev) {}
+
+	class iterator : public DeviceIterator::iterator
+	{
+	public:
+		iterator(Device *device) : DeviceIterator::iterator(device) { findInteface(); }
+
+		// Required operator function calls
+		bool operator == (const iterator &iter) { return iface == iter.iface; }
+		bool operator != (const iterator &iter) { return iface != iter.iface; }
+		iterator operator ++ () { advance(); findInteface(); return *this; }
+		iterator operator ++ (int) { const iterator result(*this); ++*this; return result; }
+		InterfaceType &operator * () { assert(iface != nullptr); return *iface; }
+		InterfaceType *operator -> () { return iface; }
+
+	private:
+		void findInteface()
+		{
+			for (; curDevice != nullptr; advance());
+				if (curDevice->hasInterface(iface))
+					return;
+			iface = nullptr;
+		}
+
+		InterfaceType *iface = nullptr;
 	};
 
 	iterator begin() { return iterator(&devRoot); }

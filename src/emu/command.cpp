@@ -19,6 +19,11 @@ CommandStatus cmdCreate(Console *cty, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus cmdDial(Console *cty, args_t &args)
+{
+	return cmdOk;
+}
+
 CommandStatus cmdDump(Console *cty, args_t &args)
 {
 	SystemEngine engine;
@@ -71,6 +76,7 @@ CommandStatus cmdShowDevices(Console *cty, args_t &args)
 command_t CommandHandler::mseCommands[] =
 {
 		{ "create",		cmdCreate,	nullptr },
+		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		nullptr,	CommandHandler::mseListCommands },
