@@ -37,7 +37,7 @@ Machine *SystemEngine::find(const string sysName)
 }
 
 
-CommandStatus SystemEngine::create(ostream &out, args_t args)
+CommandStatus SystemEngine::create(Console *cty, args_t args)
 {
 	SystemList list;
 	string devName = args.getNext();
@@ -46,37 +46,42 @@ CommandStatus SystemEngine::create(ostream &out, args_t args)
 	Machine *sys = nullptr;
 
 	if (find(devName) != nullptr) {
-		fmt::fprintf(out, "%s: system already created.\n", devName);
+		fmt::fprintf(cout, "%s: system already created.\n", devName);
 		return CommandStatus::cmdOk;
 	}
 
 	driver = list.find(sysName);
 	if (driver == nullptr) {
-		fmt::fprintf(out, "%s: system '%s' not recognized.\n", devName, sysName);
+		fmt::fprintf(cout, "%s: system '%s' not recognized.\n", devName, sysName);
 		return CommandStatus::cmdOk;
 	}
 
-	sys = Machine::create(out, driver, devName);
+	sys = Machine::create(cout, driver, devName);
 	if (sys == nullptr)
 	{
-		fmt::fprintf(out, "%s: system creation failure for %s - aborted.\n", devName, sysName);
+		fmt::fprintf(cout, "%s: system creation failure for %s - aborted.\n", devName, sysName);
 		return CommandStatus::cmdOk;
 	}
 
 	// Add new system to machines list
-	fmt::fprintf(out, "%s: system %s created successfully\n", devName, sysName);
+	fmt::fprintf(cout, "%s: system %s created successfully\n", devName, sysName);
 	machines.push_back(sys);
+
+	// Dial system as default
+	cty->setDialedSystem(sys->getSystemDevice());
+	cty->setDialedDevice(nullptr);
+
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::dump(ostream &out, args_t args)
+CommandStatus SystemEngine::dump(Console *cty, args_t args)
 {
 	string devName = args.getNext();
 
 	Machine *sys = find(devName);
 	if (sys == nullptr)
 	{
-		fmt::fprintf(out, "%s: system not found\n", devName);
+		fmt::fprintf(cout, "%s: system not found\n", devName);
 		return CommandStatus::cmdOk;
 	}
 
@@ -84,7 +89,7 @@ CommandStatus SystemEngine::dump(ostream &out, args_t args)
 	diExternalBus *mem;;
 	if (!dev->hasInterface(mem))
 	{
-		fmt::fprintf(out, "%s: do not have external bus interface\n", devName);
+		fmt::fprintf(cout, "%s: do not have external bus interface\n", devName);
 		return CommandStatus::cmdOk;
 	}
 //	mapAddressSpace &space = dev->getAddressSpace();
@@ -95,11 +100,18 @@ CommandStatus SystemEngine::dump(ostream &out, args_t args)
 
 CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
 {
-	if (machines.size() <= 0)
-		return CommandStatus::cmdOk;
-	Machine *sys = machines[0];
+//	if (machines.size() <= 0)
+//		return CommandStatus::cmdOk;
+//	Machine *sys = machines[0];
 
-	for (Device &dev : DeviceIterator(*sys->getSystemDevice()))
+	Device *sysDevice = cty->getDialedSystem();
+	if (sysDevice == nullptr)
+	{
+		fmt::printf("Please dial system first\n");
+		return CommandStatus::cmdOk;
+	}
+
+	for (Device &dev : DeviceIterator(*sysDevice))
 	{
 		fmt::printf("%s\n", dev.getDeviceName());
 	}

@@ -22,8 +22,8 @@ public:
 
 	Machine *find(const string sysName);
 
-	CommandStatus create(ostream &out, args_t args);
-	CommandStatus dump(ostream &out, args_t args);
+	CommandStatus create(Console *cty, args_t args);
+	CommandStatus dump(Console *cty, args_t args);
 	CommandStatus showDevices(Console *cty, args_t args);
 
 private:

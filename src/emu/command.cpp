@@ -14,13 +14,30 @@ CommandStatus cmdCreate(Console *cty, args_t &args)
 {
 	SystemEngine engine;
 
-	engine.create(cout, args);
+	engine.create(cty, args);
 
 	return cmdOk;
 }
 
 CommandStatus cmdDial(Console *cty, args_t &args)
 {
+	SystemEngine engine;
+	string devName = args.getNext();
+	Machine *sys = nullptr;
+
+	if (devName == "none") {
+		cty->setDialedSystem(nullptr);
+		cty->setDialedDevice(nullptr);
+		fmt::printf("Dialed system to none\n");
+	} else {
+		Machine *sys = engine.find(devName);
+		if (sys != nullptr) {
+			cty->setDialedSystem(sys->getSystemDevice());
+			cty->setDialedDevice(nullptr);
+		} else
+			fmt::printf("%s: system not found\n", devName);
+	}
+
 	return cmdOk;
 }
 
@@ -28,7 +45,7 @@ CommandStatus cmdDump(Console *cty, args_t &args)
 {
 	SystemEngine engine;
 
-	engine.dump(cout, args);
+	engine.dump(cty, args);
 
 	return cmdOk;
 }
