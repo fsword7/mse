@@ -17,6 +17,7 @@
 typedef uint64_t offs_t;
 
 class ProcessorDevice;
+class Machine;
 
 namespace map
 {
@@ -194,17 +195,19 @@ namespace map
 	class BusManager
 	{
 	public:
-		BusManager() = default;
+		BusManager(Machine *sys) : system(sys) { blocks.clear(); }
 		~BusManager() = default;
 
+		inline Machine *getMachine()     { return system; }
 		inline BlockList &getBlockList() { return blocks; }
 
 		// Executed from start command
 		void init(Console *cty);
+		void allocate(Console *cty, diExternalBus &bus);
 
 	private:
+		Machine *system = nullptr;
 		BlockList blocks;
-
 	};
 }
 

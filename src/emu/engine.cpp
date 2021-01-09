@@ -100,10 +100,6 @@ CommandStatus SystemEngine::dump(Console *cty, args_t args)
 
 CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
 {
-//	if (machines.size() <= 0)
-//		return CommandStatus::cmdOk;
-//	Machine *sys = machines[0];
-
 	Device *sysDevice = cty->getDialedSystem();
 	if (sysDevice == nullptr)
 	{
@@ -115,6 +111,29 @@ CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
 	{
 		fmt::printf("%s\n", dev.getDeviceName());
 	}
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::start(Console *cty, args_t args)
+{
+//	Device *sysDevice = cty->getDialedSystem();
+//	if (sysDevice == nullptr)
+//	{
+//		fmt::printf("Please dial system first\n");
+//		return CommandStatus::cmdOk;
+//	}
+//	Machine *sys = sysDevice->getMachine();
+
+	string devName = args.getNext();
+	Machine *sys = find(devName);
+	if (sys == nullptr) {
+		fmt::fprintf(cout, "%s: system not found.\n", devName);
+		return CommandStatus::cmdOk;
+	}
+
+	// Start system device as final initialization
+	sys->start(cty);
 
 	return CommandStatus::cmdOk;
 }

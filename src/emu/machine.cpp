@@ -10,9 +10,13 @@
 #include "emu/machine.h"
 
 Machine::Machine(const SystemConfig &config, cstag_t &tagName)
-: config(config), devName(tagName)
+: config(config), devName(tagName), busManager(this)
 {
 	sysDevice = dynamic_cast<SystemDevice *>(config.getSystemDevice());
+
+	// Assign machine handler to all devices
+	for (Device &dev : DeviceIterator(*sysDevice))
+		dev.setMachine(this);
 }
 
 Machine::~Machine()

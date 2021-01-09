@@ -143,6 +143,7 @@ public:
 
 // *************************************************************
 
+class Machine;
 class DeviceInterface;
 class diExternalBus;
 class diExecute;
@@ -164,6 +165,9 @@ public:
 	inline ctag_t  *getSourceName() const   { return type.getSourceName(); }
 
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
+
+	inline Machine *getMachine() { return ownMachine; }
+	inline void setMachine(Machine *sys) { ownMachine = sys; }
 
 	inline bool hasInterface(diExternalBus *&iface) { return (iface = ifBus) != nullptr; }
 	inline bool hasInterface(diExecute *&iface)     { return (iface = ifExecute) != nullptr; }
@@ -197,6 +201,7 @@ private:
 	const DeviceType   &type;
 	const SystemConfig &sysConfig;
 
+	Machine *ownMachine = nullptr;
 	Device *ownDevice = nullptr;
 	bool flagStarted = false;
 
@@ -299,7 +304,7 @@ public:
 //			fmt::printf("Iterator: End of iterator - all done\n");
 		}
 
-		Device *curDevice;
+		Device *curDevice = nullptr;
 		Device *ownDevice = nullptr;
 		int depth = 0;
 	};
@@ -333,9 +338,10 @@ public:
 	private:
 		void findInteface()
 		{
-			for (; curDevice != nullptr; advance());
+			for (; curDevice != nullptr; advance()) {
 				if (curDevice->hasInterface(iface))
 					return;
+			}
 			iface = nullptr;
 		}
 

@@ -25,6 +25,7 @@ public:
 	CommandStatus create(Console *cty, args_t args);
 	CommandStatus dump(Console *cty, args_t args);
 	CommandStatus showDevices(Console *cty, args_t args);
+	CommandStatus start(Console *cty, args_t args);
 
 private:
 	// Machines

@@ -60,8 +60,12 @@ CommandStatus cmdReset(Console *, args_t &args)
 	return cmdOk;
 }
 
-CommandStatus cmdStart(Console *, args_t &args)
+CommandStatus cmdStart(Console *cty, args_t &args)
 {
+	SystemEngine engine;
+
+	engine.start(cty, args);
+
 	return cmdOk;
 }
 
