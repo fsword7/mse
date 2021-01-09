@@ -40,13 +40,14 @@ namespace map
 		// Getter function calls
 		inline ctag_t *getName() const { return name; }
 
-		inline uint16_t getDataWidth() const { return dataWidth; }
-		inline uint16_t getDataRadix() const { return dataRadix; }
-		inline uint16_t getByteWidth() const { return byteWidth; }
-		inline uint16_t getAddrWidth() const { return addrWidth; }
-		inline uint16_t getAddrRadix() const { return addrRadix; }
-		inline int16_t  getAddrShift() const { return addrShift; }
-		inline int16_t  getPageShift() const { return pageShift; }
+		inline endian_t getEndianType() const { return endianType; }
+		inline uint16_t getDataWidth()  const { return dataWidth; }
+		inline uint16_t getDataRadix()  const { return dataRadix; }
+		inline uint16_t getByteWidth()  const { return byteWidth; }
+		inline uint16_t getAddrWidth()  const { return addrWidth; }
+		inline uint16_t getAddrRadix()  const { return addrRadix; }
+		inline int16_t  getAddrShift()  const { return addrShift; }
+		inline int16_t  getPageShift()  const { return pageShift; }
 
 		inline offs_t convertAddresstoByte(offs_t address) const
 		{
@@ -98,11 +99,14 @@ namespace map
 
 	using ConfigList = vector<ConfigEntry>;
 
-	class AddressSpaceBase
+	class BusManager;
+
+	class AddressSpace
 	{
 	public:
-		AddressSpaceBase(const AddressConfig &config) : config(config) {}
-		virtual ~AddressSpaceBase() = default;
+		AddressSpace(BusManager &manager, diExternalBus &bus, int space);
+
+		virtual ~AddressSpace() = default;
 
 		inline const AddressConfig &getConfig() { return config; }
 
@@ -134,10 +138,12 @@ namespace map
 		const AddressConfig &config;
 	};
 
-	class AddressSpace : public AddressSpaceBase
+	template <int aWidth, int dWidth, int endianess>
+	class AddressSpaceAccess : public AddressSpace
 	{
 	public:
-		AddressSpace(const AddressConfig &config) : AddressSpaceBase(config) {}
+		AddressSpaceAccess(BusManager &manager, diExternalBus &bus, int space, int addrWidth)
+		: AddressSpace(manager, bus, space) {}
 
 		// read/write function calls
 		uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);

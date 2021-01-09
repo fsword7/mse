@@ -28,9 +28,24 @@ public:
 
 	virtual mapConfigList getAddressConfigList() const = 0;
 
-	const mapAddressConfig *getAddressConfig(mapSpaceType type);
+	inline int getAddressConfigCount() { return mapConfig.size(); }
+	inline int getAddressSpaceCount()  { return mapSpace.size(); }
+
+//	const mapAddressConfig *getAddressConfig(mapSpaceType type) const;
+	const mapAddressConfig *getAddressConfig(int space) const;
 
 	void completeConfig();
+
+	template <typename Space>
+	void allocate(mapBusManager &manager, int space)
+	{
+		assert((space >= 0) && (space < mapSpace.size()));
+		assert(mapSpace[space] == nullptr);
+		assert(mapConfig[space] != nullptr);
+
+		mapSpace.resize(max(int(mapSpace.size()), space+1));
+		mapSpace[space] = new Space(manager, *this, space, mapConfig[space]->getAddrWidth());
+	}
 
 private:
 	vector<const mapAddressConfig *> mapConfig;

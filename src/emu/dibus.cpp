@@ -42,10 +42,10 @@ void diExternalBus::completeConfig()
 	}
 }
 
-const mapAddressConfig *diExternalBus::getAddressConfig(mapSpaceType type)
+const mapAddressConfig *diExternalBus::getAddressConfig(int space) const
 {
-	if (type >= 0 && type < mapConfig.size())
-		return mapConfig[type];
+	if (space >= 0 && space < mapConfig.size())
+		return mapConfig[space];
 	return nullptr;
 }
 

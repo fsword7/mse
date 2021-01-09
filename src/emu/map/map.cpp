@@ -6,6 +6,7 @@
  */
 
 #include "emu/core.h"
+#include "emu/dibus.h"
 #include "emu/map/addrmap.h"
 #include "emu/map/map.h"
 
@@ -17,6 +18,14 @@ AddressConfig::AddressConfig(ctag_t *tagName, endian_t eType,
 : name(tagName), endianType(eType),
   dataWidth(dWidth), dataRadix(dRadix), byteWidth(bWidth),
   addrWidth(aWidth), addrRadix(aRadix), addrShift(aShift)
+{
+
+}
+
+// **********************************************************************
+
+AddressSpace::AddressSpace(BusManager &manager, diExternalBus &bus, int space)
+: config(*bus.getAddressConfig(space))
 {
 
 }
