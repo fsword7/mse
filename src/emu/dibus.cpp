@@ -49,6 +49,10 @@ const mapAddressConfig *diExternalBus::getAddressConfig(int space) const
 	return nullptr;
 }
 
+//void diExternalBus::setAddressMap(int space, mapConstructor map)
+//{
+//}
+
 //void diBus::registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio)
 //{
 //	if (mapMemories.size() > 0)

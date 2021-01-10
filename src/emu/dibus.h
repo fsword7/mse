@@ -34,6 +34,8 @@ public:
 //	const mapAddressConfig *getAddressConfig(mapSpaceType type) const;
 	const mapAddressConfig *getAddressConfig(int space) const;
 
+//	void setAddressMap(int space, mapConstructor map);
+
 	void completeConfig();
 
 	template <typename Space>
