@@ -9,6 +9,14 @@
 
 namespace map
 {
+
+	// Data width - types
+	template <int dWidth> struct HandlerSize { };
+	template <> struct HandlerSize<0> { using uintx_t = uint8_t; };
+	template <> struct HandlerSize<1> { using uintx_t = uint16_t; };
+	template <> struct HandlerSize<2> { using uintx_t = uint32_t; };
+	template <> struct HandlerSize<3> { using uintx_t = uint64_t; };
+
 	class HandlerEntry
 	{
 	public:
@@ -43,5 +51,41 @@ namespace map
 			offs_t start;
 			offs_t end;
 		};
+	};
+
+	template <int dWidth, int aShift, int endian>
+	class HandlerRead : public HandlerEntry
+	{
+	public:
+		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
+
+
+		HandlerRead(AddressSpace *space, uint64_t flags)
+		: HandlerEntry(space, flags)
+		{ }
+
+		virtual ~HandlerRead();
+
+		virtual uintx_t read(offs_t off) = 0;
+		virtual uintx_t read(offs_t off, uintx_t mask) = 0;
+		virtual void *getAccess(offs_t off) const { return nullptr; }
+	};
+
+	template <int dWidth, int aShift, int endian>
+	class HandlerWrite : public HandlerEntry
+	{
+	public:
+		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
+
+
+		HandlerWrite(AddressSpace *space, uint64_t flags)
+		: HandlerEntry(space, flags)
+		{ }
+
+		virtual ~HandlerWrite();
+
+		virtual uintx_t write(offs_t off, uintx_t data) = 0;
+		virtual uintx_t write(offs_t off, uintx_t data, uintx_t mask) = 0;
+		virtual void *getAccess(offs_t off) const { return nullptr; }
 	};
 }

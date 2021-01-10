@@ -139,6 +139,9 @@ namespace map {
 	private:
 		uint8_t *memData = nullptr;
 		offs_t   memSize = 0;
+
+		HandlerRead<dWidth, aShift, endian> *rootRead = nullptr;
+		HandlerWrite<dWidth, aShift, endian> *rootWrite = nullptr;
 	};
 
 }
