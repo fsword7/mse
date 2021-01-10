@@ -7,6 +7,11 @@
 
 #pragma once
 
+namespace map
+{
+	class AddressSpace;
+}
+
 // address space types
 #define AS_PROGRAM  0	// Program address space
 #define AS_DATA		1	// Data address space
@@ -15,6 +20,8 @@
 
 //using offs_t = uint64_t;
 typedef uint64_t offs_t;
+
+#include "emu/map/he.h"
 
 class ProcessorDevice;
 class Machine;

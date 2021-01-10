@@ -17,10 +17,18 @@ namespace map {
 	template <int dWidth, int aShift, int endian>
 	class AddressSpaceAccess : public AddressSpace
 	{
+		using thisType = AddressSpaceAccess<dWidth, aShift, endian>;
+
 	public:
 		AddressSpaceAccess(BusManager &manager, diExternalBus &bus, int space, int addrWidth)
 		: AddressSpace(manager, bus, space)
 		{
+			Device *dev = bus.getDevice();
+
+			HandlerEntry::range r = { 0, static_cast<offs_t>(~0ull >> ((sizeof(offs_t) * 8) - addrWidth)) };
+
+			fmt::printf("%s: Address range: %llX - %llX (%d-bit addressing)\n",
+				dev->getDeviceName(), r.start, r.end, addrWidth);
 		}
 
 		void createMainMemory(offs_t size)
