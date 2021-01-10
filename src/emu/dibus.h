@@ -39,11 +39,12 @@ public:
 	template <typename Space>
 	void allocate(mapBusManager &manager, int space)
 	{
-		assert((space >= 0) && (space < mapSpace.size()));
-		assert(mapSpace[space] == nullptr);
+		assert((space >= 0) && (space < mapConfig.size()));
 		assert(mapConfig[space] != nullptr);
 
 		mapSpace.resize(max(int(mapSpace.size()), space+1));
+		assert(mapSpace[space] == nullptr);
+
 		mapSpace[space] = new Space(manager, *this, space, mapConfig[space]->getAddrWidth());
 	}
 

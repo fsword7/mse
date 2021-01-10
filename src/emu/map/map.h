@@ -138,39 +138,6 @@ namespace map
 		const AddressConfig &config;
 	};
 
-	template <int aWidth, int dWidth, int endianess>
-	class AddressSpaceAccess : public AddressSpace
-	{
-	public:
-		AddressSpaceAccess(BusManager &manager, diExternalBus &bus, int space, int addrWidth)
-		: AddressSpace(manager, bus, space) {}
-
-		// read/write function calls
-		uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr);
-		uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr);
-
-		void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr);
-		void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-		void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr);
-		void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-		void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr);
-		void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
-		void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr);
-
-		// Be removed later
-		void createMainMemory(offs_t length);
-
-	private:
-		// main memory access - be removed later
-		uint8_t *memData = nullptr;;
-		uint64_t memSize = 0;
-	};
-
 	class MemoryBlock
 	{
 	public:
