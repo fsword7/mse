@@ -8,6 +8,7 @@
 #pragma once
 
 #define ES40_NCPU	4
+#define ES45_NCPU	4
 
 class tsunami_device : public SystemDevice
 {
@@ -22,9 +23,14 @@ public:
 
 	// System creator routines
 	void es40(SystemConfig &config);
+	void es45(SystemConfig &config);
 
 	// Model-specific system initialize routines
 	static void es40_init();
+	static void es45_init();
+
+	void es40_sbus(mapAddress &map);
+	void es45_sbus(mapAddress &map);
 
 private:
 	AlphaProcessor *cpu[ES40_NCPU];

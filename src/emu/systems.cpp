@@ -16,6 +16,7 @@ const SystemDriver *SystemList::sysList[] =
 		// Digital Electric Corporation (DEC)
 		// AXP family series
 		&SYSTEM_NAME(es40),
+		&SYSTEM_NAME(es45),
 
 		// VAX family series
 		&SYSTEM_NAME(mv3900),

@@ -8,3 +8,4 @@
 #pragma once
 
 SYSTEM_EXTERN(es40);
+SYSTEM_EXTERN(es45);
