@@ -9,16 +9,18 @@
 #include "emu/device.h"
 #include "emu/map/addrmap.h"
 
-// ******** mapAddressEntry ********
+using namespace map;
 
-mapAddressEntry::mapAddressEntry(device_t &dev, mapAddress &map, offs_t start, offs_t end)
+// ******** AddressEntry ********
+
+AddressEntry::AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t end)
 : device(dev), map(map),
   addrStart(start), addrEnd(end)
 {
 
 }
 
-mapAddressEntry &mapAddressEntry::mask(offs_t mask)
+AddressEntry &AddressEntry::mask(offs_t mask)
 {
 	addrMask = mask;
 	// Apply with global address mask
@@ -27,15 +29,15 @@ mapAddressEntry &mapAddressEntry::mask(offs_t mask)
 	return *this;
 }
 
-// ******** mapAddress ********
+// ******** AddressList ********
 
-mapAddress::mapAddress(device_t &dev, int space)
+AddressList::AddressList(device_t &dev, int space)
 : device(dev), addrSpace(space)
 {
 	list.clear();
 }
 
-mapAddress::~mapAddress()
+AddressList::~AddressList()
 {
 	// Delete all address mapping entries
 	for (int idx = 0; idx < list.size(); idx++)
@@ -43,11 +45,11 @@ mapAddress::~mapAddress()
 	list.clear();
 }
 
-mapAddressEntry &mapAddress::operator ()(offs_t start, offs_t end)
+AddressEntry &AddressList::operator ()(offs_t start, offs_t end)
 {
-	mapAddressEntry *entry;
+	AddressEntry *entry;
 
-	entry = new mapAddressEntry(device, *this, start, end);
+	entry = new AddressEntry(device, *this, start, end);
 	list.push_back(entry);
 
 	return *entry;

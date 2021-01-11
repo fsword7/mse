@@ -7,76 +7,81 @@
 
 #pragma once
 
-class mapAddress;
-
-enum mapType
+namespace map
 {
-	mapNone = 0,
-	mapAccess,	// Accessible
-	mapPort,	// I/O type access
-	mapNop,		// Non-operation - do nothing
-	mapVoid		// Non-existent - exception trap
-};
+	class AddressList;
 
-struct mapHandler
-{
-	mapType		type  = mapNone;
-	uint16_t	bits  = 0; // width bits, 0 = default
-	const char	*name = nullptr;
-};
+	enum mapType
+	{
+		mapNone = 0,
+		mapAccess,	// Accessible
+		mapPort,	// I/O type access
+		mapNop,		// Non-operation - do nothing
+		mapVoid		// Non-existent - exception trap
+	};
 
-class mapAddressEntry
-{
-public:
-	using offs_t = uint64_t;
+	struct mapHandler
+	{
+		mapType   type = mapNone;
+		uint16_t  bits = 0; // width bits, 0 = default
+		ctag_t   *name = nullptr;
+	};
 
-	mapAddressEntry(device_t &dev, mapAddress &map, offs_t start, offs_t end);
+	class AddressEntry
+	{
+	public:
+		using offs_t = uint64_t;
 
-	// RAM/ROM access list
-	mapAddressEntry &ram()   { read.type = mapAccess; write.type = mapAccess; return *this; }
-	mapAddressEntry &rom()   { read.type = mapAccess; write.type = mapNop;    return *this; }
-	mapAddressEntry &ronly() { read.type = mapAccess;  return *this; }
-	mapAddressEntry &wonly() { write.type = mapAccess; return *this; }
+		AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t end);
 
-	mapAddressEntry &mirror(offs_t bits) { addrMirror = bits; return *this; }
+		// RAM/ROM access list
+		AddressEntry &ram()   { read.type = mapAccess; write.type = mapAccess; return *this; }
+		AddressEntry &rom()   { read.type = mapAccess; write.type = mapNop;    return *this; }
+		AddressEntry &ronly() { read.type = mapAccess;  return *this; }
+		AddressEntry &wonly() { write.type = mapAccess; return *this; }
 
-	mapAddressEntry &mask(offs_t mask);
+		AddressEntry &mirror(offs_t bits) { addrMirror = bits; return *this; }
 
-public:
-	// Address entry information
-	mapAddressEntry *mapNext = nullptr;
-	mapAddress      &map;
-	device_t        &device;
+		AddressEntry &mask(offs_t mask);
 
-	// Address parameters
-	offs_t addrStart;		// Start address
-	offs_t addrEnd;			// End address
-	offs_t addrMask = 0;	// Mask address bits
-	offs_t addrMirror = 0;	// Mirror address bits
+	public:
+		// Address entry information
+		AddressEntry  *mapNext = nullptr;
+		AddressList   &map;
+		device_t      &device;
 
-	// read/write access handler
-	mapHandler read, write;
-};
+		// Address parameters
+		offs_t addrStart;		// Start address
+		offs_t addrEnd;			// End address
+		offs_t addrMask = 0;	// Mask address bits
+		offs_t addrMirror = 0;	// Mirror address bits
 
-class mapAddress
-{
-	friend class mapAddressEntry;
+		// read/write access handler
+		mapHandler read, write;
+	};
 
-public:
-	using offs_t = uint64_t;
+	class AddressList
+	{
+		friend class AddressEntry;
 
-	mapAddress(device_t &dev, int space);
-	~mapAddress();
+	public:
+		using offs_t = uint64_t;
 
-	inline void setGlobalAddressMask(offs_t mask) { addrMask = mask; }
+		AddressList(device_t &dev, int space);
+		~AddressList();
 
-	mapAddressEntry &operator ()(offs_t start, offs_t end);
+		inline void setGlobalAddressMask(offs_t mask) { addrMask = mask; }
 
-private:
-	device_t &device;
-	int addrSpace;
+		inline int size() const { return list.size(); }
 
-	offs_t addrMask = 0; // Global physical address mask
+		AddressEntry &operator ()(offs_t start, offs_t end);
 
-	vector<mapAddressEntry *> list;
-};
+	private:
+		device_t &device;
+		int addrSpace;
+
+		offs_t addrMask = 0; // Global physical address mask
+
+		vector<AddressEntry *> list;
+	};
+}
