@@ -7,11 +7,25 @@
 
 #pragma once
 
+#include <type_traits>
+
 #include "emu/delegate.h"
 #include "emu/list.h"
 
 class SystemConfig;
 class Device;
+class DeviceInterface;
+
+template <typename T> struct is_device
+{
+	static constexpr bool value = std::is_base_of<Device, T>::value;
+};
+
+template <typename T> struct is_interface
+{
+	static constexpr bool value = std::is_base_of<DeviceInterface, T>::value;
+};
+
 
 template <class SystemClass, ctag_t *shortName, ctag_t *fullName, ctag_t *fileName>
 struct system_tag_struct
@@ -150,7 +164,7 @@ class diExecute;
 class diDebug;
 
 class Device
-: public Delegate,
+: public BindedDelegate,
   public List<Device>
 {
 public:

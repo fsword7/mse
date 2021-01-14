@@ -25,7 +25,7 @@ void tsunami_device::es40(SystemConfig &config)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = axp21264cb(config, tagName, 0);
-//		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_mem);
+		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
 
 //	cssc   = CSSC(config, "cssc", 0);
@@ -50,7 +50,7 @@ void tsunami_device::es45(SystemConfig &config)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = axp21264cb(config, tagName, 0);
-//		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_mem);
+		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
 
 //	cssc   = CSSC(config, "cssc", 0);
