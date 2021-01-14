@@ -7,27 +7,33 @@
 
 #pragma once
 
+#include <type_traits>
+
 namespace map
 {
 	class AddressSpace;
+	class AddressList;
 }
 
 // address space types
 #define AS_PROGRAM  0	// Program address space
 #define AS_DATA		1	// Data address space
-#define AS_IO		2	// I/O port address space
+#define AS_IOPORT	2	// I/O port address space
 
 
 //using offs_t = uint64_t;
 typedef uint64_t offs_t;
 
 #include "emu/map/he.h"
+#include "emu/map/heun.h"
 
 class ProcessorDevice;
 class Machine;
 
 namespace map
 {
+	using Constructor = NamedDelegate<void (AddressList &)>;
+
 	enum SpaceType
 	{
 		asProgram = 0,	// Program address space
@@ -86,7 +92,7 @@ namespace map
 
 
 	private:
-		ctag_t *name = nullptr;
+		ctag_t    *name = nullptr;
 
 		endian_t endianType = LittleEndian;
 		uint16_t dataWidth  = 0;
@@ -105,7 +111,9 @@ namespace map
 	};
 
 	using ConfigList = vector<ConfigEntry>;
+	using cAddressConfig = const AddressConfig;
 
+	class AddressList;
 	class BusManager;
 
 	class AddressSpace
@@ -123,6 +131,9 @@ namespace map
 		inline uint16_t getAddrRadix() const { return config.getAddrRadix(); }
 		inline int16_t  getAddrShift() const { return config.getAddrShift(); }
 		inline int16_t  getPageShift() const { return config.getPageShift(); }
+
+		// Setup initialization routines
+		void prepare(Console *cty);
 
 		// Virtual function calls
 		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
@@ -142,7 +153,13 @@ namespace map
 		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
 
 	protected:
-		const AddressConfig &config;
+		cAddressConfig &config;
+		Device         &device;
+		BusManager     &manager;
+		int             space;
+
+		AddressList    *map = nullptr;
+
 	};
 
 	class MemoryBlock

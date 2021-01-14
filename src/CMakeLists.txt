@@ -5,6 +5,7 @@ set(MSE_CPP_SRCS
 	devices/cpu/alpha/execute.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
+	emu/map/heun.cpp
 	emu/map/map.cpp
 	emu/map/space.cpp
 	emu/command.cpp
@@ -36,6 +37,7 @@ set(MSE_H_SRCS
 	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h
 	emu/map/addrmap.h
+	emu/map/he.h
 	emu/map/map.h
 	emu/command.h
 	emu/console.h

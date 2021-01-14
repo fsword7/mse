@@ -148,16 +148,7 @@ namespace map {
 
 // *********************************************************************
 
-struct mapSpaceInfo
-{
-	cstag_t name;
-	mapSpaceType type;
-} asSpaceType[] =
-{
-		{ "program", mapSpaceType::asProgram },
-		{ "data",    mapSpaceType::asData },
-		{ "I/O port", mapSpaceType::asPort }
-};
+ctag_t *asDescrip[] = { "program", "data", "I/O port" };
 
 void BusManager::allocate(Console *cty, diExternalBus &bus)
 {
@@ -170,11 +161,11 @@ void BusManager::allocate(Console *cty, diExternalBus &bus)
 
 	for (int space = 0; space < bus.getAddressConfigCount(); space++)
 	{
-		const mapAddressConfig *config = bus.getAddressConfig(asSpaceType[space].type);
+		const mapAddressConfig *config = bus.getAddressConfig(space);
 		if (config == nullptr)
 			continue;
 		fmt::printf("%s: Allocating %s address space...\n",
-			dev->getDeviceName(), asSpaceType[space].name);
+			dev->getDeviceName(), asDescrip[space]);
 
 		switch (config->getEndianType())
 		{

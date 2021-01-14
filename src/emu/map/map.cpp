@@ -25,8 +25,17 @@ AddressConfig::AddressConfig(ctag_t *tagName, endian_t eType,
 // **********************************************************************
 
 AddressSpace::AddressSpace(BusManager &manager, diExternalBus &bus, int space)
-: config(*bus.getAddressConfig(space))
+: config(*bus.getAddressConfig(space)),
+  device(*bus.getDevice()), manager(manager),
+  space(space)
 {
+
+}
+
+void AddressSpace::prepare(Console *cty)
+{
+
+	AddressList *map = new AddressList(device, space);
 
 }
 
