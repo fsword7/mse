@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "emu/device.h"
+#include "emu/dibus.h"
 #include "emu/map/addrmap.h"
 
 using namespace map;
@@ -24,8 +25,8 @@ AddressEntry &AddressEntry::mask(offs_t mask)
 {
 	addrMask = mask;
 	// Apply with global address mask
-	if (map.addrMask != 0)
-		addrMask &= ~map.addrMask;
+	if (map.gaddrMask != 0)
+		addrMask &= ~map.gaddrMask;
 	return *this;
 }
 
@@ -34,7 +35,22 @@ AddressEntry &AddressEntry::mask(offs_t mask)
 AddressList::AddressList(device_t &dev, int space)
 : device(dev), addrSpace(space)
 {
+	diExternalBus *sbus;
+	const map::AddressConfig *config;
+
 	list.clear();
+
+	dev.hasInterface(sbus);
+	assert(sbus != nullptr);
+
+	config = sbus->getAddressConfig(space);
+	assert(config != nullptr);
+
+	map::Constructor map = sbus->getAddressMap(space);
+	if (!map.isNull()) {
+		fmt::printf("%s: Trying call bus initialization delegate\n", dev.getDeviceName());
+		map(*this);
+	}
 }
 
 AddressList::~AddressList()

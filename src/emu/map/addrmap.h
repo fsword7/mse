@@ -51,10 +51,10 @@ namespace map
 		device_t      &device;
 
 		// Address parameters
-		offs_t addrStart;		// Start address
-		offs_t addrEnd;			// End address
-		offs_t addrMask = 0;	// Mask address bits
-		offs_t addrMirror = 0;	// Mirror address bits
+		offs_t addrStart  = 0;   // Start address
+		offs_t addrEnd    = 0;   // End address
+		offs_t addrMask   = 0;   // Mask address bits
+		offs_t addrMirror = 0;   // Mirror address bits
 
 		// read/write access handler
 		mapHandler read, write;
@@ -70,7 +70,7 @@ namespace map
 		AddressList(device_t &dev, int space);
 		~AddressList();
 
-		inline void setGlobalAddressMask(offs_t mask) { addrMask = mask; }
+		inline void setGlobalAddressMask(offs_t mask) { gaddrMask = mask; }
 
 		inline int size() const { return list.size(); }
 
@@ -80,7 +80,8 @@ namespace map
 		device_t &device;
 		int addrSpace;
 
-		offs_t addrMask = 0; // Global physical address mask
+		offs_t   gaddrMask  = 0;
+		uint64_t unmapValue = 0;
 
 		vector<AddressEntry *> list;
 	};

@@ -85,7 +85,7 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (related device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, map::Constructor(dev->getDeviceName(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, map::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
 	}
 
 	template <typename T, typename Return, typename... Args>
@@ -96,7 +96,7 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (unrelated device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, map::Constructor(dev->getDeviceName(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, map::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
 	}
 
 	void setAddressMap(int space, map::Constructor map);
@@ -114,6 +114,12 @@ public:
 
 		mapSpace[space] = new Space(manager, *this, space, mapConfig[space]->getAddrWidth());
 	}
+
+	// Address space initialization routines
+	void prepare(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->prepare(cty); }}
+//	void populate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->populate(cty); }}
+//	void allocate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->allocate(cty); }}
+//	void locate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->locate(cty); }}
 
 private:
 	vector<map::Constructor> AddressMapList;

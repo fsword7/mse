@@ -82,4 +82,8 @@ void BusManager::init(Console *cty)
 		allocate(cty, bus);
 	}
 
+	// Preparing for set up address space access
+	for (auto const sbus : buses)
+		sbus->prepare(cty);
+
 }
