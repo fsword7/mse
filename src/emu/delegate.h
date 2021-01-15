@@ -162,8 +162,8 @@ protected:
 public:
 	Delegate() : base() {}
 
-//	Delegate(const base &src) : base(src) {}
-//	Delegate(const base &src, BindedDelegate &obj) : base (src, obj) {}
+	Delegate(const base &src) : base(src) {}
+	Delegate(const base &src, BindedDelegate &obj) : base (src, obj) {}
 
 	explicit Delegate(function<Return (Args...)> func) : base(func) {}
 
@@ -196,22 +196,26 @@ protected:
 			typename base::template static_ref_func<FunctionClass>;
 
 public:
-	NamedDelegate() : base() {}
+	NamedDelegate() = default;
+	NamedDelegate(const NamedDelegate &src) = default;
 
 	template <class FunctionClass>
-	NamedDelegate(cstag_t &name, member_ptr_func<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(ctag_t *name, member_ptr_func<FunctionClass> func, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
 	template <class FunctionClass>
-	NamedDelegate(cstag_t &name, member_ptr_cfunc<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(ctag_t *name, member_ptr_cfunc<FunctionClass> func, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
 	template <class FunctionClass>
-	NamedDelegate(cstag_t &name, static_ref_func<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(ctag_t *name, static_ref_func<FunctionClass> func, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
-	inline cstag_t &getName() const { return name; }
+	inline ctag_t *getName() const { return name; }
+
+	NamedDelegate &operator = (const NamedDelegate &src) = default;
 
 private:
-	cstag_t name;
+//	cstag_t name;
+	ctag_t *name = nullptr;
 };
