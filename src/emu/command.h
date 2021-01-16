@@ -43,12 +43,19 @@ private:
 };
 
 typedef CommandStatus (*cmdFunc_t)(Console *, args_t &);
+typedef CommandStatus (*cmdDevice_t)(Console *, Device *, args_t &);
 
 struct command_t
 {
 	const char	*name;
 	cmdFunc_t	func;
 	command_t	*ext;
+};
+
+struct devCommand_t
+{
+	const char	*name;
+	cmdDevice_t	func;
 };
 
 class CommandHandler {

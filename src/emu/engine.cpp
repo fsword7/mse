@@ -28,7 +28,7 @@ void SystemEngine::gexit()
 }
 
 
-Machine *SystemEngine::find(const string sysName)
+Machine *SystemEngine::findSystem(const string sysName)
 {
 	for (auto mach : machines)
 		if (sysName == mach->getDeviceName())
@@ -36,6 +36,26 @@ Machine *SystemEngine::find(const string sysName)
 	return nullptr;
 }
 
+Device *SystemEngine::findDevice(Console *cty, cstag_t name)
+{
+	Device *sysDevice = cty->getDialedSystem();
+	if (sysDevice == nullptr)
+	{
+		fmt::printf("Please dial system first\n");
+		return nullptr;
+	}
+
+	for (Device &dev : DeviceIterator(*sysDevice))
+		if (dev.getDeviceName() == name)
+			return &dev;
+
+	return nullptr;
+}
+
+Device *SystemEngine::findDevice(cstag_t name)
+{
+	return nullptr;
+}
 
 CommandStatus SystemEngine::create(Console *cty, args_t args)
 {
@@ -45,7 +65,7 @@ CommandStatus SystemEngine::create(Console *cty, args_t args)
 	const SystemDriver *driver = nullptr;
 	Machine *sys = nullptr;
 
-	if (find(devName) != nullptr) {
+	if (findSystem(devName) != nullptr) {
 		fmt::fprintf(cout, "%s: system already created.\n", devName);
 		return CommandStatus::cmdOk;
 	}
@@ -78,7 +98,7 @@ CommandStatus SystemEngine::dump(Console *cty, args_t args)
 {
 	string devName = args.getNext();
 
-	Machine *sys = find(devName);
+	Machine *sys = findSystem(devName);
 	if (sys == nullptr)
 	{
 		fmt::fprintf(cout, "%s: system not found\n", devName);
@@ -98,16 +118,37 @@ CommandStatus SystemEngine::dump(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
+CommandStatus SystemEngine::set(Console *cty, args_t args)
 {
-	Device *sysDevice = cty->getDialedSystem();
-	if (sysDevice == nullptr)
-	{
-		fmt::printf("Please dial system first\n");
+	Device *dev = findDevice(cty, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
 	}
 
-	for (Device &dev : DeviceIterator(*sysDevice))
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::show(Console *cty, args_t args)
+{
+	Device *dev = findDevice(cty, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
+{
+	Device *root = findDevice(cty, args.current());
+	if (root == nullptr) {
+		fmt::printf("No such devices\n");
+		return CommandStatus::cmdOk;
+	}
+
+	for (Device &dev : DeviceIterator(*root))
 	{
 		fmt::printf("%s\n", dev.getDeviceName());
 	}
@@ -126,7 +167,7 @@ CommandStatus SystemEngine::start(Console *cty, args_t args)
 //	Machine *sys = sysDevice->getMachine();
 
 	string devName = args.getNext();
-	Machine *sys = find(devName);
+	Machine *sys = findSystem(devName);
 	if (sys == nullptr) {
 		fmt::fprintf(cout, "%s: system not found.\n", devName);
 		return CommandStatus::cmdOk;

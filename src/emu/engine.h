@@ -20,10 +20,14 @@ public:
 	void ginit();
 	void gexit();
 
-	Machine *find(const string sysName);
+	Machine *findSystem(cstag_t name);
+	Device  *findDevice(Console *cty, cstag_t name);
+	Device  *findDevice(cstag_t name);
 
 	CommandStatus create(Console *cty, args_t args);
 	CommandStatus dump(Console *cty, args_t args);
+	CommandStatus set(Console *cty, args_t args);
+	CommandStatus show(Console *cty, args_t args);
 	CommandStatus showDevices(Console *cty, args_t args);
 	CommandStatus start(Console *cty, args_t args);
 

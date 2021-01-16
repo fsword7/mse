@@ -32,7 +32,7 @@ CommandStatus cmdDial(Console *cty, args_t &args)
 		cty->setDialedDevice(nullptr);
 		fmt::printf("Dialed system to none\n");
 	} else {
-		Machine *sys = engine.find(devName);
+		Machine *sys = engine.findSystem(devName);
 		if (sys != nullptr) {
 			cty->setDialedSystem(sys->getSystemDevice());
 			cty->setDialedDevice(nullptr);
@@ -74,12 +74,16 @@ CommandStatus cmdReset(Console *, args_t &args)
 // set <device> <suboptions ...>
 CommandStatus cmdSet(Console *cty, args_t &args)
 {
+	SystemEngine engine;
+	engine.set(cty, args);
 	return cmdOk;
 }
 
 // show <device> <suboptions ...>
 CommandStatus cmdShow(Console *cty, args_t &args)
 {
+	SystemEngine engine;
+	engine.show(cty, args);
 	return cmdOk;
 }
 
