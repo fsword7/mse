@@ -10,6 +10,7 @@
 #include "emu/map/map.h"
 #include "emu/devsys.h"
 #include "emu/driver.h"
+#include "emu/engine.h"
 
 #include "devices/cpu/alpha/axp.h"
 #include "devices/cpu/alpha/21264cb.h"
@@ -17,9 +18,38 @@
 
 using namespace aspace;
 
+CommandStatus es40_SetMemory(Console *cty, Device *dev, args_t &args)
+{
+	BusManager &manager = dev->getMachine()->getExternalBusManager();
+	SystemEngine engine;
+
+	string name = args.getNext();
+	string size = args.getNext();
+
+//	fmt::printf("%s: Region: name=%s size=%s\n", dev->getDeviceName(), name, size);
+
+	uint64_t val = engine.getValue(size);
+
+	manager.allocateRegion(name, val, 8, LittleEndian);
+	fmt::printf("%s: Successfully allocated %lld (%llX) to region '%s'\n",
+		dev->getDeviceName(), val, val, name);
+
+	return CommandStatus::cmdOk;
+}
+
+devCommand_t es40_Commands[] =
+{
+		{ "mem", es40_SetMemory },
+
+		// null terminal
+		nullptr
+};
+
 // Create system routines
 void tsunami_device::es40(SystemConfig &config)
 {
+
+	setCommands(es40_Commands);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{
@@ -27,11 +57,6 @@ void tsunami_device::es40(SystemConfig &config)
 		cpu[idx] = axp21264cb(config, tagName, 0);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
-
-	// TODO: Removed later when implement
-	// 'set <system> memory <size> <region>' command
-	// Initialize main memory (memory region)
-//	busManager->allocateRegion("main", 19u << 1, 8, LittleEndian);
 
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);
@@ -55,11 +80,6 @@ void tsunami_device::es45(SystemConfig &config)
 		cpu[idx] = axp21264cb(config, tagName, 0);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
-
-	// TODO: Removed later when implement
-	// 'set <system> memory <size> <region>' command
-	// Initialize main memory (memory region)
-//	busManager->allocateRegion("main", 19u << 1, 8, LittleEndian);
 
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);

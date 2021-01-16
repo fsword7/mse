@@ -8,6 +8,7 @@
 #pragma once
 
 class Console;
+class Device;
 
 enum CommandStatus
 {

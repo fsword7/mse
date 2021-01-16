@@ -181,7 +181,10 @@ public:
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
 
 	inline Machine *getMachine() { return ownMachine; }
+	inline devCommand_t *getCommands() { return devCommands; }
+
 	inline void setMachine(Machine *sys) { ownMachine = sys; }
+	inline void setCommands(devCommand_t *cmds) { devCommands = cmds; }
 
 	inline bool hasInterface(diExternalBus *&iface) { return (iface = ifBus) != nullptr; }
 	inline bool hasInterface(diExecute *&iface)     { return (iface = ifExecute) != nullptr; }
@@ -232,6 +235,8 @@ protected:
 	diExternalBus *ifBus     = nullptr;
 	diExecute     *ifExecute = nullptr;
 	diDebug       *ifDebug   = nullptr;
+
+	devCommand_t  *devCommands = nullptr;
 };
 
 typedef Device device_t;

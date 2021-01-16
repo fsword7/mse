@@ -24,6 +24,8 @@ public:
 	Device  *findDevice(Console *cty, cstag_t name);
 	Device  *findDevice(cstag_t name);
 
+	uint64_t getValue(cstag_t sValue);
+
 	CommandStatus create(Console *cty, args_t args);
 	CommandStatus dump(Console *cty, args_t args);
 	CommandStatus set(Console *cty, args_t args);

@@ -57,6 +57,40 @@ Device *SystemEngine::findDevice(cstag_t name)
 	return nullptr;
 }
 
+// K = kilobyte - 1024 bytes
+// M = megabyte - 1024*1024 bytes
+// G = gigabyte - 1024*1024*1024 bytes
+// T = terabyte - 1024*1024*1024*1024 bytes
+
+ctag_t *byteScale = " kmgt";
+
+uint64_t SystemEngine::getValue(cstag_t sValue)
+{
+	uint64_t value = 0;
+	char     bType = 0;
+
+	stringstream ssValue(sValue);
+
+	ssValue >> value;
+	ssValue >> bType;
+
+//	fmt::printf("Value: %lld Scale: %c\n", value, bType);
+	if (bType != 0) {
+		uint64_t scale = 1;
+		for (int idx = 0; idx < strlen(byteScale); idx++) {
+//			fmt::printf("Scale: %c  Value: %lld\n", byteScale[idx], scale);
+			if (bType == byteScale[idx]) {
+				value *= scale;
+				break;
+			}
+			scale *= 1024;
+		}
+	}
+//	fmt::printf("Value: %lld (%llX) bytes\n", value, value);
+
+	return value;
+}
+
 CommandStatus SystemEngine::create(Console *cty, args_t args)
 {
 	SystemList list;
@@ -125,6 +159,23 @@ CommandStatus SystemEngine::set(Console *cty, args_t args)
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
 	}
+
+	devCommand_t *cmdList = dev->getCommands();
+	if (cmdList == nullptr) {
+		fmt::printf("%s: do not handle device commands\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
+
+	args.next();
+	for (int idx = 0; cmdList[idx].name; idx++) {
+		if (cmdList[idx].name == args.current()) {
+			args.next();
+			if (cmdList[idx].func != nullptr)
+				return cmdList[idx].func(cty, dev, args);
+		}
+	}
+
+	fmt::printf("%s: Unknown device command\n", dev->getDeviceName());
 
 	return CommandStatus::cmdOk;
 }
