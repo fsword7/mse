@@ -10,6 +10,7 @@
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
+// create <device> <suboptions ...>
 CommandStatus cmdCreate(Console *cty, args_t &args)
 {
 	SystemEngine engine;
@@ -19,6 +20,7 @@ CommandStatus cmdCreate(Console *cty, args_t &args)
 	return cmdOk;
 }
 
+// dial <device|none>
 CommandStatus cmdDial(Console *cty, args_t &args)
 {
 	SystemEngine engine;
@@ -41,6 +43,7 @@ CommandStatus cmdDial(Console *cty, args_t &args)
 	return cmdOk;
 }
 
+// dump <device> <suboptions ...>
 CommandStatus cmdDump(Console *cty, args_t &args)
 {
 	SystemEngine engine;
@@ -50,16 +53,37 @@ CommandStatus cmdDump(Console *cty, args_t &args)
 	return cmdOk;
 }
 
+// exit
 CommandStatus cmdExit(Console *, args_t &args)
 {
 	return cmdShutdown;
 }
 
+// list <device> <suboptions ...>
+CommandStatus cmdList(Console *, args_t &args)
+{
+	return cmdOk;
+}
+
+// reset <device>
 CommandStatus cmdReset(Console *, args_t &args)
 {
 	return cmdOk;
 }
 
+// set <device> <suboptions ...>
+CommandStatus cmdSet(Console *cty, args_t &args)
+{
+	return cmdOk;
+}
+
+// show <device> <suboptions ...>
+CommandStatus cmdShow(Console *cty, args_t &args)
+{
+	return cmdOk;
+}
+
+// start <device>
 CommandStatus cmdStart(Console *cty, args_t &args)
 {
 	SystemEngine engine;
@@ -69,12 +93,13 @@ CommandStatus cmdStart(Console *cty, args_t &args)
 	return cmdOk;
 }
 
+// stop <device>
 CommandStatus cmdStop(Console *, args_t &args)
 {
 	return cmdOk;
 }
 
-
+// list system
 CommandStatus cmdListSystem(Console *cty, args_t &args)
 {
 	SystemList sysList;
@@ -84,7 +109,8 @@ CommandStatus cmdListSystem(Console *cty, args_t &args)
 	return cmdOk;
 }
 
-CommandStatus cmdShowDevices(Console *cty, args_t &args)
+// show device
+CommandStatus cmdShowDevice(Console *cty, args_t &args)
 {
 	SystemEngine engine;
 
@@ -102,8 +128,8 @@ command_t CommandHandler::mseCommands[] =
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		nullptr,	CommandHandler::mseListCommands },
 		{ "reset",		cmdReset,	nullptr },
-		{ "set",		nullptr,	CommandHandler::mseSetCommands },
-		{ "show",		nullptr,	CommandHandler::mseShowCommands },
+		{ "set",		cmdSet,		CommandHandler::mseSetCommands },
+		{ "show",		cmdShow,	CommandHandler::mseShowCommands },
 		{ "start",		cmdStart,	nullptr },
 		{ "stop",		cmdStop,	nullptr },
 		{ "quit",		cmdExit,	nullptr },
@@ -127,7 +153,7 @@ command_t CommandHandler::mseSetCommands[] =
 
 command_t CommandHandler::mseShowCommands[] =
 {
-		{ "devices",	cmdShowDevices,		nullptr },
+		{ "device",		cmdShowDevice,		nullptr },
 		// Terminator
 		nullptr
 };

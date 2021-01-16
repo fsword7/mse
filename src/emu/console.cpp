@@ -40,12 +40,10 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 	for (int idx = 0; cmdList[idx].name; idx++) {
 		if (cmdList[idx].name == args.current()) {
 			args.next();
-			if (cmdList[idx].ext != nullptr) {
-				if (args.size() < 2) {
-					cout << fmt::sprintf("Usage: %s <options> [arguments...]\n", args[0]);
-					return cmdOk;
-				}
-				command_t *optList = cmdList[idx].ext;
+
+			command_t *optList = cmdList[idx].ext;
+			if (optList != nullptr)
+			{
 				for (int idx2 = 0; optList[idx2].name; idx2++) {
 					if (optList[idx2].name == args.current()) {
 						args.next();
@@ -53,10 +51,15 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 						return optList[idx2].func(cty, args);
 					}
 				}
-			} else {
-				assert(cmdList[idx].func != nullptr);
-				return cmdList[idx].func(cty, args);
 			}
+
+			if (cmdList[idx].func != nullptr)
+				return cmdList[idx].func(cty, args);
+
+//			cout << fmt::sprintf("Usage: %s <%s%s%s> [arguments...]\n", args[0],
+//				cmdList[idx].func != nullptr ? "device" : "",
+//				(cmdList[idx].func != nullptr && cmdList[idx].ext != nullptr) ? "|" : "",
+//				cmdList[idx].ext != nullptr ? "options" : "");
 		}
 	}
 
