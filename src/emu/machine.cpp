@@ -6,6 +6,7 @@
  */
 
 #include "emu/core.h"
+#include "emu/dibus.h"
 #include "emu/map/map.h"
 #include "emu/machine.h"
 
@@ -17,6 +18,9 @@ Machine::Machine(const SystemConfig &config, cstag_t &tagName)
 	// Assign machine handler to all devices
 	for (Device &dev : DeviceIterator(*sysDevice))
 		dev.setMachine(this);
+
+	// Assign system bus management to system device
+	sysDevice->setExternalBusManager(&busManager);
 }
 
 Machine::~Machine()

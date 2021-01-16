@@ -8,6 +8,8 @@
 #include "emu/core.h"
 #include "emu/dibus.h"
 
+using namespace aspace;
+
 diExternalBus::diExternalBus(device_t *owner, ctag_t *name)
 : DeviceInterface(owner, name)
 {
@@ -50,14 +52,14 @@ const mapAddressConfig *diExternalBus::getAddressConfig(int space) const
 	return nullptr;
 }
 
-map::Constructor diExternalBus::getAddressMap(int space) const
+Constructor diExternalBus::getAddressMap(int space) const
 {
 	if (space < AddressMapList.size())
 		return AddressMapList[space];
-	return map::Constructor();
+	return Constructor();
 }
 
-void diExternalBus::setAddressMap(int space, map::Constructor map)
+void diExternalBus::setAddressMap(int space, Constructor map)
 {
 	ctag_t *name = map.getName();
 

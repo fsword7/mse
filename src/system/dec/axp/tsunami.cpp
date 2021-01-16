@@ -15,11 +15,11 @@
 #include "devices/cpu/alpha/21264cb.h"
 #include "system/dec/axp/tsunami.h"
 
+using namespace aspace;
+
 // Create system routines
 void tsunami_device::es40(SystemConfig &config)
 {
-	// Initialize memory (removed later)
-//	space->createMainMemory(19u << 1);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{
@@ -27,6 +27,11 @@ void tsunami_device::es40(SystemConfig &config)
 		cpu[idx] = axp21264cb(config, tagName, 0);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
+
+	// TODO: Removed later when implement
+	// 'set <system> memory <size> <region>' command
+	// Initialize main memory (memory region)
+//	busManager->allocateRegion("main", 19u << 1, 8, LittleEndian);
 
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);
@@ -43,8 +48,6 @@ void tsunami_device::es40(SystemConfig &config)
 
 void tsunami_device::es45(SystemConfig &config)
 {
-	// Initialize memory (removed later)
-//	space->createMainMemory(19u << 1);
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{
@@ -52,6 +55,11 @@ void tsunami_device::es45(SystemConfig &config)
 		cpu[idx] = axp21264cb(config, tagName, 0);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
 	}
+
+	// TODO: Removed later when implement
+	// 'set <system> memory <size> <region>' command
+	// Initialize main memory (memory region)
+//	busManager->allocateRegion("main", 19u << 1, 8, LittleEndian);
 
 //	cssc   = CSSC(config, "cssc", 0);
 ////	cpu->setSystemSupport(cssc);
@@ -77,14 +85,14 @@ void tsunami_device::es45_init()
 
 }
 
-void tsunami_device::es40_sbus(map::AddressList &map)
+void tsunami_device::es40_sbus(AddressList &map)
 {
-	map(0x00000000000LL, 0x0001FFFFFFFLL).ram(); // up to 4 GB main memory (default 512 MB space)
+	map(0x00000000000LL, 0x0001FFFFFFFLL).ram().region("main"); // up to 4 GB main memory (default 512 MB space)
 }
 
-void tsunami_device::es45_sbus(map::AddressList &map)
+void tsunami_device::es45_sbus(AddressList &map)
 {
-	map(0x00000000000LL, 0x0001FFFFFFFLL).ram(); // up to 32 GB main memory (default 512 MB space)
+	map(0x00000000000LL, 0x0001FFFFFFFLL).ram().region("main"); // up to 32 GB main memory (default 512 MB space)
 }
 
 

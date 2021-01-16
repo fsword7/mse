@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-namespace map
+namespace aspace
 {
 	class AddressSpace;
 	class AddressList;
@@ -30,7 +30,7 @@ typedef uint64_t offs_t;
 class ProcessorDevice;
 class Machine;
 
-namespace map
+namespace aspace
 {
 	using Constructor = NamedDelegate<void (AddressList &)>;
 
@@ -134,6 +134,8 @@ namespace map
 
 		// Setup initialization routines
 		void prepare(Console *cty);
+		void populate(Console *cty);
+		void allocate(Console *cty);
 
 		// Virtual function calls
 		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
@@ -160,6 +162,13 @@ namespace map
 
 		AddressList    *map = nullptr;
 
+		offs_t addrMask = 0;
+
+		offs_t unmapValue = 0;
+
+		// Optional main memory space
+		uint8_t *memData = nullptr;
+		uint64_t memSize = 0;
 	};
 
 	class MemoryBlock
@@ -187,16 +196,59 @@ namespace map
 		vector<uint8_t> allocated;
 	};
 
-	using BlockList = vector<MemoryBlock *>;
+	class MemoryRegion
+	{
+	public:
+		MemoryRegion(Machine *sys, cstag_t &name, uint64_t size, int width, endian_t type)
+		: system(sys), name(name), data(size), width(width), type(type)
+		{
+			assert(width == 8 || width == 16 || width == 32 || width == 64);
+		}
+
+		inline Machine  *getMachine() const  { return system; }
+//		inline ctag_t   *getName() const     { return name.c_str(); }
+		inline cstag_t  &getName() const     { return name; }
+		inline uint64_t  getSize() const     { return data.size(); }
+		inline endian_t  getEndian() const   { return type; }
+		inline int       getBitWidth() const { return width; }
+
+		uint8_t *getBase() { return (data.size() > 0) ? &data[0] : nullptr; }
+		uint8_t *getEnd()  { return getBase() + data.size(); }
+
+		// Get data access
+		uint8_t  &getAccess8(offs_t off = 0) { return data[off]; }
+		uint16_t &getAccess16(offs_t off = 0) { return reinterpret_cast<uint16_t *>(getBase())[off]; }
+		uint32_t &getAccess32(offs_t off = 0) { return reinterpret_cast<uint32_t *>(getBase())[off]; }
+		uint64_t &getAccess64(offs_t off = 0) { return reinterpret_cast<uint64_t *>(getBase())[off]; }
+
+	private:
+		Machine        *system = nullptr;
+		cstag_t         name;
+		vector<uint8_t> data;
+		int             width;
+		endian_t        type;
+	};
+
+	using BlockList =  vector<MemoryBlock *>;
+	using RegionList = std::map<string, MemoryRegion *>;
 
 	class BusManager
 	{
 	public:
-		BusManager(Machine *sys) : system(sys) { blocks.clear(); }
+		BusManager(Machine *sys) : system(sys) { blocks.clear();  regions.clear(); }
 		~BusManager() = default;
 
-		inline Machine *getMachine()     { return system; }
-		inline BlockList &getBlockList() { return blocks; }
+		inline Machine *getMachine()       { return system; }
+		inline BlockList &getBlockList()   { return blocks; }
+		inline RegionList &getRegionList() { return regions; }
+
+		inline uint8_t *getMemoryData() const { return memData; }
+		inline uint64_t getMemorySize() const { return memSize; }
+
+		void allocateMainMemory(uint64_t size, uint8_t value = 0);
+		MemoryRegion *allocateRegion(cstag_t &name, uint64_t size, int width, endian_t type);
+		void releaseRegion(cstag_t &name);
+		MemoryRegion *findRegion(cstag_t &name);
 
 		// Executed from start command
 		void init(Console *cty);
@@ -205,15 +257,20 @@ namespace map
 	private:
 		Machine *system = nullptr;
 		BlockList blocks;
+		RegionList regions;
+
+		// Main memory space allocation
+		uint8_t  *memData = nullptr;
+		uint64_t  memSize = 0;
 	};
 }
 
-using mapSpaceType     = map::SpaceType;
-using mapConfigEntry   = map::ConfigEntry;
-using mapConfigList    = map::ConfigList;
+using mapSpaceType     = aspace::SpaceType;
+using mapConfigEntry   = aspace::ConfigEntry;
+using mapConfigList    = aspace::ConfigList;
 
-using mapAddressConfig = map::AddressConfig;
-using mapAddressSpace  = map::AddressSpace;
-using mapMemoryBlock   = map::MemoryBlock;
-using mapBusManager    = map::BusManager;
+using mapAddressConfig = aspace::AddressConfig;
+using mapAddressSpace  = aspace::AddressSpace;
+using mapMemoryBlock   = aspace::MemoryBlock;
+using mapBusManager    = aspace::BusManager;
 

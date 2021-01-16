@@ -10,7 +10,7 @@
 #include "emu/dibus.h"
 #include "emu/map/addrmap.h"
 
-using namespace map;
+using namespace aspace;
 
 // ******** AddressEntry ********
 
@@ -19,6 +19,15 @@ AddressEntry::AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t
   addrStart(start), addrEnd(end)
 {
 
+}
+
+AddressEntry &AddressEntry::region(ctag_t *name, offs_t off)
+{
+	// Assign region space to that entry
+	regionName   = name;
+	regionOffset = off;
+
+	return *this;
 }
 
 AddressEntry &AddressEntry::mask(offs_t mask)
@@ -36,7 +45,7 @@ AddressList::AddressList(device_t &dev, int space)
 : device(dev), addrSpace(space)
 {
 	diExternalBus *sbus;
-	const map::AddressConfig *config;
+	const AddressConfig *config;
 
 	list.clear();
 
@@ -46,7 +55,7 @@ AddressList::AddressList(device_t &dev, int space)
 	config = sbus->getAddressConfig(space);
 	assert(config != nullptr);
 
-	map::Constructor map = sbus->getAddressMap(space);
+	Constructor map = sbus->getAddressMap(space);
 	if (!map.isNull()) {
 		fmt::printf("%s: Trying call bus initialization delegate\n", dev.getDeviceName());
 		map(*this);

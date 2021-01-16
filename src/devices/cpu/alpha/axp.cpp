@@ -22,6 +22,6 @@ AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &typ
 mapConfigList AlphaProcessor::getAddressConfigList() const
 {
 	return mapConfigList {
-		{ map::asProgram, &mapProgramConfig }
+		{ aspace::asProgram, &mapProgramConfig }
 	};
 }

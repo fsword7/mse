@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace map
+namespace aspace
 {
 
 	// Data width - types

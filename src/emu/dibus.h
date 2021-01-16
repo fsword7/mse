@@ -61,13 +61,13 @@ public:
 //	const mapAddressConfig *getAddressConfig(mapSpaceType type) const;
 	const mapAddressConfig *getAddressConfig(int space) const;
 
-	map::Constructor getAddressMap(int space = 0) const;
+	aspace::Constructor getAddressMap(int space = 0) const;
 
 	template <typename T, typename U, typename Return, typename... Args>
 	enable_if_t<is_unrelated_device<Device, T>::value>
 	setAddressMap(int space, T &obj, Return (U::*func)(Args...))
 	{
-		setAddressMap(space, map::Constructor(func, obj.getDeviceName(), &dynamic_cast<U &>(obj)));
+		setAddressMap(space, aspace::Constructor(func, obj.getDeviceName(), &dynamic_cast<U &>(obj)));
 	}
 
 //	template <typename T, typename U, typename Return, typename... Args>
@@ -85,7 +85,7 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (related device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, map::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, aspace::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
 	}
 
 	template <typename T, typename Return, typename... Args>
@@ -96,10 +96,10 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (unrelated device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, map::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, aspace::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
 	}
 
-	void setAddressMap(int space, map::Constructor map);
+	void setAddressMap(int space, aspace::Constructor map);
 
 	void completeConfig();
 
@@ -117,12 +117,12 @@ public:
 
 	// Address space initialization routines
 	void prepare(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->prepare(cty); }}
-//	void populate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->populate(cty); }}
-//	void allocate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->allocate(cty); }}
+	void populate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->populate(cty); }}
+	void allocate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->allocate(cty); }}
 //	void locate(Console *cty) { for (auto const &space : mapSpace) if (space != nullptr) { space->locate(cty); }}
 
 private:
-	vector<map::Constructor> AddressMapList;
+	vector<aspace::Constructor> AddressMapList;
 	vector<const mapAddressConfig *> mapConfig;
 	vector<mapAddressSpace *> mapSpace;
 //	vector<mapMemory *> mapMemories;

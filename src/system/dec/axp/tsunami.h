@@ -29,8 +29,8 @@ public:
 	static void es40_init();
 	static void es45_init();
 
-	void es40_sbus(map::AddressList &map);
-	void es45_sbus(map::AddressList &map);
+	void es40_sbus(aspace::AddressList &map);
+	void es45_sbus(aspace::AddressList &map);
 
 private:
 	AlphaProcessor *cpu[ES40_NCPU];

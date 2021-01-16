@@ -11,7 +11,7 @@
 #include "emu/map/addrmap.h"
 #include "emu/map/map.h"
 
-using namespace map;
+using namespace aspace;
 
 //struct mapSpaceInfo
 //{
@@ -86,4 +86,39 @@ void BusManager::init(Console *cty)
 	for (auto const sbus : buses)
 		sbus->prepare(cty);
 
+	// Populating for set up address space access
+	for (auto const sbus : buses)
+		sbus->populate(cty);
+
+	// Allocating memory space for set up address space access
+	for (auto const sbus : buses)
+		sbus->allocate(cty);
+}
+
+void BusManager::allocateMainMemory(uint64_t size, uint8_t value)
+{
+	memData = new uint8_t[size];
+	memSize = size;
+	memset(memData, value, size);
+}
+
+MemoryRegion *BusManager::allocateRegion(cstag_t &name, uint64_t size, int width, endian_t type)
+{
+	MemoryRegion *region = new MemoryRegion(system, name, size, width, type);
+
+	regions.emplace(name, region);
+	return region;
+}
+
+void BusManager::releaseRegion(cstag_t &name)
+{
+	regions.erase(name);
+}
+
+MemoryRegion *BusManager::findRegion(cstag_t &name)
+{
+	auto entry = regions.find(name);
+	if (entry != regions.end())
+		return entry->second;
+	return nullptr;
 }

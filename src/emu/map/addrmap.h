@@ -7,9 +7,10 @@
 
 #pragma once
 
-namespace map
+namespace aspace
 {
 	class AddressList;
+	class AddressSpace;
 
 	enum mapType
 	{
@@ -29,6 +30,8 @@ namespace map
 
 	class AddressEntry
 	{
+		friend class AddressSpace;
+
 	public:
 		using offs_t = uint64_t;
 
@@ -41,6 +44,8 @@ namespace map
 		AddressEntry &wonly() { write.type = mapAccess; return *this; }
 
 		AddressEntry &mirror(offs_t bits) { addrMirror = bits; return *this; }
+
+		AddressEntry &region(ctag_t *name, offs_t off = 0);
 
 		AddressEntry &mask(offs_t mask);
 
@@ -56,6 +61,12 @@ namespace map
 		offs_t addrMask   = 0;   // Mask address bits
 		offs_t addrMirror = 0;   // Mirror address bits
 
+		uint8_t *memData = nullptr;
+
+		// Memory region parameters
+		ctag_t *regionName = nullptr;
+		offs_t  regionOffset = 0;
+
 		// read/write access handler
 		mapHandler read, write;
 	};
@@ -63,6 +74,7 @@ namespace map
 	class AddressList
 	{
 		friend class AddressEntry;
+		friend class AddressSpace;
 
 	public:
 		using offs_t = uint64_t;

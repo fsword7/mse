@@ -10,7 +10,7 @@
 #include "emu/map/addrmap.h"
 #include "emu/map/map.h"
 
-using namespace map;
+using namespace aspace;
 
 AddressConfig::AddressConfig(ctag_t *tagName, endian_t eType,
 	uint16_t dWidth, uint16_t dRadix, uint16_t bWidth,
@@ -24,6 +24,8 @@ AddressConfig::AddressConfig(ctag_t *tagName, endian_t eType,
 
 // **********************************************************************
 
+static ctag_t *asInfo[] = { "program", "data", "I/O port" };
+
 AddressSpace::AddressSpace(BusManager &manager, diExternalBus &bus, int space)
 : config(*bus.getAddressConfig(space)),
   device(*bus.getDevice()), manager(manager),
@@ -34,9 +36,64 @@ AddressSpace::AddressSpace(BusManager &manager, diExternalBus &bus, int space)
 
 void AddressSpace::prepare(Console *cty)
 {
+	fmt::printf("%s: Preparing for %s address space\n", device.getDeviceName(), asInfo[space]);
 
 	AddressList *map = new AddressList(device, space);
 
+	unmapValue = (map->unmapValue == 0) ? 0ull : ~0ull;
+	if (map->gaddrMask != 0ull)
+	{
+		if (map->gaddrMask & ~addrMask)
+			fmt::printf("%s(%s): Can't set a global mask of %llX on a %d-bit address width (mask %llX)\n",
+				device.getDeviceName(), asInfo[space], map->gaddrMask, config.getAddrWidth(), addrMask);
+		addrMask = map->gaddrMask;
+	}
+
+	for (AddressEntry *entry : map->list)
+	{
+		fmt::printf("%s(%s): Mapping %llX-%llX mask %llX mirror %llX\n", device.getDeviceName(), asInfo[space],
+			entry->addrStart, entry->addrEnd, entry->addrMask, entry->addrMirror);
+
+		// Validate addresses against named region space (expandable or non-expandable)
+		if (entry->regionName != nullptr)
+		{
+			MemoryRegion *region = manager.findRegion(entry->regionName);
+
+			if (region == nullptr) {
+				fmt::printf("%s(%s): %llX-%llX - non-existant region '%s'\n", device.getDeviceName(), asInfo[space],
+					entry->addrStart, entry->addrEnd, entry->regionName);
+				continue;
+			}
+
+			// Assign region space to that memory space
+			entry->memData = region->getBase();
+		}
+	}
+}
+
+void AddressSpace::populate(Console *cty)
+{
+	fmt::printf("%s: Populating for %s address space\n", device.getDeviceName(), asInfo[space]);
+
+}
+
+void AddressSpace::allocate(Console *cty)
+{
+	fmt::printf("%s: Allocating memory space for %s address space\n", device.getDeviceName(), asInfo[space]);
+
+	BlockList &blocks = manager.getBlockList();
+
+//	memData = manager.getMemoryData();
+//	memSize = manager.getMemorySize();
+//
+//	if (memData != nullptr && memSize > 0)
+//	{
+//
+//	}
+
+//	for (map::AddressEntry *entry : map->list)
+//		if (map->memData != nullptr)
+//			blocks.push_back(new map::MemoryBlock(config, entry->addrStart, entry->addrEnd, entry->memData));
 }
 
 // **********************************************************************

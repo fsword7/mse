@@ -20,6 +20,8 @@ public:
 	inline cstag_t  &getDeviceName() const   { return devName; }
 	inline device_t *getSystemDevice() const { return sysDevice; }
 
+	inline aspace::BusManager &getExternalBusManager() { return busManager; }
+
 	static Machine *create(ostream &out, const SystemDriver *driver, cstag_t &devName);
 
 	// Command function calls
@@ -34,5 +36,5 @@ private:
 	cstag_t devName;
 
 	// External bus manager
-	map::BusManager busManager;
+	aspace::BusManager busManager;
 };

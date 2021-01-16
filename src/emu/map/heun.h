@@ -7,7 +7,7 @@
 
 #pragma once
 
-namespace map
+namespace aspace
 {
 
 	template <int dWidth, int aShift, int Endian>
