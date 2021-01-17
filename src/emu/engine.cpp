@@ -6,7 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "emu/command.h"
+#include "emu/dibus.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
@@ -130,24 +130,58 @@ CommandStatus SystemEngine::create(Console *cty, args_t args)
 
 CommandStatus SystemEngine::dump(Console *cty, args_t args)
 {
-	string devName = args.getNext();
+	using namespace aspace;
 
-	Machine *sys = findSystem(devName);
-	if (sys == nullptr)
-	{
-		fmt::fprintf(cout, "%s: system not found\n", devName);
+	Device *dev = findDevice(cty, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
 	}
 
-	Device *dev = sys->getSystemDevice();
-	diExternalBus *mem;;
-	if (!dev->hasInterface(mem))
+	diExternalBus *sbus;
+	if (!dev->hasInterface(sbus))
 	{
-		fmt::fprintf(cout, "%s: do not have external bus interface\n", devName);
+		fmt::fprintf(cout, "%s: do not have external bus interface\n", dev->getDeviceName());
 		return CommandStatus::cmdOk;
 	}
-//	mapAddressSpace &space = dev->getAddressSpace();
+	AddressSpace *space = sbus->getAddressSpace();
 
+	uint32_t  sAddr, eAddr = -1;
+	char     *strAddr;
+
+	args.next();
+	sscanf(args.current().c_str(), "%x", &sAddr);
+	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
+		sscanf(strAddr+1, "%x", &eAddr);
+	else {
+		if (args.size() > 4) {
+			args.next();
+			sscanf(args.current().c_str(), "%x", &eAddr);
+			eAddr = sAddr + eAddr - 1;
+		} else if (eAddr == -1)
+			eAddr = sAddr + 0x140 - 1;
+	}
+
+	int       idx;
+	char      line[256], lasc[32];
+	char      *lptr, *pasc;
+	uint32_t  data;
+	uint32_t  sts;
+
+	while (sAddr <= eAddr) {
+		lptr = line;
+		pasc = lasc;
+		lptr += sprintf(lptr, "%08X: ", sAddr);
+		for (idx = 0; (idx < 16) && (sAddr <= eAddr); idx++) {
+			data = space->read8(sAddr++);
+			lptr += sprintf(lptr, "%02X%c", data, (idx == 7) ? '-' : ' ');
+			*pasc++ = ((data >= 32) && (data < 127)) ? data : '.';
+		}
+		*pasc = '\0';
+		*lptr = '\0';
+
+		fmt::printf("%s |%-16s|\n", line, lasc);
+	}
 
 	return CommandStatus::cmdOk;
 }

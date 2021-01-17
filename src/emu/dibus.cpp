@@ -52,6 +52,13 @@ const mapAddressConfig *diExternalBus::getAddressConfig(int space) const
 	return nullptr;
 }
 
+AddressSpace *diExternalBus::getAddressSpace(int space) const
+{
+	if (space >= 0 && space < mapSpace.size())
+		return mapSpace[space];
+	return nullptr;
+}
+
 Constructor diExternalBus::getAddressMap(int space) const
 {
 	if (space < AddressMapList.size())

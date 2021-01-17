@@ -62,6 +62,7 @@ public:
 	const mapAddressConfig *getAddressConfig(int space) const;
 
 	aspace::Constructor getAddressMap(int space = 0) const;
+	aspace::AddressSpace *getAddressSpace(int space = 0) const;
 
 	template <typename T, typename U, typename Return, typename... Args>
 	enable_if_t<is_unrelated_device<Device, T>::value>
