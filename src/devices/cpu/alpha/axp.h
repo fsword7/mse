@@ -128,12 +128,22 @@
 #define WRITEV(vAddr, size, value)
 #define WRITEVC(vAddr, size, value)
 
+struct opcAlpha
+{
+	ctag_t   *opName;	// Instruction name
+	uint32_t  opFlags;	// Opcode flags
+	uint16_t  opCode;	// Opcode code
+	uint16_t  fnCode;	// Function code
+};
+
 class AlphaProcessor : public ProcessorDevice
 {
 public:
 	AlphaProcessor(const SystemConfig &config, const DeviceType &type,
 		const string &tagName, Device *owner, uint64_t clock, int aWidth);
 	virtual ~AlphaProcessor() = default;
+
+	void initOpcodeTable();
 
 	void init();
 	void execute();
@@ -152,6 +162,10 @@ public:
 	// Debugging tools
 	string getStringAddress(offs_t addr);
 	int list(Console *cty, offs_t vAddr) override;
+
+	static opcAlpha axp_opCodes[];
+
+	opcAlpha *axpCodes[OPM_CODE+1];
 
 protected:
 

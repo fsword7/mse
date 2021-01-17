@@ -16,7 +16,8 @@ AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &typ
 : ProcessorDevice(config, type, tagName, owner, clock),
   mapProgramConfig("program", LittleEndian, 64, 16, 8, aWidth, 16, 0)
 {
-
+	// Initialize opcode table for disassembler
+	initOpcodeTable();
 }
 
 mapConfigList AlphaProcessor::getAddressConfigList() const

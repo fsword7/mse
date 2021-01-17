@@ -3,6 +3,7 @@ set(MSE_CPP_SRCS
 	devices/cpu/alpha/axp.cpp
 	devices/cpu/alpha/debug.cpp
 	devices/cpu/alpha/execute.cpp
+	devices/cpu/alpha/opcodes.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/heun.cpp
