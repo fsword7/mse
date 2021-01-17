@@ -60,8 +60,10 @@ CommandStatus cmdExit(Console *, args_t &args)
 }
 
 // list <device> <suboptions ...>
-CommandStatus cmdList(Console *, args_t &args)
+CommandStatus cmdList(Console *cty, args_t &args)
 {
+	SystemEngine engine;
+	engine.list(cty, args);
 	return cmdOk;
 }
 
@@ -138,7 +140,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
-		{ "list",		nullptr,	CommandHandler::mseListCommands },
+		{ "list",		cmdList,	CommandHandler::mseListCommands },
 		{ "load",		cmdLoad,	nullptr },
 		{ "reset",		cmdReset,	nullptr },
 		{ "set",		cmdSet,		CommandHandler::mseSetCommands },

@@ -154,7 +154,7 @@ CommandStatus SystemEngine::dump(Console *cty, args_t &args)
 	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
 		sscanf(strAddr+1, "%x", &eAddr);
 	else {
-		if (args.size() > 4) {
+		if (args.size() > 3) {
 			args.next();
 			sscanf(args.current().c_str(), "%x", &eAddr);
 			eAddr = sAddr + eAddr - 1;
@@ -181,6 +181,55 @@ CommandStatus SystemEngine::dump(Console *cty, args_t &args)
 		*lptr = '\0';
 
 		fmt::printf("%s |%-16s|\n", line, lasc);
+	}
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::list(Console *cty, args_t &args)
+{
+	using namespace aspace;
+
+	Device *dev = findDevice(cty, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	diExternalBus *sbus;
+	if (!dev->hasInterface(sbus))
+	{
+		fmt::fprintf(cout, "%s: do not have external bus interface\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
+	AddressSpace *space = sbus->getAddressSpace();
+
+	uint32_t  sAddr, eAddr = -1;
+	char     *strAddr;
+	int       count = 20; // default 20 line count
+
+	args.next();
+	sscanf(args.current().c_str(), "%x", &sAddr);
+	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
+	{
+		sscanf(strAddr+1, "%x", &eAddr);
+		count = (eAddr - sAddr) / 4;
+	}
+	else if (args.size() > 3)
+	{
+		args.next();
+		sscanf(args.current().c_str(), "%d", &count);
+	}
+
+	uint64_t addr = sAddr;
+	uint32_t opCode;
+	for (int idx = 0; idx < count; idx++)
+	{
+		opCode = space->read32(addr);
+		fmt::printf("%llX  %08X\n", addr, opCode);
+
+		// next PC addrees
+		addr += 4;
 	}
 
 	return CommandStatus::cmdOk;
