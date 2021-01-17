@@ -133,7 +133,7 @@ class AlphaProcessor : public ProcessorDevice
 public:
 	AlphaProcessor(const SystemConfig &config, const DeviceType &type,
 		const string &tagName, Device *owner, uint64_t clock, int aWidth);
-	~AlphaProcessor() = default;
+	virtual ~AlphaProcessor() = default;
 
 	void init();
 	void execute();
@@ -148,6 +148,10 @@ public:
 	}
 
 	mapConfigList getAddressConfigList() const;
+
+	// Debugging tools
+	string getStringAddress(offs_t addr);
+	int list(Console *cty, offs_t vAddr) override;
 
 protected:
 

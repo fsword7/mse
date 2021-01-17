@@ -7,11 +7,15 @@
 
 #pragma once
 
+#include "emu/map/map.h"
+
 class diDebug : public DeviceInterface
 {
 public:
 	diDebug(device_t *owner);
-	~diDebug() = default;
+	virtual ~diDebug() = default;
+
+	virtual int list(Console *cty, offs_t vAddr) = 0;
 
 private:
 };

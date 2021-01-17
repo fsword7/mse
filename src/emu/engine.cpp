@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "emu/dibus.h"
+#include "emu/didebug.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
@@ -197,12 +198,19 @@ CommandStatus SystemEngine::list(Console *cty, args_t &args)
 	}
 
 	diExternalBus *sbus;
+	diDebug *debug;
 	if (!dev->hasInterface(sbus))
 	{
 		fmt::fprintf(cout, "%s: do not have external bus interface\n", dev->getDeviceName());
 		return CommandStatus::cmdOk;
 	}
 	AddressSpace *space = sbus->getAddressSpace();
+
+	if (!dev->hasInterface(debug))
+	{
+		fmt::fprintf(cout, "%s: do not have debug tools\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
 
 	uint32_t  sAddr, eAddr = -1;
 	char     *strAddr;
@@ -225,11 +233,12 @@ CommandStatus SystemEngine::list(Console *cty, args_t &args)
 	uint32_t opCode;
 	for (int idx = 0; idx < count; idx++)
 	{
-		opCode = space->read32(addr);
-		fmt::printf("%llX  %08X\n", addr, opCode);
-
-		// next PC addrees
-		addr += 4;
+//		opCode = space->read32(addr);
+//		fmt::printf("%llX  %08X\n", addr, opCode);
+//
+//		// next PC addrees
+//		addr += 4;
+		addr += debug->list(cty, addr);
 	}
 
 	return CommandStatus::cmdOk;

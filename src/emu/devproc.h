@@ -18,8 +18,6 @@ class ProcessorDevice
   public diExternalBus,
   public diDebug
 {
-public:
-
 protected:
 	ProcessorDevice(const SystemConfig &config, const DeviceType &type,
 			const string &tagName, Device *owner, uint64_t clock);
