@@ -107,12 +107,12 @@ void tsunami_device::es45_init()
 
 void tsunami_device::es40_sbus(AddressList &map)
 {
-	map(0x00000000000LL, 0x0001FFFFFFFLL).ram().region("main"); // up to 4 GB main memory (default 512 MB space)
+	map(0x00000000000LL, 0x000FFFFFFFFLL).ram().region("main"); // up to 4 GB main memory (default 512 MB space)
 }
 
 void tsunami_device::es45_sbus(AddressList &map)
 {
-	map(0x00000000000LL, 0x0001FFFFFFFLL).ram().region("main"); // up to 32 GB main memory (default 512 MB space)
+	map(0x00000000000LL, 0x007FFFFFFFFLL).ram().region("main"); // up to 32 GB main memory (default 512 MB space)
 }
 
 

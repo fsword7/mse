@@ -47,7 +47,7 @@ namespace aspace {
 		//			return mem->data[addr - mem->baseAddr];
 		//	}
 
-			return 0;
+			return unmapValue;
 		}
 
 		uint16_t read16(offs_t addr, ProcessorDevice *cpu)
@@ -56,12 +56,12 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x1);
 				return *((uint16_t *)ptr);
 			}
-			return 0;
+			return unmapValue;
 		}
 
 		uint16_t read16u(offs_t addr, ProcessorDevice *cpu)
 		{
-			return 0;
+			return unmapValue;
 		}
 
 		uint32_t read32(offs_t addr, ProcessorDevice *cpu)
@@ -70,12 +70,12 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x3);
 				return *((uint32_t *)ptr);
 			}
-			return 0;
+			return unmapValue;
 		}
 
 		uint32_t read32u(offs_t addr, ProcessorDevice *cpu)
 		{
-			return 0;
+			return unmapValue;
 		}
 
 		uint64_t read64(offs_t addr, ProcessorDevice *cpu)
@@ -84,12 +84,12 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x7);
 				return *((uint64_t *)ptr);
 			}
-			return 0;
+			return unmapValue;
 		}
 
 		uint64_t read64u(offs_t addr, ProcessorDevice *cpu)
 		{
-			return 0;
+			return unmapValue;
 		}
 
 		// **** Write access function calls ****

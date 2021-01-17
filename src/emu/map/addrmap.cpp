@@ -57,7 +57,7 @@ AddressList::AddressList(device_t &dev, int space)
 
 	Constructor map = sbus->getAddressMap(space);
 	if (!map.isNull()) {
-		fmt::printf("%s: Trying call bus initialization delegate\n", dev.getDeviceName());
+//		fmt::printf("%s: Trying call bus initialization delegate\n", dev.getDeviceName());
 		map(*this);
 	}
 }

@@ -132,6 +132,11 @@ namespace aspace
 		inline int16_t  getAddrShift() const { return config.getAddrShift(); }
 		inline int16_t  getPageShift() const { return config.getPageShift(); }
 
+		// Unmapped value setting
+		inline void setUnmapLowValue()          { unmapValue = 0; }
+		inline void setUnmapHighValue()         { unmapValue = ~0ull; }
+		inline void setUnmapValue(uint64_t val) { unmapValue = val; }
+
 		// Setup initialization routines
 		void prepare(Console *cty);
 		void populate(Console *cty);
@@ -164,7 +169,7 @@ namespace aspace
 
 		offs_t addrMask = 0;
 
-		offs_t unmapValue = 0;
+		uint64_t unmapValue = 0;
 
 		// Optional main memory space
 		uint8_t *memData = nullptr;

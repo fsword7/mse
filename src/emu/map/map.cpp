@@ -38,7 +38,8 @@ void AddressSpace::prepare(Console *cty)
 {
 	fmt::printf("%s: Preparing for %s address space\n", device.getDeviceName(), asInfo[space]);
 
-	AddressList *map = new AddressList(device, space);
+	assert(map == nullptr);
+	map = new AddressList(device, space);
 
 	unmapValue = (map->unmapValue == 0) ? 0ull : ~0ull;
 	if (map->gaddrMask != 0ull)
@@ -65,6 +66,14 @@ void AddressSpace::prepare(Console *cty)
 				continue;
 			}
 
+			// Determine ending address for expandable memory space
+			if (region->getSize() < (entry->addrEnd - entry->addrStart + 1)) {
+				fmt::printf("%s(%s): %llX-%llX - expandable range up to %llX\n", device.getDeviceName(), asInfo[space],
+					entry->addrStart, (entry->addrStart + region->getSize() - 1), entry->addrEnd);
+				// New ending address for desired memory length
+				entry->addrEnd = entry->addrStart + region->getSize() - 1;
+			}
+
 			// Assign region space to that memory space
 			entry->memData = region->getBase();
 		}
@@ -75,6 +84,7 @@ void AddressSpace::populate(Console *cty)
 {
 	fmt::printf("%s: Populating for %s address space\n", device.getDeviceName(), asInfo[space]);
 
+	assert(map != nullptr);
 }
 
 void AddressSpace::allocate(Console *cty)
@@ -83,17 +93,21 @@ void AddressSpace::allocate(Console *cty)
 
 	BlockList &blocks = manager.getBlockList();
 
-//	memData = manager.getMemoryData();
-//	memSize = manager.getMemorySize();
-//
-//	if (memData != nullptr && memSize > 0)
-//	{
-//
-//	}
+	assert(map != nullptr);
+	for (AddressEntry *entry : map->list)
+	{
+		if (entry->memData != nullptr && entry->addrStart == 0) {
+			if (entry->addrStart == 0)
+			{
+				// Assign fast access for main memory
+				// if starting address is zero.
+				memData = entry->memData;
+				memSize = entry->addrEnd + 1;
+			}
+//			blocks.push_back(new MemoryBlock(config, entry->addrStart, entry->addrEnd, entry->memData));
+		}
+	}
 
-//	for (map::AddressEntry *entry : map->list)
-//		if (map->memData != nullptr)
-//			blocks.push_back(new map::MemoryBlock(config, entry->addrStart, entry->addrEnd, entry->memData));
 }
 
 // **********************************************************************
