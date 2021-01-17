@@ -69,6 +69,49 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 
 // Console handler
 
+void Console::script(fs::path fname)
+{
+	fmt::printf("Script: %s\n", fname);
+
+	CommandHandler cmd;
+	string   cmdLine;
+	int      noLine = 0;
+
+	CommandStatus st = cmdOk;
+
+	try {
+		ifstream fin(fname);
+		while (!fin.eof())
+		{
+			getline(fin, cmdLine);
+			noLine++;
+
+			fmt::printf("/// %04d: %s\n", noLine, cmdLine);
+
+			// Check comment character first
+			if (cmdLine[0] == '#' || cmdLine[0] == ';')
+				continue;
+
+			st = cmd.execute(this, cmdLine);
+			if (st == cmdShutdown)
+				break;
+			if (st == cmdNotFound)
+			{
+				cout << fmt::sprintf("*** Invalid command: %s\n", cmdLine) << flush;
+				st = cmdOk;
+			}
+		}
+
+		fin.close();
+	}
+
+	catch (system_error &e)
+	{
+		fmt::fprintf(cerr, "%s: file error: %s\n", fname, e.code().message());
+		cout << flush;
+	}
+}
+
 void Console::prompt()
 {
 	CommandHandler cmd;

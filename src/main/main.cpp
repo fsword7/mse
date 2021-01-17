@@ -19,6 +19,8 @@ int main(int argc, char **argv)
 	// System initialization
 	engine.ginit();
 
+	if (argc > 1)
+		cty.script(argv[1]);
 	cty.prompt();
 
 	// System shut down and cleanup

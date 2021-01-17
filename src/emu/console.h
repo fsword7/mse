@@ -15,6 +15,7 @@ public:
 	Console() = default;
 	~Console() = default;
 
+	void script(fs::path fname);
 	void prompt();
 
 	inline void setDialedSystem(Device *device) { dialedSystem = device; }

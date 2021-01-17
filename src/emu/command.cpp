@@ -65,6 +65,14 @@ CommandStatus cmdList(Console *, args_t &args)
 	return cmdOk;
 }
 
+// load <device> <file> <address>
+CommandStatus cmdLoad(Console *cty, args_t &args)
+{
+	SystemEngine engine;
+	engine.load(cty, args);
+	return cmdOk;
+}
+
 // reset <device>
 CommandStatus cmdReset(Console *, args_t &args)
 {
@@ -131,6 +139,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		nullptr,	CommandHandler::mseListCommands },
+		{ "load",		cmdLoad,	nullptr },
 		{ "reset",		cmdReset,	nullptr },
 		{ "set",		cmdSet,		CommandHandler::mseSetCommands },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },
