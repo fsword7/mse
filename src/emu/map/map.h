@@ -158,6 +158,7 @@ namespace aspace
 		virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
 		virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
 		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void writeBlock(offs_t addr, uint8_t *data, uint64_t size) = 0;
 
 	protected:
 		cAddressConfig &config;

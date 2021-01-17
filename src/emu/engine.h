@@ -26,12 +26,13 @@ public:
 
 	uint64_t getValue(cstag_t sValue);
 
-	CommandStatus create(Console *cty, args_t args);
-	CommandStatus dump(Console *cty, args_t args);
-	CommandStatus set(Console *cty, args_t args);
-	CommandStatus show(Console *cty, args_t args);
-	CommandStatus showDevices(Console *cty, args_t args);
-	CommandStatus start(Console *cty, args_t args);
+	CommandStatus create(Console *cty, args_t &args);
+	CommandStatus dump(Console *cty, args_t &args);
+	CommandStatus load(Console *cty, args_t &args);
+	CommandStatus set(Console *cty, args_t &args);
+	CommandStatus show(Console *cty, args_t &args);
+	CommandStatus showDevices(Console *cty, args_t &args);
+	CommandStatus start(Console *cty, args_t &args);
 
 private:
 	// Machines

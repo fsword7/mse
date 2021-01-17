@@ -91,7 +91,7 @@ uint64_t SystemEngine::getValue(cstag_t sValue)
 	return value;
 }
 
-CommandStatus SystemEngine::create(Console *cty, args_t args)
+CommandStatus SystemEngine::create(Console *cty, args_t &args)
 {
 	SystemList list;
 	string devName = args.getNext();
@@ -128,7 +128,7 @@ CommandStatus SystemEngine::create(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::dump(Console *cty, args_t args)
+CommandStatus SystemEngine::dump(Console *cty, args_t &args)
 {
 	using namespace aspace;
 
@@ -186,7 +186,55 @@ CommandStatus SystemEngine::dump(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::set(Console *cty, args_t args)
+CommandStatus SystemEngine::load(Console *cty, args_t &args)
+{
+	using namespace aspace;
+
+	Device *dev = findDevice(cty, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	diExternalBus *sbus;
+	if (!dev->hasInterface(sbus))
+	{
+		fmt::fprintf(cout, "%s: do not have external bus interface\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
+	AddressSpace *space = sbus->getAddressSpace();
+
+	args.next();
+	fs::path fname = args.current();
+
+	args.next();
+	offs_t off;
+	sscanf(args.current().c_str(), "%llx", &off);
+	offs_t soff = off;
+
+	try {
+		ifstream fin(fname, ios::binary);
+		uint8_t blkData[512];
+		while (!fin.eof())
+		{
+			fin.read((char *)blkData, sizeof(blkData));
+			space->writeBlock(off, blkData, fin.gcount());
+			off += fin.gcount();
+		}
+		fin.close();
+		fmt::printf("%s: Loaded into %llX-%llX (length: %d bytes)\n", fname, soff, off, off - soff);
+	}
+
+	catch (system_error &e)
+	{
+		fmt::fprintf(cerr, "%s: file error: %s\n", fname, e.code().message());
+		cout << flush;
+	}
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::set(Console *cty, args_t &args)
 {
 	Device *dev = findDevice(cty, args.current());
 	if (dev == nullptr) {
@@ -214,7 +262,7 @@ CommandStatus SystemEngine::set(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::show(Console *cty, args_t args)
+CommandStatus SystemEngine::show(Console *cty, args_t &args)
 {
 	Device *dev = findDevice(cty, args.current());
 	if (dev == nullptr) {
@@ -225,7 +273,7 @@ CommandStatus SystemEngine::show(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
+CommandStatus SystemEngine::showDevices(Console *cty, args_t &args)
 {
 	Device *root = findDevice(cty, args.current());
 	if (root == nullptr) {
@@ -241,7 +289,7 @@ CommandStatus SystemEngine::showDevices(Console *cty, args_t args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::start(Console *cty, args_t args)
+CommandStatus SystemEngine::start(Console *cty, args_t &args)
 {
 //	Device *sysDevice = cty->getDialedSystem();
 //	if (sysDevice == nullptr)

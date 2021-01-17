@@ -129,6 +129,15 @@ namespace aspace {
 
 		}
 
+		void writeBlock(offs_t addr, uint8_t *data, uint64_t size)
+		{
+			if (addr < memSize) {
+				if ((addr + size) > memSize)
+					size = memSize - addr;
+				memcpy(&memData[addr], data, size);
+			}
+		}
+
 	private:
 		HandlerRead<dWidth, aShift, endian> *rootRead = nullptr;
 		HandlerWrite<dWidth, aShift, endian> *rootWrite = nullptr;
