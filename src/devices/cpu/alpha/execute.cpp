@@ -37,7 +37,7 @@ void AlphaProcessor::execute()
 	state.iRegs[AXP_NIREGS-1] = 0;
 	state.fRegs[AXP_NFREGS-1] = 0;
 
-	opCode = OP_GETCD(inst);
+	opCode = OP_GETOP(inst);
 	switch (opCode)
 	{
 	case OPC_PAL:		// 00 - CALL_PAL instruction
