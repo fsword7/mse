@@ -21,19 +21,21 @@ public:
 	void gexit();
 
 	Machine *findSystem(cstag_t name);
-	Device  *findDevice(Console *cty, cstag_t name);
+	Device  *findDevice(Console *user, cstag_t name);
 	Device  *findDevice(cstag_t name);
 
 	uint64_t getValue(cstag_t sValue);
 
-	CommandStatus create(Console *cty, args_t &args);
-	CommandStatus dump(Console *cty, args_t &args);
-	CommandStatus list(Console *cty, args_t &args);
-	CommandStatus load(Console *cty, args_t &args);
-	CommandStatus set(Console *cty, args_t &args);
-	CommandStatus show(Console *cty, args_t &args);
-	CommandStatus showDevices(Console *cty, args_t &args);
-	CommandStatus start(Console *cty, args_t &args);
+	CommandStatus create(Console *user, args_t &args);
+	CommandStatus dump(Console *user, args_t &args);
+	CommandStatus list(Console *user, args_t &args);
+	CommandStatus load(Console *user, args_t &args);
+	CommandStatus reset(Console *user, args_t &args);
+	CommandStatus set(Console *user, args_t &args);
+	CommandStatus show(Console *user, args_t &args);
+	CommandStatus showDevices(Console *user, args_t &args);
+	CommandStatus step(Console *user, args_t &args);
+	CommandStatus start(Console *user, args_t &args);
 
 private:
 	// Machines

@@ -38,9 +38,9 @@ Machine *SystemEngine::findSystem(const string sysName)
 	return nullptr;
 }
 
-Device *SystemEngine::findDevice(Console *cty, cstag_t name)
+Device *SystemEngine::findDevice(Console *user, cstag_t name)
 {
-	Device *sysDevice = cty->getDialedSystem();
+	Device *sysDevice = user->getDialedSystem();
 	if (sysDevice == nullptr)
 	{
 		fmt::printf("Please dial system first\n");
@@ -93,7 +93,7 @@ uint64_t SystemEngine::getValue(cstag_t sValue)
 	return value;
 }
 
-CommandStatus SystemEngine::create(Console *cty, args_t &args)
+CommandStatus SystemEngine::create(Console *user, args_t &args)
 {
 	SystemList list;
 	string devName = args.getNext();
@@ -124,17 +124,17 @@ CommandStatus SystemEngine::create(Console *cty, args_t &args)
 	machines.push_back(sys);
 
 	// Dial system as default
-	cty->setDialedSystem(sys->getSystemDevice());
-	cty->setDialedDevice(nullptr);
+	user->setDialedSystem(sys->getSystemDevice());
+	user->setDialedDevice(nullptr);
 
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::dump(Console *cty, args_t &args)
+CommandStatus SystemEngine::dump(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(cty, args.current());
+	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
@@ -188,11 +188,11 @@ CommandStatus SystemEngine::dump(Console *cty, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::list(Console *cty, args_t &args)
+CommandStatus SystemEngine::list(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(cty, args.current());
+	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
@@ -239,17 +239,17 @@ CommandStatus SystemEngine::list(Console *cty, args_t &args)
 //
 //		// next PC addrees
 //		addr += 4;
-		addr += debug->list(cty, addr);
+		addr += debug->list(user, addr);
 	}
 
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::load(Console *cty, args_t &args)
+CommandStatus SystemEngine::load(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(cty, args.current());
+	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
@@ -304,9 +304,23 @@ CommandStatus SystemEngine::load(Console *cty, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::set(Console *cty, args_t &args)
+CommandStatus SystemEngine::reset(Console *user, args_t &args)
 {
-	Device *dev = findDevice(cty, args.current());
+	Device *dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	// Reset device back to initialized state
+	dev->reset();
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::set(Console *user, args_t &args)
+{
+	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
@@ -323,7 +337,7 @@ CommandStatus SystemEngine::set(Console *cty, args_t &args)
 		if (cmdList[idx].name == args.current()) {
 			args.next();
 			if (cmdList[idx].func != nullptr)
-				return cmdList[idx].func(cty, dev, args);
+				return cmdList[idx].func(user, dev, args);
 		}
 	}
 
@@ -332,9 +346,9 @@ CommandStatus SystemEngine::set(Console *cty, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::show(Console *cty, args_t &args)
+CommandStatus SystemEngine::show(Console *user, args_t &args)
 {
-	Device *dev = findDevice(cty, args.current());
+	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		fmt::printf("%s: unknown device\n", args.current());
 		return CommandStatus::cmdOk;
@@ -343,9 +357,9 @@ CommandStatus SystemEngine::show(Console *cty, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::showDevices(Console *cty, args_t &args)
+CommandStatus SystemEngine::showDevices(Console *user, args_t &args)
 {
-	Device *root = findDevice(cty, args.current());
+	Device *root = findDevice(user, args.current());
 	if (root == nullptr) {
 		fmt::printf("No such devices\n");
 		return CommandStatus::cmdOk;
@@ -359,9 +373,9 @@ CommandStatus SystemEngine::showDevices(Console *cty, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::start(Console *cty, args_t &args)
+CommandStatus SystemEngine::start(Console *user, args_t &args)
 {
-//	Device *sysDevice = cty->getDialedSystem();
+//	Device *sysDevice = user->getDialedSystem();
 //	if (sysDevice == nullptr)
 //	{
 //		fmt::printf("Please dial system first\n");
@@ -377,7 +391,29 @@ CommandStatus SystemEngine::start(Console *cty, args_t &args)
 	}
 
 	// Start system device as final initialization
-	sys->start(cty);
+	sys->start(user);
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::step(Console *user, args_t &args)
+{
+	using namespace aspace;
+
+	Device *dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		fmt::printf("%s: unknown device\n", args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	diExecute *exec;
+	if (!dev->hasInterface(exec))
+	{
+		fmt::fprintf(cout, "%s: do not have execution interface\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
+
+	exec->step(user);
 
 	return CommandStatus::cmdOk;
 }

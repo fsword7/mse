@@ -76,8 +76,10 @@ CommandStatus cmdLoad(Console *cty, args_t &args)
 }
 
 // reset <device>
-CommandStatus cmdReset(Console *, args_t &args)
+CommandStatus cmdReset(Console *user, args_t &args)
 {
+	SystemEngine engine;
+	engine.reset(user, args);
 	return cmdOk;
 }
 
@@ -104,6 +106,14 @@ CommandStatus cmdStart(Console *cty, args_t &args)
 
 	engine.start(cty, args);
 
+	return cmdOk;
+}
+
+// step <device>
+CommandStatus cmdStep(Console *user, args_t &args)
+{
+	SystemEngine engine;
+	engine.step(user, args);
 	return cmdOk;
 }
 
@@ -146,6 +156,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "set",		cmdSet,		CommandHandler::mseSetCommands },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },
 		{ "start",		cmdStart,	nullptr },
+		{ "step",		cmdStep,	nullptr },
 		{ "stop",		cmdStop,	nullptr },
 		{ "quit",		cmdExit,	nullptr },
 		// Terminator

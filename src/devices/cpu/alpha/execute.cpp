@@ -25,6 +25,7 @@ void AlphaProcessor::init()
 	for (int idx = 0; idx < AXP_NFREGS*2; idx++)
 		state.fRegs[idx] = 0;
 
+	mapProgram = getAddressSpace(AS_PROGRAM);
 }
 
 void AlphaProcessor::setPCAddress(offs_t addr)
@@ -33,21 +34,32 @@ void AlphaProcessor::setPCAddress(offs_t addr)
 	state.ppcReg = addr;
 }
 
+void AlphaProcessor::step(Console *user)
+{
+	execute();
+}
+
 void AlphaProcessor::execute()
 {
-	uint32_t inst;
+	uint32_t opWord;
 	int opCode;
 	uint32_t func;
+
+	// Display current instruction
+	list(nullptr, state.vpcReg);
+
+	opWord = readv32(state.vpcReg);
+	nextPC();
 
 	// R31/F31 register - always zero
 	state.iRegs[REG_ZERO] = 0;
 	state.fRegs[REG_ZERO] = 0;
 
-	opCode = OP_GETOP(inst);
+	opCode = OP_GETOP(opWord);
 	switch (opCode)
 	{
 	case OPC_PAL:		// 00 - CALL_PAL instruction
-		func = OP_GETPAL(inst);
+		func = OP_GETPAL(opWord);
 		goto unimpl;
 
 	case OPC_LDA:		// 08 - LDA instruction
@@ -83,7 +95,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTA:		// 10 - Arithmetic instructions
-		func = (inst >> 5) & 0x7F;
+		func = (opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		case 0x00:
@@ -170,7 +182,7 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_INTM:		// 13 - Multiply instructions
-		func = (inst >> 5) & 0x7F;
+		func = (opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		case 0x00:
