@@ -175,22 +175,27 @@
 //#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
 
 // executing instruction definitions
-#define RA		OP_GETRA(inst)
-#define RB		OP_GETRB(inst)
-#define RC		OP_GETRC(inst)
+#define RA		OP_GETRA(opWord)
+#define RB		OP_GETRB(opWord)
+#define RC		OP_GETRC(opWord)
 #define RAV		state.iRegs[RA]
 #define RBV		state.iRegs[RB]
-#define RBVL	((inst & OPC_LIT) ? OP_GETLIT(inst) : state.iRegs[RB])
+#define RBVL	((opWord & OPC_LIT) ? OP_GETLIT(opWord) : state.iRegs[RB])
 #define RCV		state.iRegs[RC]
-#define DISP16	SXTW(inst)
-#define DISP21  SXT21(inst)
+#define DISP16	SXTW(opWord)
+#define DISP21  SXT21(opWord)
 
-#define SXT21(val) ((int32_t)((val & 0x100000) ? ((val) | 0xFFE00000) : (val)))
+#define SXT21(val) SXTL((int32_t)(((val) & 0x100000) ? ((val) | 0xFFE00000) : ((val) & 0x001FFFFF)))
 
-#define READV(vAddr, size, value)
-#define READVL(vAddr, size, value)
-#define WRITEV(vAddr, size, value)
-#define WRITEVC(vAddr, size, value)
+#define readv8(vAddr)  mapProgram->read8(vAddr, this)
+#define readv16(vAddr) mapProgram->read16(vAddr, this)
+#define readv32(vAddr) mapProgram->read32(vAddr, this)
+#define readv64(vAddr) mapProgram->read64(vAddr, this)
+
+#define writev8(vAddr, data)  mapProgram->write8(vAddr, data, this)
+#define writev16(vAddr, data) mapProgram->write16(vAddr, data, this)
+#define writev32(vAddr, data) mapProgram->write32(vAddr, data, this)
+#define writev64(vAddr, data) mapProgram->write64(vAddr, data, this)
 
 struct opcAlpha
 {
@@ -212,11 +217,14 @@ public:
 	void init();
 	void execute();
 
-	// Virtual function calls from diExeute interface
+	// Virtual function calls from execution interface
+	void step(Console *user) override;
 	void setPCAddress(offs_t addr) override;
 
+	void devReset() override { init(); }
+
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
-	inline void addPC(uint64_t disp) { state.vpcReg += disp; }
+	inline void addPC(int32_t disp) { state.vpcReg += disp; }
 
 	inline void nextPC()
 	{
@@ -259,4 +267,5 @@ protected:
 
 	mapAddressConfig mapProgramConfig;
 
+	mapAddressSpace *mapProgram = nullptr;
 };

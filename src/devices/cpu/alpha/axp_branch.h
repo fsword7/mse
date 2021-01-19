@@ -8,23 +8,23 @@
 #pragma once
 
 // branch condition instructions
-#define DOPC_BEQ		if (RAV == 0) addPC(DISP21 * 4)
-#define DOPC_BGE		if (SXTQ(RAV) >= 0) addPC(DISP21 * 4)
-#define DOPC_BGT		if (SXTQ(RAV) > 0) addPC(DISP21 * 4)
-#define DOPC_BLE		if (SXTQ(RAV) <= 0) addPC(DISP21 * 4)
-#define DOPC_BLT		if (SXTQ(RAV) < 0) addPC(DISP21 * 4)
-#define DOPC_BNE		if (SXTQ(RAV) != 0) addPC(DISP21 * 4)
+#define DOPC_BEQ		if (SXTQ(RAV) == 0) addPC(DISP21 << 2)
+#define DOPC_BGE		if (SXTQ(RAV) >= 0) addPC(DISP21 << 2)
+#define DOPC_BGT		if (SXTQ(RAV) > 0)  addPC(DISP21 << 2)
+#define DOPC_BLE		if (SXTQ(RAV) <= 0) addPC(DISP21 << 2)
+#define DOPC_BLT		if (SXTQ(RAV) < 0)  addPC(DISP21 << 2)
+#define DOPC_BNE		if (SXTQ(RAV) != 0) addPC(DISP21 << 2)
 
 // branch set/clear instructions
-#define DOPC_BLBC		if ((RAV & 1) == 0) addPC(DISP21 * 4)
-#define DOPC_BLBS		if ((RAV & 1) == 1) addPC(DISP21 * 4)
+#define DOPC_BLBC		if ((RAV & 1) == 0) addPC(DISP21 << 2)
+#define DOPC_BLBS		if ((RAV & 1) == 1) addPC(DISP21 << 2)
 
 // branch instructions
 #define DOPC_BSR		DOPC_BR
 #define DOPC_BR									\
 	{											\
 		RAV = state.vpcReg & ~0x03LL;			\
-		addPC(DISP21 * 4);						\
+		addPC(DISP21 << 2);						\
 	}
 
 
