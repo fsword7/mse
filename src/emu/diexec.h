@@ -16,5 +16,7 @@ public:
 	// Abstract function calls
 	virtual void run() = 0;
 
+	virtual void setPCAddress(offs_t addr) = 0;
+
 private:
 };

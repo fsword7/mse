@@ -212,6 +212,9 @@ public:
 	void init();
 	void execute();
 
+	// Virtual function calls from diExeute interface
+	void setPCAddress(offs_t addr) override;
+
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
 	inline void addPC(uint64_t disp) { state.vpcReg += disp; }
 

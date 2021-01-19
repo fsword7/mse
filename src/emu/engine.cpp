@@ -8,6 +8,7 @@
 #include "emu/core.h"
 #include "emu/dibus.h"
 #include "emu/didebug.h"
+#include "emu/diexec.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
@@ -280,13 +281,24 @@ CommandStatus SystemEngine::load(Console *cty, args_t &args)
 			off += fin.gcount();
 		}
 		fin.close();
-		fmt::printf("%s: Loaded into %llX-%llX (length: %d bytes)\n", fname, soff, off, off - soff);
+		fmt::printf("%s: Loaded %s into %llX-%llX (length: %d bytes)\n",
+			dev->getDeviceName(), fname, soff, off, off - soff);
 	}
 
 	catch (system_error &e)
 	{
 		fmt::fprintf(cerr, "%s: file error: %s\n", fname, e.code().message());
 		cout << flush;
+
+		return CommandStatus::cmdOk;
+	}
+
+	// Assigning starting address at execution
+	// if device has execution interface
+	diExecute *exec;
+	if (dev->hasInterface(exec)) {
+		exec->setPCAddress(soff);
+		fmt::printf("%s: Set starting execution at address %llX\n", dev->getDeviceName(), soff);
 	}
 
 	return CommandStatus::cmdOk;

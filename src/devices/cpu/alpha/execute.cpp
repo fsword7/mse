@@ -27,6 +27,12 @@ void AlphaProcessor::init()
 
 }
 
+void AlphaProcessor::setPCAddress(offs_t addr)
+{
+	state.vpcReg = addr;
+	state.ppcReg = addr;
+}
+
 void AlphaProcessor::execute()
 {
 	uint32_t inst;
@@ -34,8 +40,8 @@ void AlphaProcessor::execute()
 	uint32_t func;
 
 	// R31/F31 register - always zero
-	state.iRegs[AXP_NIREGS-1] = 0;
-	state.fRegs[AXP_NFREGS-1] = 0;
+	state.iRegs[REG_ZERO] = 0;
+	state.fRegs[REG_ZERO] = 0;
 
 	opCode = OP_GETOP(inst);
 	switch (opCode)
