@@ -26,6 +26,9 @@
 		dbgout += fmt::sprintf(" : (%016llX)", RBV);														\
 	}
 
+#define OPC_EXEC(opcode, format) DOPC_##opcode
+#define OPC_FUNC(opcode, format)
+
 
 #else
 

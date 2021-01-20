@@ -197,6 +197,11 @@
 #define writev32(vAddr, data) mapProgram->write32(vAddr, data, this)
 #define writev64(vAddr, data) mapProgram->write64(vAddr, data, this)
 
+#define MSKQ_BYTE 0x00000000000000FFULL
+#define MSKQ_WORD 0x000000000000FFFFULL
+#define MSKQ_LONG 0x00000000FFFFFFFFULL
+#define MSKQ_QUAD 0xFFFFFFFFFFFFFFFFULL
+
 struct opcAlpha
 {
 	ctag_t   *opName;	// Instruction name
@@ -268,4 +273,6 @@ protected:
 	mapAddressConfig mapProgramConfig;
 
 	mapAddressSpace *mapProgram = nullptr;
+
+	Console *log = nullptr;
 };

@@ -34,6 +34,8 @@ set(MSE_H_SRCS
 	devices/cpu/alpha/axp.h
 	devices/cpu/alpha/axp_arith.h
 	devices/cpu/alpha/axp_branch.h
+	devices/cpu/alpha/axp_bwx.h
+	devices/cpu/alpha/axp_logical.h
 	devices/cpu/alpha/axp_mem.h
 	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h
@@ -64,6 +66,7 @@ set(MSE_H_SRCS
 	system/dec/vax/ka655.h
 )
 
+add_definitions(-DDEBUG)
 add_executable(mse ${MSE_CPP_SRCS} ${MSE_H_SRCS})
 target_link_libraries(mse
 	fmt::fmt

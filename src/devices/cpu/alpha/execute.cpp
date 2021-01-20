@@ -12,6 +12,8 @@
 
 // Instruction defines
 #include "devices/cpu/alpha/axp_arith.h"
+#include "devices/cpu/alpha/axp_bwx.h"
+#include "devices/cpu/alpha/axp_logical.h"
 #include "devices/cpu/alpha/axp_branch.h"
 #include "devices/cpu/alpha/axp_mem.h"
 
@@ -36,6 +38,7 @@ void AlphaProcessor::setPCAddress(offs_t addr)
 
 void AlphaProcessor::step(Console *user)
 {
+	log = user;
 	execute();
 }
 
@@ -178,8 +181,150 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTL:		// 11 - Logical instructions
+		func = (opWord >> 5) & 0x7F;
+		switch (func)
+		{
+		case 0x00:
+			OPC_EXEC(AND, R12_R3);
+			break;
+		case 0x08:
+			OPC_EXEC(BIC, R12_R3);
+			break;
+		case 0x14:
+			OPC_EXEC(CMOVLBS, R12_R3);
+			break;
+		case 0x16:
+			OPC_EXEC(CMOVLBC, R12_R3);
+			break;
+		case 0x20:
+			OPC_EXEC(BIS, R12_R3);
+			break;
+		case 0x24:
+			OPC_EXEC(CMOVEQ, R12_R3);
+			break;
+		case 0x26:
+			OPC_EXEC(CMOVNE, R12_R3);
+			break;
+		case 0x28:
+			OPC_EXEC(ORNOT, R12_R3);
+			break;
+		case 0x40:
+			OPC_EXEC(XOR, R12_R3);
+			break;
+		case 0x44:
+			OPC_EXEC(CMOVLT, R12_R3);
+			break;
+		case 0x46:
+			OPC_EXEC(CMOVGE, R12_R3);
+			break;
+		case 0x48:
+			OPC_EXEC(EQV, R12_R3);
+			break;
+//		case 0x61:
+//			OPC_EXEC(AMASK, R12_R3);
+//			break;
+		case 0x64:
+			OPC_EXEC(CMOVLE, R12_R3);
+			break;
+		case 0x66:
+			OPC_EXEC(CMOVGT, R12_R3);
+			break;
+//		case 0x6C:
+//			OPC_EXEC(IMPLVER, X_R3);
+//			break;
+		default:
+			UNKNOWN_OPCODE2;
+			break;
+		}
+		break;
+
 	case OPC_INTS:		// 12 - Shift instructions
-		goto unimpl;
+		func = (opWord >> 5) & 0x7F;
+		switch (func)
+		{
+	    case 0x02:
+	      OPC_EXEC(MSKBL, R12_R3);
+	      break;
+	    case 0x06:
+	      OPC_EXEC(EXTBL, R12_R3);
+	      break;
+	    case 0x0B:
+	      OPC_EXEC(INSBL, R12_R3);
+	      break;
+	    case 0x12:
+	      OPC_EXEC(MSKWL, R12_R3);
+	      break;
+	    case 0x16:
+	      OPC_EXEC(EXTWL, R12_R3);
+	      break;
+	    case 0x1B:
+	      OPC_EXEC(INSWL, R12_R3);
+	      break;
+	    case 0x22:
+	      OPC_EXEC(MSKLL, R12_R3);
+	      break;
+	    case 0x26:
+	      OPC_EXEC(EXTLL, R12_R3);
+	      break;
+	    case 0x2b:
+	      OPC_EXEC(INSLL, R12_R3);
+	      break;
+	    case 0x30:
+	      OPC_EXEC(ZAP, R12_R3);
+	      break;
+	    case 0x31:
+	      OPC_EXEC(ZAPNOT, R12_R3);
+	      break;
+	    case 0x32:
+	      OPC_EXEC(MSKQL, R12_R3);
+	      break;
+	    case 0x34:
+	      OPC_EXEC(SRL, R12_R3);
+	      break;
+	    case 0x36:
+	      OPC_EXEC(EXTQL, R12_R3);
+	      break;
+	    case 0x39:
+	      OPC_EXEC(SLL, R12_R3);
+	      break;
+	    case 0x3B:
+	      OPC_EXEC(INSQL, R12_R3);
+	      break;
+//	    case 0x3C:
+//	      OPC_EXEC(SRA, R12_R3);
+//	      break;
+	    case 0x52:
+	      OPC_EXEC(MSKWH, R12_R3);
+	      break;
+	    case 0x57:
+	      OPC_EXEC(INSWH, R12_R3);
+	      break;
+	    case 0x5A:
+	      OPC_EXEC(EXTWH, R12_R3);
+	      break;
+	    case 0x62:
+	      OPC_EXEC(MSKLH, R12_R3);
+	      break;
+	    case 0x67:
+	      OPC_EXEC(INSLH, R12_R3);
+	      break;
+	    case 0x6A:
+	      OPC_EXEC(EXTLH, R12_R3);
+	      break;
+	    case 0x72:
+	      OPC_EXEC(MSKQH, R12_R3);
+	      break;
+	    case 0x77:
+	      OPC_EXEC(INSQH, R12_R3);
+	      break;
+	    case 0x7a:
+	      OPC_EXEC(EXTQH, R12_R3);
+	      break;
+		default:
+			UNKNOWN_OPCODE2;
+			break;
+		}
+		break;
 
 	case OPC_INTM:		// 13 - Multiply instructions
 		func = (opWord >> 5) & 0x7F;
