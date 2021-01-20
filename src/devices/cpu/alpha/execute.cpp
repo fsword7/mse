@@ -48,6 +48,9 @@ void AlphaProcessor::execute()
 	int opCode;
 	uint32_t func;
 
+	string   dbgout = "";
+	uint64_t dbgval;
+
 	// Display current instruction
 	list(nullptr, state.vpcReg);
 
@@ -66,35 +69,35 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_LDA:		// 08 - LDA instruction
-		OPC_EXEC(LDA, MEM);
+		OPC_EXEC2(LDA, MEM);
 		break;
 
 	case OPC_LDAH:		// 09 - LDAH instruction
-		OPC_EXEC(LDAH, MEM);
+		OPC_EXEC2(LDAH, MEM);
 		break;
 
 	case OPC_LDBU:		// 0A - LDBU instruction
-		OPC_EXEC(LDBU, MEM);
+		OPC_EXEC2(LDBU, MEM);
 		break;
 
 	case OPC_LDQ_U:		// 0B - LDQ_U instruction
-		OPC_EXEC(LDQ_U, MEM);
+		OPC_EXEC2(LDQ_U, MEM);
 		break;
 
 	case OPC_LDWU:		// 0C - LDWU instruction
-		OPC_EXEC(LDWU, MEM);
+		OPC_EXEC2(LDWU, MEM);
 		break;
 
 	case OPC_STW:		// 0D - STW instruction
-		OPC_EXEC(STW, MEM);
+		OPC_EXEC2(STW, MEM);
 		break;
 
 	case OPC_STB:		// 0E - STB instruction
-		OPC_EXEC(STB, MEM);
+		OPC_EXEC2(STB, MEM);
 		break;
 
 	case OPC_STQ_U:		// OF - STQ_U instruction
-		OPC_EXEC(STQ_U, MEM);
+		OPC_EXEC2(STQ_U, MEM);
 		break;
 
 	case OPC_INTA:		// 10 - Arithmetic instructions
@@ -386,35 +389,35 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_LDL:		// 28 - LDL instruction
-		OPC_EXEC(LDL, MEM);
+		OPC_EXEC2(LDL, MEM);
 		break;
 
 	case OPC_LDQ:		// 29 - LDQ instruction
-		OPC_EXEC(LDQ, MEM);
+		OPC_EXEC2(LDQ, MEM);
 		break;
 
 	case OPC_LDL_L:		// 2A - LDL_L instruction
-		OPC_EXEC(LDL_L, MEM);
+		OPC_EXEC2(LDL_L, MEM);
 		break;
 
 	case OPC_LDQ_L:		// 2B - LDQ_L instruction
-		OPC_EXEC(LDQ_L, MEM);
+		OPC_EXEC2(LDQ_L, MEM);
 		break;
 
 	case OPC_STL:		// 2C - STL instruction
-		OPC_EXEC(STL, MEM);
+		OPC_EXEC2(STL, MEM);
 		break;
 
 	case OPC_STQ:		// 2D - STQ instruction
-		OPC_EXEC(STQ, MEM);
+		OPC_EXEC2(STQ, MEM);
 		break;
 
 	case OPC_STL_C:		// 2E - STL_C instruction
-		OPC_EXEC(STL_C, MEM);
+		OPC_EXEC2(STL_C, MEM);
 		break;
 
 	case OPC_STQ_C:		// 2F - STQ_C instruction
-		OPC_EXEC(STQ_C, MEM);
+		OPC_EXEC2(STQ_C, MEM);
 		break;
 
 	case OPC_BR:		// 30 - BR instruction
@@ -436,35 +439,35 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_BLBC:		// 38 - BLBC instruction
-		OPC_EXEC(BLBC, COND);
+		OPC_EXEC2(BLBC, COND);
 		break;
 
 	case OPC_BEQ:		// 39 - BEQ instruction
-		OPC_EXEC(BEQ, COND);
+		OPC_EXEC2(BEQ, COND);
 		break;
 
 	case OPC_BLT:		// 3A - BLT instruction
-		OPC_EXEC(BLT, COND);
+		OPC_EXEC2(BLT, COND);
 		break;
 
 	case OPC_BLE:		// 3B - BLE instruction
-		OPC_EXEC(BLE, COND);
+		OPC_EXEC2(BLE, COND);
 		break;
 
 	case OPC_BLBS:		// 3C - BLBS instruction
-		OPC_EXEC(BLBS, COND);
+		OPC_EXEC2(BLBS, COND);
 		break;
 
 	case OPC_BNE:		// 3D - BNE instruction
-		OPC_EXEC(BNE, COND);
+		OPC_EXEC2(BNE, COND);
 		break;
 
 	case OPC_BGE:		// 3E - BGE instruction
-		OPC_EXEC(BGE, COND);
+		OPC_EXEC2(BGE, COND);
 		break;
 
 	case OPC_BGT:		// 3F - BGT instruction
-		OPC_EXEC(BGT, COND);
+		OPC_EXEC2(BGT, COND);
 		break;
 
 	unimpl:

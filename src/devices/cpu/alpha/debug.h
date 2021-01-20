@@ -15,20 +15,38 @@
 #define UNKNOWN_OPCODE2 \
 	fmt::printf("*** Unknown opcode %02X.%02X\n", opCode, func);
 
-#define POST_X8(VAL)  fmt::sprintf(" ==> %02X", ZEXTB(val))
-#define POST_X16(val) fmt::sprintf(" ==> %04X", ZEXTW(val))
-#define POST_X32(val) fmt::sprintf(" ==> %08X", ZEXTL(val))
-#define POST_X64(val) fmt::sprintf(" ==> %016llX", ZEXTQ(val))
+#define POST_X8(VAL)  dbgout += fmt::sprintf(" ==> %02X", ZXTB(val))
+#define POST_X16(val) dbgout += fmt::sprintf(" ==> %04X", ZXTW(val))
+#define POST_X32(val) dbgout += fmt::sprintf(" ==> %08X", ZXTL(val))
+#define POST_X64(val) dbgout += fmt::sprintf(" ==> %016llX", ZXTQ(val))
 
-#define PRE_MEM(opcode) 																					\
-	{																										\
-		dbgout += fmt::sprintf("%016llX %-8s r%d, %04xH(r%d)", state.vpcReg, #opcode, RA, ZETW(inst), RB);	\
-		dbgout += fmt::sprintf(" : (%016llX)", RBV);														\
+
+// Condition instructions
+#define PRE_COND(opcode)                                                \
+		dbgval = (state.vpcReg + (DISP21 << 2)) & ~0x3;                 \
+		dbgout += fmt::sprintf("%016llx %-8s r%d, %016llX : (%016llX)", \
+			state.vpcReg-4, #opcode, RA, dbgval, RAV);
+
+#define POST_COND
+
+// Mmemory instructions
+#define PRE_MEM(opcode) 																					 \
+	{																										 \
+		dbgout += fmt::sprintf("%016llX %-8s r%d, %04xH(r%d)", state.vpcReg-4, #opcode, RA, ZXTW(opWord), RB); \
+		dbgout += fmt::sprintf(" : (%016llX)", RBV);														 \
 	}
+
+#define POST_MEM POST_X64(RAV)
+
 
 #define OPC_EXEC(opcode, format) DOPC_##opcode
 #define OPC_FUNC(opcode, format)
 
+#define OPC_EXEC2(opcode, format) \
+	PRE_##format(opcode);         \
+	DOPC_##opcode;                \
+	POST_##format;                \
+	cout << dbgout << endl;
 
 #else
 
