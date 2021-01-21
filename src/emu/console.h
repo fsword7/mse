@@ -24,6 +24,9 @@ public:
 	inline Device *getDialedSystem() const { return dialedSystem; }
 	inline Device *getDialedDevice() const { return dialedDevice; }
 
+	inline void setLastAddress(Device *device, offs_t addr) { cmd.lastDevice = device; cmd.lastAddress = addr; }
+	inline offs_t  getLastAddress(Device *&device) { device = cmd.lastDevice; return cmd.lastAddress; }
+
 	template <typename ... Args>
 	void printf(cstag_t &format, Args ... args)
 	{
@@ -32,6 +35,8 @@ public:
 
 
 private:
+	CommandHandler cmd;
+
 	Device *dialedSystem = nullptr;
 	Device *dialedDevice = nullptr;
 };

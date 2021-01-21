@@ -33,8 +33,12 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 	// Split command line into words
 	args.clear();
 	split(cmdLine, args);
-	if (args.empty())
+	if (args.empty()) {
+		// Check if repeating command for continuing
+		if (lastCommand != nullptr)
+			lastCommand->func(cty, args);
 		return cmdOk;
+	}
 
 	cmdList = mseCommands;
 	for (int idx = 0; cmdList[idx].name; idx++) {
@@ -53,8 +57,10 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 				}
 			}
 
-			if (cmdList[idx].func != nullptr)
+			if (cmdList[idx].func != nullptr) {
+				lastCommand = &cmdList[idx];
 				return cmdList[idx].func(cty, args);
+			}
 
 //			cout << fmt::sprintf("Usage: %s <%s%s%s> [arguments...]\n", args[0],
 //				cmdList[idx].func != nullptr ? "device" : "",
@@ -73,7 +79,6 @@ void Console::script(fs::path fname)
 {
 	fmt::printf("Script: %s\n", fname);
 
-	CommandHandler cmd;
 	string   cmdLine;
 	int      noLine = 0;
 
@@ -114,7 +119,6 @@ void Console::script(fs::path fname)
 
 void Console::prompt()
 {
-	CommandHandler cmd;
 	string cmdLine;
 	CommandStatus st = cmdOk;
 

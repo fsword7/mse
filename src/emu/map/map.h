@@ -21,14 +21,15 @@ namespace aspace
 #define AS_IOPORT	2	// I/O port address space
 
 
-//using offs_t = uint64_t;
-typedef uint64_t offs_t;
+////using offs_t = uint64_t;
+//typedef uint64_t offs_t;
 
 #include "emu/map/he.h"
 #include "emu/map/heun.h"
 
 class ProcessorDevice;
 class Machine;
+class Console;
 
 namespace aspace
 {

@@ -23,6 +23,8 @@ using namespace std;
 
 namespace fs = std::filesystem;
 
+using offs_t = uint64_t;
+
 typedef const char tag_t;
 typedef const char ctag_t;
 typedef string stag_t;
@@ -34,8 +36,9 @@ enum endian_t { LittleEndian, BigEndian };
 // Common include packages
 #include "emu/console.h"
 #include "emu/sysconfig.h"
-#include "emu/map/map.h"
 #include "emu/device.h"
+#include "emu/map/map.h"
+
 //#include "emu/machine.h"
 
 #include "emu/templates.h"

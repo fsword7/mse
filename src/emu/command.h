@@ -60,6 +60,8 @@ struct devCommand_t
 };
 
 class CommandHandler {
+	friend class Console;
+
 public:
 
 	CommandHandler() = default;
@@ -75,4 +77,8 @@ private:
 	static command_t mseListCommands[];
 	static command_t mseSetCommands[];
 	static command_t mseShowCommands[];
+
+	command_t *lastCommand = nullptr;
+	Device    *lastDevice = nullptr;
+	offs_t     lastAddress = 0;
 };

@@ -134,10 +134,34 @@ CommandStatus SystemEngine::dump(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(user, args.current());
-	if (dev == nullptr) {
-		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+	offs_t sAddr, eAddr = -1ull;
+	Device *dev = nullptr;
+
+	if (!args.empty())
+	{
+		char *strAddr;
+
+		dev = findDevice(user, args.current());
+		if (dev == nullptr) {
+			user->printf("%s: unknown device\n", args.current());
+			return CommandStatus::cmdOk;
+		}
+
+		args.next();
+		sscanf(args.current().c_str(), "%x", &sAddr);
+		if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
+			sscanf(strAddr+1, "%x", &eAddr);
+		else {
+			if (args.size() > 3) {
+				args.next();
+				sscanf(args.current().c_str(), "%x", &eAddr);
+				eAddr = sAddr + eAddr - 1;
+			} else if (eAddr == -1)
+				eAddr = sAddr + 0x140 - 1;
+		}
+	} else {
+		sAddr = user->getLastAddress(dev);
+		eAddr = sAddr + 0x140 - 1;
 	}
 
 	diExternalBus *sbus;
@@ -147,22 +171,6 @@ CommandStatus SystemEngine::dump(Console *user, args_t &args)
 		return CommandStatus::cmdOk;
 	}
 	AddressSpace *space = sbus->getAddressSpace();
-
-	uint32_t  sAddr, eAddr = -1;
-	char     *strAddr;
-
-	args.next();
-	sscanf(args.current().c_str(), "%x", &sAddr);
-	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
-		sscanf(strAddr+1, "%x", &eAddr);
-	else {
-		if (args.size() > 3) {
-			args.next();
-			sscanf(args.current().c_str(), "%x", &eAddr);
-			eAddr = sAddr + eAddr - 1;
-		} else if (eAddr == -1)
-			eAddr = sAddr + 0x140 - 1;
-	}
 
 	int       idx;
 	char      line[256], lasc[32];
@@ -185,6 +193,8 @@ CommandStatus SystemEngine::dump(Console *user, args_t &args)
 		user->printf("%s |%-16s|\n", line, lasc);
 	}
 
+	// Save device and current address for more output
+	user->setLastAddress(dev, sAddr);
 	return CommandStatus::cmdOk;
 }
 
@@ -192,11 +202,34 @@ CommandStatus SystemEngine::list(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(user, args.current());
-	if (dev == nullptr) {
-		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
-	}
+	Device *dev = nullptr;
+	offs_t sAddr, eAddr = -1ull;
+	int    count = 20;
+
+	if (!args.empty())
+	{
+		char *strAddr;
+
+		dev = findDevice(user, args.current());
+		if (dev == nullptr) {
+			user->printf("%s: unknown device\n", args.current());
+			return CommandStatus::cmdOk;
+		}
+
+		args.next();
+		sscanf(args.current().c_str(), "%llx", &sAddr);
+		if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
+		{
+			sscanf(strAddr+1, "%llx", &eAddr);
+			count = (eAddr - sAddr) / 4;
+		}
+		else if (args.size() > 3)
+		{
+			args.next();
+			sscanf(args.current().c_str(), "%d", &count);
+		}
+	} else
+		sAddr = user->getLastAddress(dev);
 
 	diExternalBus *sbus;
 	diDebug *debug;
@@ -213,23 +246,6 @@ CommandStatus SystemEngine::list(Console *user, args_t &args)
 		return CommandStatus::cmdOk;
 	}
 
-	uint32_t  sAddr, eAddr = -1;
-	char     *strAddr;
-	int       count = 20; // default 20 line count
-
-	args.next();
-	sscanf(args.current().c_str(), "%x", &sAddr);
-	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
-	{
-		sscanf(strAddr+1, "%x", &eAddr);
-		count = (eAddr - sAddr) / 4;
-	}
-	else if (args.size() > 3)
-	{
-		args.next();
-		sscanf(args.current().c_str(), "%d", &count);
-	}
-
 	uint64_t addr = sAddr;
 	uint32_t opCode;
 	for (int idx = 0; idx < count; idx++)
@@ -242,6 +258,8 @@ CommandStatus SystemEngine::list(Console *user, args_t &args)
 		addr += debug->list(user, addr);
 	}
 
+	// Save device and current address for more output
+	user->setLastAddress(dev, addr);
 	return CommandStatus::cmdOk;
 }
 
@@ -400,11 +418,18 @@ CommandStatus SystemEngine::step(Console *user, args_t &args)
 {
 	using namespace aspace;
 
-	Device *dev = findDevice(user, args.current());
-	if (dev == nullptr) {
-		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+	Device *dev = nullptr;
+
+	if (!args.empty())
+	{
+		dev = findDevice(user, args.current());
+		if (dev == nullptr) {
+			user->printf("%s: unknown device\n", args.current());
+			return CommandStatus::cmdOk;
+		}
 	}
+	else
+		user->getLastAddress(dev);
 
 	diExecute *exec;
 	if (!dev->hasInterface(exec))
@@ -413,6 +438,7 @@ CommandStatus SystemEngine::step(Console *user, args_t &args)
 		return CommandStatus::cmdOk;
 	}
 
+	user->setLastAddress(dev, 0);
 	exec->step(user);
 
 	return CommandStatus::cmdOk;
