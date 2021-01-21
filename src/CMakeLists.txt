@@ -11,6 +11,7 @@ set(MSE_CPP_SRCS
 	emu/map/space.cpp
 	emu/command.cpp
 	emu/console.cpp
+	emu/debug.cpp
 	emu/delegate.cpp
 	emu/device.cpp
 	emu/devproc.cpp
@@ -45,6 +46,7 @@ set(MSE_H_SRCS
 	emu/command.h
 	emu/console.h
 	emu/core.h
+	emu/debug.h
 	emu/delegate.h
 	emu/device.h
 	emu/devproc.h
