@@ -24,6 +24,13 @@ public:
 	inline Device *getDialedSystem() const { return dialedSystem; }
 	inline Device *getDialedDevice() const { return dialedDevice; }
 
+	template <typename ... Args>
+	void printf(cstag_t &format, Args ... args)
+	{
+		fmt::printf(format, forward<Args>(args) ...);
+	}
+
+
 private:
 	Device *dialedSystem = nullptr;
 	Device *dialedDevice = nullptr;

@@ -11,45 +11,41 @@
 #include "emu/syslist.h"
 
 // create <device> <suboptions ...>
-CommandStatus cmdCreate(Console *cty, args_t &args)
+CommandStatus cmdCreate(Console *user, args_t &args)
 {
 	SystemEngine engine;
-
-	engine.create(cty, args);
-
+	engine.create(user, args);
 	return cmdOk;
 }
 
 // dial <device|none>
-CommandStatus cmdDial(Console *cty, args_t &args)
+CommandStatus cmdDial(Console *user, args_t &args)
 {
 	SystemEngine engine;
 	string devName = args.getNext();
 	Machine *sys = nullptr;
 
 	if (devName == "none") {
-		cty->setDialedSystem(nullptr);
-		cty->setDialedDevice(nullptr);
-		fmt::printf("Dialed system to none\n");
+		user->setDialedSystem(nullptr);
+		user->setDialedDevice(nullptr);
+		user->printf("Dialed system to none\n");
 	} else {
 		Machine *sys = engine.findSystem(devName);
 		if (sys != nullptr) {
-			cty->setDialedSystem(sys->getSystemDevice());
-			cty->setDialedDevice(nullptr);
+			user->setDialedSystem(sys->getSystemDevice());
+			user->setDialedDevice(nullptr);
 		} else
-			fmt::printf("%s: system not found\n", devName);
+			user->printf("%s: system not found\n", devName);
 	}
 
 	return cmdOk;
 }
 
 // dump <device> <suboptions ...>
-CommandStatus cmdDump(Console *cty, args_t &args)
+CommandStatus cmdDump(Console *user, args_t &args)
 {
 	SystemEngine engine;
-
-	engine.dump(cty, args);
-
+	engine.dump(user, args);
 	return cmdOk;
 }
 
@@ -60,18 +56,18 @@ CommandStatus cmdExit(Console *, args_t &args)
 }
 
 // list <device> <suboptions ...>
-CommandStatus cmdList(Console *cty, args_t &args)
+CommandStatus cmdList(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.list(cty, args);
+	engine.list(user, args);
 	return cmdOk;
 }
 
 // load <device> <file> <address>
-CommandStatus cmdLoad(Console *cty, args_t &args)
+CommandStatus cmdLoad(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.load(cty, args);
+	engine.load(user, args);
 	return cmdOk;
 }
 
@@ -84,28 +80,26 @@ CommandStatus cmdReset(Console *user, args_t &args)
 }
 
 // set <device> <suboptions ...>
-CommandStatus cmdSet(Console *cty, args_t &args)
+CommandStatus cmdSet(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.set(cty, args);
+	engine.set(user, args);
 	return cmdOk;
 }
 
 // show <device> <suboptions ...>
-CommandStatus cmdShow(Console *cty, args_t &args)
+CommandStatus cmdShow(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.show(cty, args);
+	engine.show(user, args);
 	return cmdOk;
 }
 
 // start <device>
-CommandStatus cmdStart(Console *cty, args_t &args)
+CommandStatus cmdStart(Console *user, args_t &args)
 {
 	SystemEngine engine;
-
-	engine.start(cty, args);
-
+	engine.start(user, args);
 	return cmdOk;
 }
 
@@ -124,22 +118,18 @@ CommandStatus cmdStop(Console *, args_t &args)
 }
 
 // list system
-CommandStatus cmdListSystem(Console *cty, args_t &args)
+CommandStatus cmdListSystem(Console *user, args_t &args)
 {
 	SystemList sysList;
-
 	sysList.list(cout);
-
 	return cmdOk;
 }
 
 // show device
-CommandStatus cmdShowDevice(Console *cty, args_t &args)
+CommandStatus cmdShowDevice(Console *user, args_t &args)
 {
 	SystemEngine engine;
-
-	engine.showDevices(cty, args);
-
+	engine.showDevices(user, args);
 	return cmdOk;
 }
 
