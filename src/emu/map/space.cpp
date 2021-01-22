@@ -96,12 +96,16 @@ namespace aspace {
 
 		void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize)
+				memData[addr] = data;
 		}
 
 		void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x1);
+				*((uint16_t *)ptr) = data;
+			}
 		}
 
 		void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu)
@@ -111,7 +115,10 @@ namespace aspace {
 
 		void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x2);
+				*((uint32_t *)ptr) = data;
+			}
 		}
 
 		void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu)
@@ -121,7 +128,10 @@ namespace aspace {
 
 		void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x3);
+				*((uint64_t *)ptr) = data;
+			}
 		}
 
 		void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu)

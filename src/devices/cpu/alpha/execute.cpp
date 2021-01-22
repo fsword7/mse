@@ -16,6 +16,7 @@
 #include "devices/cpu/alpha/axp_logical.h"
 #include "devices/cpu/alpha/axp_branch.h"
 #include "devices/cpu/alpha/axp_mem.h"
+#include "devices/cpu/alpha/axp_pal.h"
 
 
 void AlphaProcessor::init()
@@ -47,13 +48,14 @@ void AlphaProcessor::execute()
 	uint32_t opWord;
 	int opCode;
 	uint32_t func;
+	uint64_t pAddr;
 
-	string   dbgout = "";
 	uint64_t dbgval;
 
 	// Display current instruction
 	list(nullptr, state.vpcReg);
 
+	state.cpcAddr = state.vpcReg;
 	opWord = readv32(state.vpcReg);
 	nextPC();
 
@@ -105,76 +107,76 @@ void AlphaProcessor::execute()
 		switch (func)
 		{
 		case 0x00:
-			OPC_EXEC(ADDL, R12_R3);
+			OPC_EXEC2(ADDL, RAB_RC);
 			break;
 		case 0x02:
-			OPC_EXEC(S4ADDL, R12_R3);
+			OPC_EXEC2(S4ADDL, RAB_RC);
 			break;
 		case 0x12:
-			OPC_EXEC(S8ADDL, R12_R3);
+			OPC_EXEC2(S8ADDL, RAB_RC);
 			break;
 //		case 0x40:
-//			OPC_EXEC(ADDL_V, RF12_R3);
+//			OPC_EXEC2(ADDL_V, RAB_RC);
 //			break;
 
 		case 0x20:
-			OPC_EXEC(ADDQ, R12_R3);
+			OPC_EXEC2(ADDQ, RAB_RC);
 			break;
 		case 0x22:
-			OPC_EXEC(S4ADDQ, R12_R3);
+			OPC_EXEC2(S4ADDQ, RAB_RC);
 			break;
 		case 0x32:
-			OPC_EXEC(S8ADDQ, R12_R3);
+			OPC_EXEC2(S8ADDQ, RAB_RC);
 			break;
 //		case 0x60:
-//			OPC_EXEC(ADDQ_V, R12_R3);
+//			OPC_EXEC2(ADDQ_V, RAB_RC);
 //			break;
 
 
 		case 0x09:
-			OPC_EXEC(SUBL, R12_R3);
+			OPC_EXEC2(SUBL, RAB_RC);
 			break;
 		case 0x0B:
-			OPC_EXEC(S4SUBL, R12_R3);
+			OPC_EXEC2(S4SUBL, RAB_RC);
 			break;
 		case 0x1B:
-			OPC_EXEC(S8SUBL, R12_R3);
+			OPC_EXEC2(S8SUBL, RAB_RC);
 			break;
 //		case 0x49:
-//			OPC_EXEC(SUBL_V, R12_R3);
+//			OPC_EXEC2(SUBL_V, RAB_RC);
 //			break;
 
 		case 0x29:
-			OPC_EXEC(SUBQ, R12_R3);
+			OPC_EXEC2(SUBQ, RAB_RC);
 			break;
 		case 0x2B:
-			OPC_EXEC(S4SUBQ, R12_R3);
+			OPC_EXEC2(S4SUBQ, RAB_RC);
 			break;
 		case 0x3B:
-			OPC_EXEC(S8SUBL, R12_R3);
+			OPC_EXEC2(S8SUBL, RAB_RC);
 			break;
 //		case 0x69:
-//			OPC_EXEC(SUBQ_V, R12_R3);
+//			OPC_EXEC2(SUBQ_V, RAB_RC);
 //			break;
 
 //		case 0x0F:
-//			OPC_EXEC(CMPBGE, R12_R3);
+//			OPC_EXEC2(CMPBGE, RAB_RC);
 //			break;
 
 		case 0x1D:
-			OPC_EXEC(CMPULT, R12_R3);
+			OPC_EXEC2(CMPULT, RAB_RC);
 			break;
 		case 0x2D:
-			OPC_EXEC(CMPEQ, R12_R3);
+			OPC_EXEC2(CMPEQ, RAB_RC);
 			break;
 		case 0x3D:
-			OPC_EXEC(CMPULE, R12_R3);
+			OPC_EXEC2(CMPULE, RAB_RC);
 			break;
 		case 0x4D:
-			OPC_EXEC(CMPLT, R12_R3);
+			OPC_EXEC2(CMPLT, RAB_RC);
 			break;
 		case 0x6D:
-			OPC_EXEC(CMPLE, R12_R3);
+			OPC_EXEC2(CMPLE, RAB_RC);
 			break;
 
 		default:
@@ -188,49 +190,49 @@ void AlphaProcessor::execute()
 		switch (func)
 		{
 		case 0x00:
-			OPC_EXEC(AND, R12_R3);
+			OPC_EXEC2(AND, RAB_RC);
 			break;
 		case 0x08:
-			OPC_EXEC(BIC, R12_R3);
+			OPC_EXEC2(BIC, RAB_RC);
 			break;
 		case 0x14:
-			OPC_EXEC(CMOVLBS, R12_R3);
+			OPC_EXEC2(CMOVLBS, RAB_RC);
 			break;
 		case 0x16:
-			OPC_EXEC(CMOVLBC, R12_R3);
+			OPC_EXEC2(CMOVLBC, RAB_RC);
 			break;
 		case 0x20:
-			OPC_EXEC(BIS, R12_R3);
+			OPC_EXEC2(BIS, RAB_RC);
 			break;
 		case 0x24:
-			OPC_EXEC(CMOVEQ, R12_R3);
+			OPC_EXEC2(CMOVEQ, RAB_RC);
 			break;
 		case 0x26:
-			OPC_EXEC(CMOVNE, R12_R3);
+			OPC_EXEC2(CMOVNE, RAB_RC);
 			break;
 		case 0x28:
-			OPC_EXEC(ORNOT, R12_R3);
+			OPC_EXEC2(ORNOT, RAB_RC);
 			break;
 		case 0x40:
-			OPC_EXEC(XOR, R12_R3);
+			OPC_EXEC2(XOR, RAB_RC);
 			break;
 		case 0x44:
-			OPC_EXEC(CMOVLT, R12_R3);
+			OPC_EXEC2(CMOVLT, RAB_RC);
 			break;
 		case 0x46:
-			OPC_EXEC(CMOVGE, R12_R3);
+			OPC_EXEC2(CMOVGE, RAB_RC);
 			break;
 		case 0x48:
-			OPC_EXEC(EQV, R12_R3);
+			OPC_EXEC2(EQV, RAB_RC);
 			break;
 //		case 0x61:
-//			OPC_EXEC(AMASK, R12_R3);
+//			OPC_EXEC2(AMASK, RAB_RC);
 //			break;
 		case 0x64:
-			OPC_EXEC(CMOVLE, R12_R3);
+			OPC_EXEC2(CMOVLE, RAB_RC);
 			break;
 		case 0x66:
-			OPC_EXEC(CMOVGT, R12_R3);
+			OPC_EXEC2(CMOVGT, RAB_RC);
 			break;
 //		case 0x6C:
 //			OPC_EXEC(IMPLVER, X_R3);
@@ -246,82 +248,82 @@ void AlphaProcessor::execute()
 		switch (func)
 		{
 	    case 0x02:
-	      OPC_EXEC(MSKBL, R12_R3);
+	      OPC_EXEC2(MSKBL, RAB_RC);
 	      break;
 	    case 0x06:
-	      OPC_EXEC(EXTBL, R12_R3);
+	      OPC_EXEC2(EXTBL, RAB_RC);
 	      break;
 	    case 0x0B:
-	      OPC_EXEC(INSBL, R12_R3);
+	      OPC_EXEC2(INSBL, RAB_RC);
 	      break;
 	    case 0x12:
-	      OPC_EXEC(MSKWL, R12_R3);
+	      OPC_EXEC2(MSKWL, RAB_RC);
 	      break;
 	    case 0x16:
-	      OPC_EXEC(EXTWL, R12_R3);
+	      OPC_EXEC2(EXTWL, RAB_RC);
 	      break;
 	    case 0x1B:
-	      OPC_EXEC(INSWL, R12_R3);
+	      OPC_EXEC2(INSWL, RAB_RC);
 	      break;
 	    case 0x22:
-	      OPC_EXEC(MSKLL, R12_R3);
+	      OPC_EXEC2(MSKLL, RAB_RC);
 	      break;
 	    case 0x26:
-	      OPC_EXEC(EXTLL, R12_R3);
+	      OPC_EXEC2(EXTLL, RAB_RC);
 	      break;
 	    case 0x2b:
-	      OPC_EXEC(INSLL, R12_R3);
+	      OPC_EXEC2(INSLL, RAB_RC);
 	      break;
 	    case 0x30:
-	      OPC_EXEC(ZAP, R12_R3);
+	      OPC_EXEC2(ZAP, RAB_RC);
 	      break;
 	    case 0x31:
-	      OPC_EXEC(ZAPNOT, R12_R3);
+	      OPC_EXEC2(ZAPNOT, RAB_RC);
 	      break;
 	    case 0x32:
-	      OPC_EXEC(MSKQL, R12_R3);
+	      OPC_EXEC2(MSKQL, RAB_RC);
 	      break;
 	    case 0x34:
-	      OPC_EXEC(SRL, R12_R3);
+	      OPC_EXEC2(SRL, RAB_RC);
 	      break;
 	    case 0x36:
-	      OPC_EXEC(EXTQL, R12_R3);
+	      OPC_EXEC2(EXTQL, RAB_RC);
 	      break;
 	    case 0x39:
-	      OPC_EXEC(SLL, R12_R3);
+	      OPC_EXEC2(SLL, RAB_RC);
 	      break;
 	    case 0x3B:
-	      OPC_EXEC(INSQL, R12_R3);
+	      OPC_EXEC2(INSQL, RAB_RC);
 	      break;
-//	    case 0x3C:
-//	      OPC_EXEC(SRA, R12_R3);
-//	      break;
+	    case 0x3C:
+	      OPC_EXEC2(SRA, RAB_RC);
+	      break;
 	    case 0x52:
-	      OPC_EXEC(MSKWH, R12_R3);
+	      OPC_EXEC2(MSKWH, RAB_RC);
 	      break;
 	    case 0x57:
-	      OPC_EXEC(INSWH, R12_R3);
+	      OPC_EXEC2(INSWH, RAB_RC);
 	      break;
 	    case 0x5A:
-	      OPC_EXEC(EXTWH, R12_R3);
+	      OPC_EXEC2(EXTWH, RAB_RC);
 	      break;
 	    case 0x62:
-	      OPC_EXEC(MSKLH, R12_R3);
+	      OPC_EXEC2(MSKLH, RAB_RC);
 	      break;
 	    case 0x67:
-	      OPC_EXEC(INSLH, R12_R3);
+	      OPC_EXEC2(INSLH, RAB_RC);
 	      break;
 	    case 0x6A:
-	      OPC_EXEC(EXTLH, R12_R3);
+	      OPC_EXEC2(EXTLH, RAB_RC);
 	      break;
 	    case 0x72:
-	      OPC_EXEC(MSKQH, R12_R3);
+	      OPC_EXEC2(MSKQH, RAB_RC);
 	      break;
 	    case 0x77:
-	      OPC_EXEC(INSQH, R12_R3);
+	      OPC_EXEC2(INSQH, RAB_RC);
 	      break;
 	    case 0x7a:
-	      OPC_EXEC(EXTQH, R12_R3);
+	      OPC_EXEC2(EXTQH, RAB_RC);
 	      break;
 		default:
 			UNKNOWN_OPCODE2;
@@ -334,19 +336,19 @@ void AlphaProcessor::execute()
 		switch (func)
 		{
 		case 0x00:
-			OPC_EXEC(MULL, R12_R3);
+			OPC_EXEC2(MULL, RAB_RC);
 			break;
 		case 0x20:
-			OPC_EXEC(MULQ, R12_R3);
+			OPC_EXEC2(MULQ, RAB_RC);
 			break;
 //		case 0x40:
-//			OP_EXEC(MULL_V, R12_R3);
+//			OP_EXEC2(MULL_V, RAB_RC);
 //			break;
 //		case 0x60:
-//			OP_EXEC(MULQ_V, R12_R3);
+//			OP_EXEC2(MULQ_V, RAB_RC);
 //			break;
 //		case 0x30:
-//			OP_EXEC(UMULH, R12_R3);
+//			OP_EXEC2(UMULH, RAB_RC);
 //			break;
 		default:
 			UNKNOWN_OPCODE2;
@@ -367,6 +369,14 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_LD:		// 1B - HW_LD instruction
+		func = (opWord >> 12) & 0xF;
+		if (func & 1) {
+			OPC_EXEC2(HW_LDQ, HW_LD);
+		} else {
+			OPC_EXEC2(HW_LDL, HW_LD);
+		}
+		break;
+
 	case OPC_FPTI:		// 1C - Floating/Integer instructions
 	case OPC_HW_MTPR:	// 1D - HW_MTPR instruction
 		break;
@@ -376,7 +386,13 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_ST:		// 1F - HW_ST instruction
-		goto unimpl;
+		func = (opWord >> 12) & 0xF;
+		if (func & 1) {
+			OPC_EXEC2(HW_STQ, HW_ST);
+		} else {
+			OPC_EXEC2(HW_STL, HW_ST);
+		}
+		break;
 
 	case OPC_LDF:		// 20 - LDF instruction
 	case OPC_LDG:		// 21 - LDG instruction

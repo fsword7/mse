@@ -82,7 +82,7 @@
 #define OP_MFC1 CLS_MEM
 #define OP_MEM  CLS_MEM|OPR_RA|OPR_RB|OPR_MDP
 #define OP_IPR  CLS_MEM|OPR_RA|OPR_MDP|OPR_IPR
-#define OP_IOP  CLS_IOP|OPR_RA|OPR_RB|OPR_RC
+#define OP_IOP  CLS_IOP|OPR_RA|OPR_RBL|OPR_RC
 #define OP_FOP  CLS_FOP|OPR_RA|OPR_RB|OPR_RC
 
 #define INST(name, flags, op, fn) { name, flags, op, fn }

@@ -281,6 +281,12 @@ CommandStatus SystemEngine::load(Console *user, args_t &args)
 	}
 	AddressSpace *space = sbus->getAddressSpace();
 
+	diExecute *exec;
+	if (!dev->hasInterface(exec)) {
+		user->printf("%s: do not have execution interface\n", dev->getDeviceName());
+		return CommandStatus::cmdOk;
+	}
+
 	args.next();
 	fs::path fname = args.current();
 
@@ -291,16 +297,19 @@ CommandStatus SystemEngine::load(Console *user, args_t &args)
 
 	try {
 		ifstream fin(fname, ios::binary);
-		uint8_t blkData[512];
-		while (!fin.eof())
-		{
-			fin.read((char *)blkData, sizeof(blkData));
-			space->writeBlock(off, blkData, fin.gcount());
-			off += fin.gcount();
-		}
+//		uint8_t blkData[512];
+//		while (!fin.eof())
+//		{
+//			fin.read((char *)blkData, sizeof(blkData));
+//			space->writeBlock(off, blkData, fin.gcount());
+//			off += fin.gcount();
+//		}
+//		fin.close();
+//		user->printf("%s: Loaded %s into %llX-%llX (length: %d bytes)\n",
+//			dev->getDeviceName(), fname, soff, off, off - soff);
+
+		exec->load(fin);
 		fin.close();
-		user->printf("%s: Loaded %s into %llX-%llX (length: %d bytes)\n",
-			dev->getDeviceName(), fname, soff, off, off - soff);
 	}
 
 	catch (system_error &e)
@@ -313,11 +322,11 @@ CommandStatus SystemEngine::load(Console *user, args_t &args)
 
 	// Assigning starting address at execution
 	// if device has execution interface
-	diExecute *exec;
-	if (dev->hasInterface(exec)) {
-		exec->setPCAddress(soff);
-		user->printf("%s: Set starting execution at address %llX\n", dev->getDeviceName(), soff);
-	}
+//	diExecute *exec;
+//	if (dev->hasInterface(exec)) {
+//		exec->setPCAddress(soff);
+//		user->printf("%s: Set starting execution at address %llX\n", dev->getDeviceName(), soff);
+//	}
 
 	return CommandStatus::cmdOk;
 }

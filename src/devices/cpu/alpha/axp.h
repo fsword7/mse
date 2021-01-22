@@ -83,11 +83,12 @@
 #define OPR_MDP    0x00008000  // Memory Displacement
 #define OPR_BDP    0x00004000  // Branch Displacement
 #define OPR_IDX    0x00002000  // Register B - Index
-#define OPR_LIT    0x00001000  // 8-bit Literal
+#define OPR_LIT    0x00001000  // Register B - 8-bit Literal
 #define OPR_RC     0x00000400  // Register C
 #define OPR_RB     0x00000200  // Register B
 #define OPR_RA     0x00000100  // Register A
 #define OPR_NONE   0x00000000  // No Operands (Hardware PALcode)
+#define OPR_RBL    (OPR_RB|OPR_LIT)
 
 // Instruction Field Defintions
 #define OPP_CODE   26        // Operation Code
@@ -110,7 +111,7 @@
 #define OP_GETLIT(opc) (((opc) >> OPP_LIT) & 0xFF)
 #define OP_GETPAL(opc) ((opc) & 0x03FFFFFF)
 #define OP_GETBDP(opc) SXT21((opc) & 0x001FFFFF)
-#define OP_GETMDP(opc) int16_t(opc) // SXTW((opc)
+#define OP_GETMDP(opc) ((opc) & 0xFFFF)
 #define OP_GETMEM(opc) ((opc) & 0xFFFF)
 #define OP_GETMJP(opc) ((opc) & 0x3FFF)
 
@@ -182,9 +183,11 @@
 #define RBV		state.iRegs[RB]
 #define RBVL	((opWord & OPC_LIT) ? OP_GETLIT(opWord) : state.iRegs[RB])
 #define RCV		state.iRegs[RC]
-#define DISP16	SXTW(opWord)
+#define DISP12  SXT12(opWord)
+#define DISP16	OP_GETMDP(opWord)
 #define DISP21  SXT21(opWord)
 
+#define SXT12(val) SXTL((int32_t)(((val) & 0x800) ? ((val) | 0xFFFFF000) : ((val) & 0x00000FFF)))
 #define SXT21(val) SXTL((int32_t)(((val) & 0x100000) ? ((val) | 0xFFE00000) : ((val) & 0x001FFFFF)))
 
 #define readv8(vAddr)  mapProgram->read8(vAddr, this)
@@ -225,6 +228,7 @@ public:
 	// Virtual function calls from execution interface
 	void step(Console *user) override;
 	void setPCAddress(offs_t addr) override;
+	bool load(ifstream &fin) override;
 
 	void devReset() override { init(); }
 
@@ -236,6 +240,8 @@ public:
 		state.vpcReg += 4;
 		state.ppcReg += 4;
 	}
+
+	inline void setPALAddress(offs_t addr) { state.palBase = addr; }
 
 	mapConfigList getAddressConfigList() const;
 
@@ -266,6 +272,9 @@ protected:
 		uint64_t fRegs[AXP_NFREGS*2];	// Floating registers (0-31 - regular, 32-63 - shadow)
 		uint64_t vpcReg;            	// Virtual program counter register
 		uint64_t ppcReg;				// Physical program counter register
+		uint64_t cpcAddr;               // Current program counter address
+
+		uint64_t palBase;				// Current PAL base address
 
 		bool sde; // Shadow register enable
 	} state;
