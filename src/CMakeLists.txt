@@ -39,6 +39,7 @@ set(MSE_H_SRCS
 	devices/cpu/alpha/axp_bwx.h
 	devices/cpu/alpha/axp_logical.h
 	devices/cpu/alpha/axp_mem.h
+	devices/cpu/alpha/axp_misc.h
 	devices/cpu/alpha/axp_pal.h
 	devices/cpu/alpha/debug.h
 	devices/cpu/alpha/opcode.h

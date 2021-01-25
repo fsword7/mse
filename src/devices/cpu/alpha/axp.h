@@ -275,8 +275,9 @@ protected:
 		uint64_t cpcAddr;               // Current program counter address
 
 		uint64_t palBase;				// Current PAL base address
+		int      cMode;                 // Current access mode
+		bool     sde;                   // Shadow register enable
 
-		bool sde; // Shadow register enable
 	} state;
 
 	mapAddressConfig mapProgramConfig;

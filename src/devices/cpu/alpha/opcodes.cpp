@@ -232,6 +232,7 @@ opcAlpha AlphaProcessor::axp_opCodes[] =
 	INST("ECB",           OP_MFC, 0x18, 0xE800),
 	INST("RS",            OP_MFC, 0x18, 0xF000),
 	INST("WH64",          OP_MFC, 0x18, 0xF800),
+	INST("WH64EN",        OP_MFC, 0x18, 0xFC00),
 
 
 	INST("CLTZ",          OP_IOP, 0x1C, 0x32),

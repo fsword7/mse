@@ -7,6 +7,22 @@
 
 #pragma once
 
+// Call PAL instruction
+
+#define DOPC_CALL_PAL \
+	if (((func < 0x40) && (state.cMode == ACC_KERNEL)) ||      \
+       ((func >= 0x80) && (func < 0xC0)))                      \
+	{                                                          \
+		state.iRegs[32 + 23] = state.vpcReg;                   \
+		pAddr = state.palBase | (1u << 13) | 1 |               \
+			((func & 0x80) << 5) | ((func & 0x3F) << 6);       \
+		setPC(pAddr);                                          \
+	} else {                                                   \
+		UNKNOWN_OPCODE2;                                       \
+	}
+
+// Hardware instructions
+
 #define DOPC_HW_REI		setPC(state.iRegs[RB])
 
 #define DOPC_HW_LDL                                        \
@@ -29,7 +45,7 @@
 	{                                                      \
 		case 1: /* quadword physical */                    \
 			pAddr = RBV + DISP12;                          \
-			mapProgram->write64(pAddr, RAV);               \
+			RAV = mapProgram->read64(pAddr);               \
 			break;                                         \
 		case 3: /* quadword physical conditional */        \
 		case 5: /* quadword virtual */                     \

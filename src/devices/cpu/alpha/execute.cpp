@@ -16,6 +16,7 @@
 #include "devices/cpu/alpha/axp_logical.h"
 #include "devices/cpu/alpha/axp_branch.h"
 #include "devices/cpu/alpha/axp_mem.h"
+#include "devices/cpu/alpha/axp_misc.h"
 #include "devices/cpu/alpha/axp_pal.h"
 
 
@@ -27,6 +28,8 @@ void AlphaProcessor::init()
 		state.iRegs[idx] = 0;
 	for (int idx = 0; idx < AXP_NFREGS*2; idx++)
 		state.fRegs[idx] = 0;
+
+	state.cMode = ACC_KERNEL;
 
 	mapProgram = getAddressSpace(AS_PROGRAM);
 }
@@ -51,6 +54,7 @@ void AlphaProcessor::execute()
 	uint64_t pAddr;
 
 	uint64_t dbgval;
+	string   dbgstr;
 
 	// Display current instruction
 	list(nullptr, state.vpcReg);
@@ -67,7 +71,7 @@ void AlphaProcessor::execute()
 	switch (opCode)
 	{
 	case OPC_PAL:		// 00 - CALL_PAL instruction
-		func = OP_GETPAL(opWord);
+		OPC_EXEC2(CALL_PAL, PAL);
 		goto unimpl;
 
 	case OPC_LDA:		// 08 - LDA instruction
@@ -360,12 +364,59 @@ void AlphaProcessor::execute()
 	case OPC_FLTV:		// 15 - Floating VAX instructions
 	case OPC_FLTI:		// 16 - Floating IEEE instructions
 	case OPC_FLTL:		// 17 - FLTL instruction
+		goto unimpl;
+
 	case OPC_MISC:		// 18 - Miscellaneous instructions
+		func = opWord & 0xFFFF;
+		switch (func)
+		{
+		case 0x0000: // 0000 - TRAPB
+			OPC_EXEC2(TRAPB, NOP);
+			break;
+		case 0x0400: // EXCB
+			OPC_EXEC2(EXCB, NOP);
+			break;
+		case 0x4000: // MB
+			OPC_EXEC2(MB, NOP);
+			break;
+		case 0x4400: // WMB
+			OPC_EXEC2(WMB, NOP);
+			break;
+		case 0x8000: // FETCH
+			OPC_EXEC2(FETCH, NOP);
+			break;
+		case 0xA000: // FETCH_M
+			OPC_EXEC2(FETCH_M, NOP);
+			break;
+//		case 0xC000: // RPCC
+//			OPC_EXEC(RPCC, X_R1);
+//			break;
+//		case 0xE000: // RC
+//			OPC_EXEC(RC, X_R1);
+//			break;
+		case 0xE800: // ECB
+			OPC_EXEC2(ECB, NOP);
+			break;
+//		case 0xF000: // RS
+//			OPC_EXEC(RS, X_R1);
+//			break;
+		case 0xF800: // WH64
+			OPC_EXEC2(WH64, NOP);
+			break;
+		case 0xFC00: // WH64EN
+			OPC_EXEC2(WH64EN, NOP);
+			break;
+		default:
+			UNKNOWN_OPCODE2;
+			break;
+		}
+		break;
+
 	case OPC_HW_MFPR:	// 19 - HW_MFPR instruction
 		goto unimpl;
 
 	case OPC_JSR:		// 1A - JSR instruction
-		OPC_EXEC(JSR, DISP);
+		OPC_EXEC2(JMP, JMP);
 		break;
 
 	case OPC_HW_LD:		// 1B - HW_LD instruction
@@ -382,7 +433,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_RET:		// 1E - RET instruction
-		OPC_EXEC(RET, DISP);
+		OPC_EXEC2(HW_REI, RET);
 		break;
 
 	case OPC_HW_ST:		// 1F - HW_ST instruction
@@ -437,7 +488,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_BR:		// 30 - BR instruction
-		OPC_EXEC(BR, DISP);
+		OPC_EXEC2(BR, BR);
 		break;
 
 	case OPC_FBEQ:		// 31 - FBEQ instruction
@@ -446,7 +497,7 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_BSR:		// 34 - BSR instruction
-		OPC_EXEC(BSR, DISP);
+		OPC_EXEC2(BSR, BR);
 		break;
 
 	case OPC_FBNE:		// 35 - FBNE instruction

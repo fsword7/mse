@@ -40,7 +40,7 @@ bool AlphaProcessor::load(ifstream &fin)
 		getDeviceName(), "LFU" /* fname */, soff, off, off - soff);
 
 	// Set starting PC and PAL address
-	setPCAddress(0x900000);
+	setPCAddress(0x900001);
 	setPALAddress(0x900000);
 
 	return true;
