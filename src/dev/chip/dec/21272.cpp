@@ -6,7 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "devices/chip/dec/21272.h"
+#include "dev/chip/dec/21272.h"
 
 // System memory map
 //

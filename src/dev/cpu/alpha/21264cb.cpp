@@ -6,7 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "devices/cpu/alpha/21264cb.h"
+#include "dev/cpu/alpha/21264cb.h"
 
 DEFINE_DEVICE_TYPE(axp21264cb, axp21264cb_device, "21264CB", "DEC 21264CB Alpha Processor")
 

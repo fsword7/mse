@@ -6,9 +6,9 @@
  */
 
 #include "emu/core.h"
-#include "devices/cpu/alpha/axp.h"
-#include "devices/cpu/alpha/debug.h"
-#include "devices/cpu/alpha/opcodes.h"
+#include "dev/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/debug.h"
+#include "dev/cpu/alpha/opcodes.h"
 
 // Instruction Formats for Alpha Processor Series
 //

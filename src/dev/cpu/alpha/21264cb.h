@@ -9,7 +9,7 @@
 
 #define CPU_TYPE_EV68
 
-#include "devices/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/axp.h"
 
 class axp21264cb_device : public AlphaProcessor
 {

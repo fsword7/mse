@@ -6,18 +6,18 @@
  */
 
 #include "emu/core.h"
-#include "devices/cpu/alpha/axp.h"
-#include "devices/cpu/alpha/debug.h"
-#include "devices/cpu/alpha/opcode.h"
+#include "dev/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/debug.h"
+#include "dev/cpu/alpha/opcode.h"
 
 // Instruction defines
-#include "devices/cpu/alpha/axp_arith.h"
-#include "devices/cpu/alpha/axp_bwx.h"
-#include "devices/cpu/alpha/axp_logical.h"
-#include "devices/cpu/alpha/axp_branch.h"
-#include "devices/cpu/alpha/axp_mem.h"
-#include "devices/cpu/alpha/axp_misc.h"
-#include "devices/cpu/alpha/axp_pal.h"
+#include "dev/cpu/alpha/axp_arith.h"
+#include "dev/cpu/alpha/axp_bwx.h"
+#include "dev/cpu/alpha/axp_logical.h"
+#include "dev/cpu/alpha/axp_branch.h"
+#include "dev/cpu/alpha/axp_mem.h"
+#include "dev/cpu/alpha/axp_misc.h"
+#include "dev/cpu/alpha/axp_pal.h"
 
 
 void AlphaProcessor::init()

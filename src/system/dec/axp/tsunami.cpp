@@ -12,8 +12,8 @@
 #include "emu/driver.h"
 #include "emu/engine.h"
 
-#include "devices/cpu/alpha/axp.h"
-#include "devices/cpu/alpha/21264cb.h"
+#include "dev/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/21264cb.h"
 #include "system/dec/axp/tsunami.h"
 
 using namespace aspace;

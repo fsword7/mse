@@ -20,6 +20,10 @@
 #define POST_X32(val) dbg.log(" ==> %08X\n", ZXTL(val))
 #define POST_X64(val) dbg.log(" ==> %016llX\n", ZXTQ(val))
 
+#define POST_X8S(VAL)  dbg.log(" <== %02X\n", ZXTB(val))
+#define POST_X16S(val) dbg.log(" <== %04X\n", ZXTW(val))
+#define POST_X32S(val) dbg.log(" <== %08X\n", ZXTL(val))
+#define POST_X64S(val) dbg.log(" <== %016llX\n", ZXTQ(val))
 
 // Condition instructions
 #define PRE_COND(opcode)                              \
@@ -104,7 +108,11 @@
 		#opcode, dbgstr, RA, ZXTW(DISP12), RB);             \
 	dbg.log(" : (%llX)", RBV + DISP12)
 
-#define POST_HW_ST POST_X64(RAV)
+//#define PRE_HW_STL(opcode) PRE_HE_ST(opcode)
+//#define PRE_HW_STQ(opcode) PRE_HE_ST(opcode)
+//
+//#define POST_HW_STL POST_X32S(RAV)
+#define POST_HW_ST POST_X64S(RAV)
 
 #define PRE_NOP(opcode) \
 	dbg.log("%016llX %-8s\n", state.cpcAddr, #opcode);

@@ -6,7 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "devices/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/axp.h"
 
 bool AlphaProcessor::load(ifstream &fin)
 {

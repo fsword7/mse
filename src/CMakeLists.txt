@@ -1,10 +1,10 @@
 set(MSE_CPP_SRCS
-	devices/cpu/alpha/21264cb.cpp
-	devices/cpu/alpha/axp.cpp
-	devices/cpu/alpha/debug.cpp
-	devices/cpu/alpha/execute.cpp
-	devices/cpu/alpha/load.cpp
-	devices/cpu/alpha/opcodes.cpp
+	dev/cpu/alpha/21264cb.cpp
+	dev/cpu/alpha/axp.cpp
+	dev/cpu/alpha/debug.cpp
+	dev/cpu/alpha/execute.cpp
+	dev/cpu/alpha/load.cpp
+	dev/cpu/alpha/opcodes.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/heun.cpp
@@ -32,17 +32,17 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
-	devices/cpu/alpha/21264cb.h
-	devices/cpu/alpha/axp.h
-	devices/cpu/alpha/axp_arith.h
-	devices/cpu/alpha/axp_branch.h
-	devices/cpu/alpha/axp_bwx.h
-	devices/cpu/alpha/axp_logical.h
-	devices/cpu/alpha/axp_mem.h
-	devices/cpu/alpha/axp_misc.h
-	devices/cpu/alpha/axp_pal.h
-	devices/cpu/alpha/debug.h
-	devices/cpu/alpha/opcode.h
+	dev/cpu/alpha/21264cb.h
+	dev/cpu/alpha/axp.h
+	dev/cpu/alpha/axp_arith.h
+	dev/cpu/alpha/axp_branch.h
+	dev/cpu/alpha/axp_bwx.h
+	dev/cpu/alpha/axp_logical.h
+	dev/cpu/alpha/axp_mem.h
+	dev/cpu/alpha/axp_misc.h
+	dev/cpu/alpha/axp_pal.h
+	dev/cpu/alpha/debug.h
+	dev/cpu/alpha/opcode.h
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/map.h
