@@ -19,6 +19,7 @@ public:
 
 	inline cstag_t  &getDeviceName() const   { return devName; }
 	inline device_t *getSystemDevice() const { return sysDevice; }
+	inline LogFile  *getLogFile() const      { return &logFile; }
 
 	inline aspace::BusManager &getExternalBusManager() { return busManager; }
 
@@ -34,6 +35,8 @@ private:
 	SystemDevice *sysDevice = nullptr;
 
 	cstag_t devName;
+
+	mutable LogFile logFile;
 
 	// External bus manager
 	aspace::BusManager busManager;

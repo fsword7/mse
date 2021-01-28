@@ -21,15 +21,18 @@ public:
 	void gexit();
 
 	Machine *findSystem(cstag_t name);
+	Machine *findSystem(Console *user);
 	Device  *findDevice(Console *user, cstag_t name);
 	Device  *findDevice(cstag_t name);
 
 	uint64_t getValue(cstag_t sValue);
 
 	CommandStatus create(Console *user, args_t &args);
+	CommandStatus debug(Console *user, args_t &args);
 	CommandStatus dump(Console *user, args_t &args);
 	CommandStatus list(Console *user, args_t &args);
 	CommandStatus load(Console *user, args_t &args);
+	CommandStatus log(Console *user, args_t &args);
 	CommandStatus reset(Console *user, args_t &args);
 	CommandStatus set(Console *user, args_t &args);
 	CommandStatus show(Console *user, args_t &args);

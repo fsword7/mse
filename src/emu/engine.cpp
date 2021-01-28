@@ -38,6 +38,18 @@ Machine *SystemEngine::findSystem(const string sysName)
 	return nullptr;
 }
 
+Machine *SystemEngine::findSystem(Console *user)
+{
+	Device *sysDevice = user->getDialedSystem();
+	if (sysDevice == nullptr)
+	{
+		user->printf("Please dial system first\n");
+		return nullptr;
+	}
+
+	return sysDevice->getMachine();
+}
+
 Device *SystemEngine::findDevice(Console *user, cstag_t name)
 {
 	Device *sysDevice = user->getDialedSystem();
@@ -129,6 +141,125 @@ CommandStatus SystemEngine::create(Console *user, args_t &args)
 
 	return CommandStatus::cmdOk;
 }
+
+// debug <device> <option|all> <on|off>
+// debug <device> log <slot|all|console> <on|off>
+CommandStatus SystemEngine::debug(Console *user, args_t &args)
+{
+	Device *dev = nullptr;
+
+	dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		user->printf("(%s): Unknown device: %s\n",
+			args[0], args.current());
+		return CommandStatus::cmdOk;
+	}
+
+	diDebug *devDebug = nullptr;
+	if (!dev->hasInterface(devDebug))
+	{
+		user->printf("%s(%s): do not have debugging interface\n",
+			dev->getDeviceName(), args[0]);
+		return CommandStatus::cmdOk;
+	}
+	Debug *dbg = devDebug->getDebugSetting();
+
+
+	return CommandStatus::cmdOk;
+}
+
+//// Usage: debug <device> <option|all> <on|off>
+////        debug <device> log <slot|all|cty> <on|off>
+//static int cmdDebug(Console *con, Device *cdev, args_t &args)
+//{
+//	Device *sdev, *dev;
+//	Debug  *dbg;
+//	bool    onFlag = false;
+//	int     slot = 0;
+//	int     ok;
+//
+//	// Check number of arguments
+//	if (args.size() < 3) {
+//		std::cout << "Usage: " << args[0] << " <device> <option|all> <on|off>" << std::endl;
+//		std::cout << "       " << args[0] << " <device> log <slot|all|cty> <on|off>" << std::endl;
+//		return CMD_OK;
+//	}
+//
+//	// Check current system device
+//	sdev = con->getSystemDevice();
+//	if (sdev == nullptr) {
+//		std::cerr << cdev->getName() << ": Please select system device first" << std::endl;
+//		return CMD_OK;
+//	}
+//
+//	// check existing device by using name
+//	dev = sdev->findDevice(args[1]);
+//	if (dev == nullptr) {
+//		std::cout << args[1] << ": device not found." << std::endl;
+//		return CMD_OK;
+//	}
+//
+//
+//	dbg = dev->getDebug();
+//	if (boost::iequals(args[2], "log")) {
+//		// Parse on/off argument
+//		if (boost::iequals(args[4], "on"))
+//			onFlag = true;
+//		else if (boost::iequals(args[4], "off"))
+//			onFlag = false;
+//		else {
+//			std::cout << "Invalid on/off option" << std::endl;
+//			return CMD_OK;
+//		}
+//
+//		// Parse cty, all or slot argument
+//		if (boost::iequals(args[3], "cty")) {
+//			if (onFlag == true)
+//				dbg->enableLog(LOG_CTYSLOT);
+//			else
+//				dbg->disableLog(LOG_CTYSLOT);
+//		} else if (boost::iequals(args[3], "all")) {
+//			if (onFlag == true)
+//				dbg->enableLog(LOG_ALLSLOTS);
+//			else
+//				dbg->disableLog(LOG_ALLSLOTS);
+//		} else {
+//			if (sscanf(args[3].c_str(), "%d", &slot) != 1) {
+//				std::cout << "Invalid slot argument" << std::endl;
+//				return CMD_OK;
+//			} else if ((slot < 0) || (slot > LOG_NFILES)) {
+//				std::cout << "Out of valid range (0 - " << LOG_NFILES << ")" << std::endl;
+//				return CMD_OK;
+//			}
+//			if (onFlag == true)
+//				dbg->enableLog(slot);
+//			else
+//				dbg->disableLog(slot);
+//		}
+//	} else  {
+//		// Parse on/off argument
+//		if (boost::iequals(args[3], "on"))
+//			onFlag = true;
+//		else if (boost::iequals(args[3], "off"))
+//			onFlag = false;
+//		else {
+//			std::cout << "Invalid on/off option" << std::endl;
+//			return CMD_OK;
+//		}
+//
+//		// Parse debug option argument
+//		if (onFlag == true)
+//			ok = dbg->enableFlag(args[2]);
+//		else
+//			ok = dbg->disableFlag(args[2]);
+//		if (ok == CMD_NOTFOUND) {
+//			std::cout << "Invalid debug option: " << args[2] << std::endl;
+//			return CMD_OK;
+//		}
+//	}
+//
+//	return CMD_OK;
+//}
 
 CommandStatus SystemEngine::dump(Console *user, args_t &args)
 {
@@ -327,6 +458,31 @@ CommandStatus SystemEngine::load(Console *user, args_t &args)
 //		exec->setPCAddress(soff);
 //		user->printf("%s: Set starting execution at address %llX\n", dev->getDeviceName(), soff);
 //	}
+
+	return CommandStatus::cmdOk;
+}
+
+CommandStatus SystemEngine::log(Console *user, args_t &args)
+{
+	Machine *sys = nullptr;
+	LogFile *log = nullptr;
+	string   fname = args.getNext();
+	string   sSlot = args.getNext();
+
+	if ((sys = findSystem(user)) == nullptr)
+		return CommandStatus::cmdOk;
+
+	log = sys->getLogFile();
+
+	int slot;
+	sscanf(sSlot.c_str(), "%d", &slot);
+	if (slot < 0 || slot >= LOG_NFILES)
+	{
+		user->printf("%s: Please select slot between 0 and %d\n",
+			sys->getDeviceName(), LOG_NFILES);
+		return CommandStatus::cmdOk;
+	}
+	log->open(fname, slot);
 
 	return CommandStatus::cmdOk;
 }

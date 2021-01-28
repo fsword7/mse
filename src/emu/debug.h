@@ -36,16 +36,19 @@
 #define LOG_ALLSLOTS	-2
 
 
-class logFile
+class LogFile
 {
 public:
-	logFile() = default;
-	~logFile() = default;
+	LogFile() = default;
+	~LogFile() = default;
 
-	void log(uint32_t flags, string line);
+	void out(uint32_t flags, cstag_t &message);
+
+	bool open(fs::path fname, int slot);
+	void close(int slot);
 
 private:
-	uint32_t flags = 0;
+	uint32_t logFlags = 0;
 	ofstream fout[LOG_NFILES];
 };
 

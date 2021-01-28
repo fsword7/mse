@@ -25,6 +25,8 @@ Machine::Machine(const SystemConfig &config, cstag_t &tagName)
 
 Machine::~Machine()
 {
+	// Close all logging files
+	logFile.close(-1);
 }
 
 Machine *Machine::create(ostream &out, const SystemDriver *driver, cstag_t &tagName)

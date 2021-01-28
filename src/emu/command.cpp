@@ -18,6 +18,13 @@ CommandStatus cmdCreate(Console *user, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus cmdDebug(Console *user, args_t &args)
+{
+	SystemEngine engine;
+	engine.debug(user, args);
+	return cmdOk;
+}
+
 // dial <device|none>
 CommandStatus cmdDial(Console *user, args_t &args)
 {
@@ -68,6 +75,13 @@ CommandStatus cmdLoad(Console *user, args_t &args)
 {
 	SystemEngine engine;
 	engine.load(user, args);
+	return cmdOk;
+}
+
+CommandStatus cmdLog(Console *user, args_t &args)
+{
+	SystemEngine engine;
+	engine.log(user, args);
 	return cmdOk;
 }
 
@@ -137,11 +151,13 @@ CommandStatus cmdShowDevice(Console *user, args_t &args)
 command_t CommandHandler::mseCommands[] =
 {
 		{ "create",		cmdCreate,	nullptr },
+		{ "debug",		cmdDebug,	nullptr },
 		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "list",		cmdList,	CommandHandler::mseListCommands },
 		{ "load",		cmdLoad,	nullptr },
+		{ "log",		cmdLog,		nullptr },
 		{ "reset",		cmdReset,	nullptr },
 		{ "set",		cmdSet,		CommandHandler::mseSetCommands },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },

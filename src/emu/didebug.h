@@ -19,8 +19,12 @@ public:
 	virtual int list(Console *cty, offs_t vAddr) = 0;
 
 #ifdef DEBUG
+	inline Debug *getDebugSetting() const { return &dbg; }
+#endif /* DEBUG */
+
+#ifdef DEBUG
 protected:
-	Debug dbg;
+	mutable Debug dbg;
 #endif /* DEBUG */
 
 private:
