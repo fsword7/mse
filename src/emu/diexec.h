@@ -13,6 +13,16 @@ public:
 	diExecute(device_t *owner);
 	virtual ~diExecute() = default;
 
+	// execution state
+	enum execState
+	{
+		execStopped = 0,
+		execStopping,
+		execRunning,
+		execIdle,
+		execWait
+	};
+
 	// Abstract function calls
 	virtual void run() = 0;
 	virtual void step(Console *user) = 0; // single step function call
@@ -22,5 +32,10 @@ public:
 	virtual bool load(ifstream &fin) = 0;
 //	virtual bool save(ofstream &fout) = 0;
 
-private:
+//	void boot();
+	void runx();
+	void halt();
+
+protected:
+	execState pState = execStopped;
 };

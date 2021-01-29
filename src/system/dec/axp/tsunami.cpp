@@ -10,6 +10,7 @@
 #include "emu/map/map.h"
 #include "emu/devsys.h"
 #include "emu/driver.h"
+#include "emu/machine.h"
 #include "emu/engine.h"
 
 #include "dev/cpu/alpha/axp.h"

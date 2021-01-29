@@ -17,7 +17,7 @@ public:
 	axp21264cb_device(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
 	~axp21264cb_device() = default;
 
-	void run();
+//	void run();
 };
 
 DECLARE_DEVICE_TYPE(axp21264cb, axp21264cb_device)

@@ -11,6 +11,7 @@
 #include <fstream>
 #include <filesystem>
 #include <typeinfo>
+#include <thread>
 
 #include <vector>
 #include <map>

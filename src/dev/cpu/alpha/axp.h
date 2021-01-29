@@ -224,6 +224,7 @@ public:
 
 	void init();
 	void execute();
+	void run();
 
 	// Virtual function calls from execution interface
 	void step(Console *user) override;

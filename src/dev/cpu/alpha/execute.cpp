@@ -46,6 +46,20 @@ void AlphaProcessor::step(Console *user)
 	execute();
 }
 
+void AlphaProcessor::run()
+{
+	// Start execution state
+	pState = execRunning;
+
+	while(pState == execRunning)
+	{
+		execute();
+	}
+
+	// Stop execution state
+	pState = execStopped;
+}
+
 void AlphaProcessor::execute()
 {
 	uint32_t opWord;

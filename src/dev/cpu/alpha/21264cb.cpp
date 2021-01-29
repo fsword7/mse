@@ -20,6 +20,6 @@ axp21264cb_device::axp21264cb_device(const SystemConfig &config,
 //{
 //}
 
-void axp21264cb_device::run()
-{
-}
+//void axp21264cb_device::run()
+//{
+//}

@@ -13,3 +13,17 @@ diExecute::diExecute(device_t *owner)
 {
 	owner->ifExecute = this;
 }
+
+void diExecute::runx()
+{
+	thread myThis;
+
+}
+
+void diExecute::halt()
+{
+	thread myThis;
+
+//	sendSignal(CPU_HALT);
+	myThis.join();
+}
