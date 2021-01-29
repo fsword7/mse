@@ -8,12 +8,21 @@
 #pragma once
 
 #include "emu/command.h"
-#include "emu/machine.h"
 
+class Machine;
 class SystemEngine
 {
 public:
+	using cmdFunc_t = CommandStatus (SystemEngine::*)(Console *, args_t &);
+	struct command_t
+	{
+		ctag_t	  *name;
+		cmdFunc_t  func;
+		command_t *options;
+	};
+
 	SystemEngine() = default;
+	SystemEngine(Console *user) : user(user) {}
 	~SystemEngine() = default;
 
 	// Global system initialization
@@ -27,20 +36,36 @@ public:
 
 	uint64_t getValue(cstag_t sValue);
 
-	CommandStatus create(Console *user, args_t &args);
-	CommandStatus debug(Console *user, args_t &args);
-	CommandStatus dump(Console *user, args_t &args);
-	CommandStatus list(Console *user, args_t &args);
-	CommandStatus load(Console *user, args_t &args);
-	CommandStatus log(Console *user, args_t &args);
-	CommandStatus reset(Console *user, args_t &args);
-	CommandStatus set(Console *user, args_t &args);
-	CommandStatus show(Console *user, args_t &args);
-	CommandStatus showDevices(Console *user, args_t &args);
-	CommandStatus step(Console *user, args_t &args);
-	CommandStatus start(Console *user, args_t &args);
+	// command handlers
+	CommandStatus cmdCreate(Console *user, args_t &args);
+	CommandStatus cmdDial(Console *user, args_t &args);
+	CommandStatus cmdDebug(Console *user, args_t &args);
+	CommandStatus cmdDump(Console *user, args_t &args);
+	CommandStatus cmdExit(Console *user, args_t &args);
+	CommandStatus cmdHalt(Console *user, args_t &args);
+	CommandStatus cmdList(Console *user, args_t &args);
+	CommandStatus cmdLoad(Console *user, args_t &args);
+	CommandStatus cmdLog(Console *user, args_t &args);
+	CommandStatus cmdReset(Console *user, args_t &args);
+	CommandStatus cmdRun(Console *user, args_t &args);
+	CommandStatus cmdSet(Console *user, args_t &args);
+	CommandStatus cmdShow(Console *user, args_t &args);
+	CommandStatus cmdShowDevices(Console *user, args_t &args);
+	CommandStatus cmdStart(Console *user, args_t &args);
+	CommandStatus cmdStep(Console *user, args_t &args);
+	CommandStatus cmdStop(Console *user, args_t &args);
 
 private:
+	Console *user = nullptr;
+
+	Machine *dialedMachine = nullptr;
+	Device *dialedSystem   = nullptr;
+	Device *dialedDevice   = nullptr;
+
 	// Machines
 	static vector<Machine *> machines;
+
+	static command_t mseCommands[];
+//	static command_t mseShowCommands[];
+//	static command_t mseSetCommands[];
 };

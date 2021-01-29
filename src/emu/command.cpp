@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "emu/console.h"
+#include "emu/machine.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
@@ -14,14 +15,14 @@
 CommandStatus cmdCreate(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.create(user, args);
+	engine.cmdCreate(user, args);
 	return cmdOk;
 }
 
 CommandStatus cmdDebug(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.debug(user, args);
+	engine.cmdDebug(user, args);
 	return cmdOk;
 }
 
@@ -48,11 +49,18 @@ CommandStatus cmdDial(Console *user, args_t &args)
 	return cmdOk;
 }
 
+//CommandStatus cmdDial(Console *user, args_t &args)
+//{
+//	SystemEngine engine;
+//	engine.cmdDial(user, args);
+//	return cmdOk;
+//}
+
 // dump <device> <suboptions ...>
 CommandStatus cmdDump(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.dump(user, args);
+	engine.cmdDump(user, args);
 	return cmdOk;
 }
 
@@ -66,7 +74,7 @@ CommandStatus cmdExit(Console *, args_t &args)
 CommandStatus cmdList(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.list(user, args);
+	engine.cmdList(user, args);
 	return cmdOk;
 }
 
@@ -74,14 +82,14 @@ CommandStatus cmdList(Console *user, args_t &args)
 CommandStatus cmdLoad(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.load(user, args);
+	engine.cmdLoad(user, args);
 	return cmdOk;
 }
 
 CommandStatus cmdLog(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.log(user, args);
+	engine.cmdLog(user, args);
 	return cmdOk;
 }
 
@@ -89,7 +97,7 @@ CommandStatus cmdLog(Console *user, args_t &args)
 CommandStatus cmdReset(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.reset(user, args);
+	engine.cmdReset(user, args);
 	return cmdOk;
 }
 
@@ -97,7 +105,7 @@ CommandStatus cmdReset(Console *user, args_t &args)
 CommandStatus cmdSet(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.set(user, args);
+	engine.cmdSet(user, args);
 	return cmdOk;
 }
 
@@ -105,7 +113,7 @@ CommandStatus cmdSet(Console *user, args_t &args)
 CommandStatus cmdShow(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.show(user, args);
+	engine.cmdShow(user, args);
 	return cmdOk;
 }
 
@@ -113,7 +121,7 @@ CommandStatus cmdShow(Console *user, args_t &args)
 CommandStatus cmdStart(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.start(user, args);
+	engine.cmdStart(user, args);
 	return cmdOk;
 }
 
@@ -121,7 +129,7 @@ CommandStatus cmdStart(Console *user, args_t &args)
 CommandStatus cmdStep(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.step(user, args);
+	engine.cmdStep(user, args);
 	return cmdOk;
 }
 
@@ -143,7 +151,7 @@ CommandStatus cmdListSystem(Console *user, args_t &args)
 CommandStatus cmdShowDevice(Console *user, args_t &args)
 {
 	SystemEngine engine;
-	engine.showDevices(user, args);
+	engine.cmdShowDevices(user, args);
 	return cmdOk;
 }
 

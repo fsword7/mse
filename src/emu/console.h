@@ -8,11 +8,12 @@
 #pragma once
 
 #include "emu/command.h"
+#include "emu/engine.h"
 
 class Console
 {
 public:
-	Console() = default;
+	Console() : engine(this) {}
 	~Console() = default;
 
 	void script(fs::path fname);
@@ -35,6 +36,7 @@ public:
 
 
 private:
+	SystemEngine engine;
 	CommandHandler cmd;
 
 	Device *dialedSystem = nullptr;

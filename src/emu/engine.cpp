@@ -9,6 +9,7 @@
 #include "emu/dibus.h"
 #include "emu/didebug.h"
 #include "emu/diexec.h"
+#include "emu/machine.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
 
@@ -105,7 +106,7 @@ uint64_t SystemEngine::getValue(cstag_t sValue)
 	return value;
 }
 
-CommandStatus SystemEngine::create(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdCreate(Console *user, args_t &args)
 {
 	SystemList list;
 	string devName = args.getNext();
@@ -142,9 +143,33 @@ CommandStatus SystemEngine::create(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
+CommandStatus SystemEngine::cmdDial(Console *user, args_t &args)
+{
+	string devName = args.getNext();
+	Machine *sys = nullptr;
+
+	if (devName == "none") {
+		dialedMachine = nullptr;
+		dialedSystem = nullptr;
+		dialedDevice = nullptr;
+		user->printf("(%s): Dialed system to none\n", args[0]);
+	} else {
+		Machine *sys = findSystem(devName);
+		if (sys != nullptr) {
+			dialedMachine = sys;
+			dialedSystem = sys->getSystemDevice();
+			dialedDevice = nullptr;
+		} else
+			user->printf("(%s): system %s not found\n",
+				args[0], devName);
+	}
+
+	return cmdOk;
+}
+
 // debug <device> <option|all> <on|off>
 // debug <device> log <slot|all|console> <on|off>
-CommandStatus SystemEngine::debug(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 {
 	Device *dev = nullptr;
 
@@ -261,7 +286,7 @@ CommandStatus SystemEngine::debug(Console *user, args_t &args)
 //	return CMD_OK;
 //}
 
-CommandStatus SystemEngine::dump(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 {
 	using namespace aspace;
 
@@ -329,7 +354,17 @@ CommandStatus SystemEngine::dump(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::list(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdExit(Console *user, args_t &args)
+{
+	return cmdShutdown;
+}
+
+CommandStatus SystemEngine::cmdHalt(Console *user, args_t &args)
+{
+	return cmdOk;
+}
+
+CommandStatus SystemEngine::cmdList(Console *user, args_t &args)
 {
 	using namespace aspace;
 
@@ -394,7 +429,7 @@ CommandStatus SystemEngine::list(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::load(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 {
 	using namespace aspace;
 
@@ -462,7 +497,7 @@ CommandStatus SystemEngine::load(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::log(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
 {
 	Machine *sys = nullptr;
 	LogFile *log = nullptr;
@@ -487,7 +522,7 @@ CommandStatus SystemEngine::log(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::reset(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
@@ -501,7 +536,12 @@ CommandStatus SystemEngine::reset(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::set(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdRun(Console *user, args_t &args)
+{
+	return cmdOk;
+}
+
+CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
@@ -529,7 +569,7 @@ CommandStatus SystemEngine::set(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::show(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdShow(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
@@ -540,7 +580,7 @@ CommandStatus SystemEngine::show(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::showDevices(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdShowDevices(Console *user, args_t &args)
 {
 	Device *root = findDevice(user, args.current());
 	if (root == nullptr) {
@@ -556,7 +596,7 @@ CommandStatus SystemEngine::showDevices(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::start(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdStart(Console *user, args_t &args)
 {
 //	Device *sysDevice = user->getDialedSystem();
 //	if (sysDevice == nullptr)
@@ -579,7 +619,7 @@ CommandStatus SystemEngine::start(Console *user, args_t &args)
 	return CommandStatus::cmdOk;
 }
 
-CommandStatus SystemEngine::step(Console *user, args_t &args)
+CommandStatus SystemEngine::cmdStep(Console *user, args_t &args)
 {
 	using namespace aspace;
 
@@ -608,3 +648,33 @@ CommandStatus SystemEngine::step(Console *user, args_t &args)
 
 	return CommandStatus::cmdOk;
 }
+
+CommandStatus SystemEngine::cmdStop(Console *user, args_t &args)
+{
+	return cmdOk;
+}
+
+// General command list
+SystemEngine::command_t SystemEngine::mseCommands[] =
+{
+		{ "create",		SystemEngine::cmdCreate,	nullptr },
+		{ "debug",		SystemEngine::cmdDebug,		nullptr },
+		{ "dial",		SystemEngine::cmdDial,		nullptr },
+		{ "dump",		SystemEngine::cmdDump,		nullptr },
+		{ "exit",		SystemEngine::cmdExit,		nullptr },
+		{ "halt",		SystemEngine::cmdHalt,		nullptr },
+		{ "list",		SystemEngine::cmdList,		nullptr },
+		{ "load",		SystemEngine::cmdLoad,		nullptr },
+		{ "log",		SystemEngine::cmdLog,		nullptr },
+		{ "reset",		SystemEngine::cmdReset,		nullptr },
+		{ "run",		SystemEngine::cmdRun,		nullptr },
+		{ "set",		SystemEngine::cmdSet,		nullptr },
+		{ "show",		SystemEngine::cmdShow,		nullptr },
+		{ "start",		SystemEngine::cmdStart,		nullptr },
+		{ "step",		SystemEngine::cmdStep,		nullptr },
+		{ "stop",		SystemEngine::cmdStop,		nullptr },
+		{ "quit",		SystemEngine::cmdExit,		nullptr },
+		// Terminator
+		nullptr
+};
+
