@@ -14,144 +14,109 @@
 // create <device> <suboptions ...>
 CommandStatus cmdCreate(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdCreate(user, args);
+	user->engine.cmdCreate(user, args);
 	return cmdOk;
 }
 
 CommandStatus cmdDebug(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdDebug(user, args);
+	user->engine.cmdDebug(user, args);
 	return cmdOk;
 }
 
-// dial <device|none>
 CommandStatus cmdDial(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	string devName = args.getNext();
-	Machine *sys = nullptr;
-
-	if (devName == "none") {
-		user->setDialedSystem(nullptr);
-		user->setDialedDevice(nullptr);
-		user->printf("Dialed system to none\n");
-	} else {
-		Machine *sys = engine.findSystem(devName);
-		if (sys != nullptr) {
-			user->setDialedSystem(sys->getSystemDevice());
-			user->setDialedDevice(nullptr);
-		} else
-			user->printf("%s: system not found\n", devName);
-	}
-
+	user->engine.cmdDial(user, args);
 	return cmdOk;
 }
-
-//CommandStatus cmdDial(Console *user, args_t &args)
-//{
-//	SystemEngine engine;
-//	engine.cmdDial(user, args);
-//	return cmdOk;
-//}
 
 // dump <device> <suboptions ...>
 CommandStatus cmdDump(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdDump(user, args);
+	user->engine.cmdDump(user, args);
 	return cmdOk;
 }
 
 // exit
-CommandStatus cmdExit(Console *, args_t &args)
+CommandStatus cmdExit(Console *user, args_t &args)
 {
+//	user->engine.cmdExit(user, args);
 	return cmdShutdown;
 }
 
 // list <device> <suboptions ...>
 CommandStatus cmdList(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdList(user, args);
+	user->engine.cmdList(user, args);
 	return cmdOk;
 }
 
 // load <device> <file> <address>
 CommandStatus cmdLoad(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdLoad(user, args);
+	user->engine.cmdLoad(user, args);
 	return cmdOk;
 }
 
 CommandStatus cmdLog(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdLog(user, args);
+	user->engine.cmdLog(user, args);
 	return cmdOk;
 }
 
 // reset <device>
 CommandStatus cmdReset(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdReset(user, args);
+	user->engine.cmdReset(user, args);
 	return cmdOk;
 }
 
 // set <device> <suboptions ...>
 CommandStatus cmdSet(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdSet(user, args);
+	user->engine.cmdSet(user, args);
 	return cmdOk;
 }
 
 // show <device> <suboptions ...>
 CommandStatus cmdShow(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdShow(user, args);
+	user->engine.cmdShow(user, args);
 	return cmdOk;
 }
 
 // start <device>
 CommandStatus cmdStart(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdStart(user, args);
+	user->engine.cmdStart(user, args);
 	return cmdOk;
 }
 
 // step <device>
 CommandStatus cmdStep(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdStep(user, args);
+	user->engine.cmdStep(user, args);
 	return cmdOk;
 }
 
 // stop <device>
-CommandStatus cmdStop(Console *, args_t &args)
+CommandStatus cmdStop(Console *user, args_t &args)
 {
-	return cmdOk;
-}
-
-// list system
-CommandStatus cmdListSystem(Console *user, args_t &args)
-{
-	SystemList sysList;
-	sysList.list(cout);
+	user->engine.cmdStop(user, args);
 	return cmdOk;
 }
 
 // show device
 CommandStatus cmdShowDevice(Console *user, args_t &args)
 {
-	SystemEngine engine;
-	engine.cmdShowDevices(user, args);
+	user->engine.cmdShowDevice(user, args);
+	return cmdOk;
+}
+
+// show system
+CommandStatus cmdShowSystem(Console *user, args_t &args)
+{
+	user->engine.cmdShowSystem(user, args);
 	return cmdOk;
 }
 
@@ -163,7 +128,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
 		{ "exit",		cmdExit,	nullptr },
-		{ "list",		cmdList,	CommandHandler::mseListCommands },
+		{ "list",		cmdList,	nullptr },
 		{ "load",		cmdLoad,	nullptr },
 		{ "log",		cmdLog,		nullptr },
 		{ "reset",		cmdReset,	nullptr },
@@ -180,7 +145,6 @@ command_t CommandHandler::mseCommands[] =
 // General list command list
 command_t CommandHandler::mseListCommands[] =
 {
-		{ "system",		cmdListSystem,		nullptr },
 		// Terminator
 		nullptr
 };
@@ -194,6 +158,7 @@ command_t CommandHandler::mseSetCommands[] =
 command_t CommandHandler::mseShowCommands[] =
 {
 		{ "device",		cmdShowDevice,		nullptr },
+		{ "system",		cmdShowSystem,		nullptr },
 		// Terminator
 		nullptr
 };

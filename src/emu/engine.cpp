@@ -41,26 +41,24 @@ Machine *SystemEngine::findSystem(const string sysName)
 
 Machine *SystemEngine::findSystem(Console *user)
 {
-	Device *sysDevice = user->getDialedSystem();
-	if (sysDevice == nullptr)
+	if (dialedMachine == nullptr)
 	{
 		user->printf("Please dial system first\n");
 		return nullptr;
 	}
 
-	return sysDevice->getMachine();
+	return dialedMachine;
 }
 
 Device *SystemEngine::findDevice(Console *user, cstag_t name)
 {
-	Device *sysDevice = user->getDialedSystem();
-	if (sysDevice == nullptr)
+	if (dialedSystem == nullptr)
 	{
 		user->printf("Please dial system first\n");
 		return nullptr;
 	}
 
-	for (Device &dev : DeviceIterator(*sysDevice))
+	for (Device &dev : DeviceIterator(*dialedSystem))
 		if (dev.getDeviceName() == name)
 			return &dev;
 
@@ -69,6 +67,13 @@ Device *SystemEngine::findDevice(Console *user, cstag_t name)
 
 Device *SystemEngine::findDevice(cstag_t name)
 {
+	if (dialedSystem == nullptr)
+		return nullptr;
+
+	for (Device &dev : DeviceIterator(*dialedSystem))
+		if (dev.getDeviceName() == name)
+			return &dev;
+
 	return nullptr;
 }
 
@@ -137,10 +142,11 @@ CommandStatus SystemEngine::cmdCreate(Console *user, args_t &args)
 	machines.push_back(sys);
 
 	// Dial system as default
-	user->setDialedSystem(sys->getSystemDevice());
-	user->setDialedDevice(nullptr);
+	dialedMachine = sys;
+	dialedSystem = sys->getSystemDevice();
+	dialedDevice = nullptr;
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdDial(Console *user, args_t &args)
@@ -177,7 +183,7 @@ CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 	if (dev == nullptr) {
 		user->printf("(%s): Unknown device: %s\n",
 			args[0], args.current());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	diDebug *devDebug = nullptr;
@@ -185,12 +191,12 @@ CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 	{
 		user->printf("%s(%s): do not have debugging interface\n",
 			dev->getDeviceName(), args[0]);
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 	Debug *dbg = devDebug->getDebugSetting();
 
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 //// Usage: debug <device> <option|all> <on|off>
@@ -300,7 +306,7 @@ CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 		dev = findDevice(user, args.current());
 		if (dev == nullptr) {
 			user->printf("%s: unknown device\n", args.current());
-			return CommandStatus::cmdOk;
+			return cmdOk;
 		}
 
 		args.next();
@@ -324,7 +330,7 @@ CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 	if (!dev->hasInterface(sbus))
 	{
 		user->printf("%s: do not have external bus interface\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 	AddressSpace *space = sbus->getAddressSpace();
 
@@ -351,7 +357,7 @@ CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 
 	// Save device and current address for more output
 	user->setLastAddress(dev, sAddr);
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdExit(Console *user, args_t &args)
@@ -379,7 +385,7 @@ CommandStatus SystemEngine::cmdList(Console *user, args_t &args)
 		dev = findDevice(user, args.current());
 		if (dev == nullptr) {
 			user->printf("%s: unknown device\n", args.current());
-			return CommandStatus::cmdOk;
+			return cmdOk;
 		}
 
 		args.next();
@@ -402,14 +408,14 @@ CommandStatus SystemEngine::cmdList(Console *user, args_t &args)
 	if (!dev->hasInterface(sbus))
 	{
 		user->printf("%s: do not have external bus interface\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 	AddressSpace *space = sbus->getAddressSpace();
 
 	if (!dev->hasInterface(debug))
 	{
 		user->printf("%s: do not have debug tools\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	uint64_t addr = sAddr;
@@ -426,7 +432,7 @@ CommandStatus SystemEngine::cmdList(Console *user, args_t &args)
 
 	// Save device and current address for more output
 	user->setLastAddress(dev, addr);
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
@@ -436,21 +442,21 @@ CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	diExternalBus *sbus;
 	if (!dev->hasInterface(sbus))
 	{
 		user->printf("%s: do not have external bus interface\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 	AddressSpace *space = sbus->getAddressSpace();
 
 	diExecute *exec;
 	if (!dev->hasInterface(exec)) {
 		user->printf("%s: do not have execution interface\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	args.next();
@@ -483,7 +489,7 @@ CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 		user->printf("%s: file error: %s\n", fname, e.code().message());
 		cout << flush;
 
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	// Assigning starting address at execution
@@ -494,7 +500,7 @@ CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 //		user->printf("%s: Set starting execution at address %llX\n", dev->getDeviceName(), soff);
 //	}
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
@@ -505,7 +511,7 @@ CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
 	string   sSlot = args.getNext();
 
 	if ((sys = findSystem(user)) == nullptr)
-		return CommandStatus::cmdOk;
+		return cmdOk;
 
 	log = sys->getLogFile();
 
@@ -515,11 +521,11 @@ CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
 	{
 		user->printf("%s: Please select slot between 0 and %d\n",
 			sys->getDeviceName(), LOG_NFILES);
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 	log->open(fname, slot);
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
@@ -527,13 +533,13 @@ CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	// Reset device back to initialized state
 	dev->reset();
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdRun(Console *user, args_t &args)
@@ -546,13 +552,13 @@ CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	devCommand_t *cmdList = dev->getCommands();
 	if (cmdList == nullptr) {
 		user->printf("%s: do not handle device commands\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	args.next();
@@ -566,7 +572,7 @@ CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 
 	user->printf("%s: Unknown device command\n", dev->getDeviceName());
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdShow(Console *user, args_t &args)
@@ -574,26 +580,10 @@ CommandStatus SystemEngine::cmdShow(Console *user, args_t &args)
 	Device *dev = findDevice(user, args.current());
 	if (dev == nullptr) {
 		user->printf("%s: unknown device\n", args.current());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
-	return CommandStatus::cmdOk;
-}
-
-CommandStatus SystemEngine::cmdShowDevices(Console *user, args_t &args)
-{
-	Device *root = findDevice(user, args.current());
-	if (root == nullptr) {
-		user->printf("No such devices\n");
-		return CommandStatus::cmdOk;
-	}
-
-	for (Device &dev : DeviceIterator(*root))
-	{
-		user->printf("%s\n", dev.getDeviceName());
-	}
-
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdStart(Console *user, args_t &args)
@@ -610,13 +600,13 @@ CommandStatus SystemEngine::cmdStart(Console *user, args_t &args)
 	Machine *sys = findSystem(devName);
 	if (sys == nullptr) {
 		user->printf("%s: system not found.\n", devName);
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	// Start system device as final initialization
 	sys->start(user);
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdStep(Console *user, args_t &args)
@@ -630,7 +620,7 @@ CommandStatus SystemEngine::cmdStep(Console *user, args_t &args)
 		dev = findDevice(user, args.current());
 		if (dev == nullptr) {
 			user->printf("%s: unknown device\n", args.current());
-			return CommandStatus::cmdOk;
+			return cmdOk;
 		}
 	}
 	else
@@ -640,17 +630,43 @@ CommandStatus SystemEngine::cmdStep(Console *user, args_t &args)
 	if (!dev->hasInterface(exec))
 	{
 		user->printf("%s: do not have execution interface\n", dev->getDeviceName());
-		return CommandStatus::cmdOk;
+		return cmdOk;
 	}
 
 	user->setLastAddress(dev, 0);
 	exec->step(user);
 
-	return CommandStatus::cmdOk;
+	return cmdOk;
 }
 
 CommandStatus SystemEngine::cmdStop(Console *user, args_t &args)
 {
+	return cmdOk;
+}
+
+// show <suboption> commands
+
+CommandStatus SystemEngine::cmdShowDevice(Console *user, args_t &args)
+{
+	Device *root = findDevice(user, args.current());
+	if (root == nullptr) {
+		user->printf("No such devices\n");
+		return cmdOk;
+	}
+
+	for (Device &dev : DeviceIterator(*root))
+	{
+		user->printf("%s\n", dev.getDeviceName());
+	}
+
+	return cmdOk;
+}
+
+CommandStatus SystemEngine::cmdShowSystem(Console *user, args_t &args)
+{
+	SystemList sysList;
+	sysList.list(cout);
+
 	return cmdOk;
 }
 

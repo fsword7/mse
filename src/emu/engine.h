@@ -50,7 +50,8 @@ public:
 	CommandStatus cmdRun(Console *user, args_t &args);
 	CommandStatus cmdSet(Console *user, args_t &args);
 	CommandStatus cmdShow(Console *user, args_t &args);
-	CommandStatus cmdShowDevices(Console *user, args_t &args);
+	CommandStatus cmdShowDevice(Console *user, args_t &args);
+	CommandStatus cmdShowSystem(Console *user, args_t &args);
 	CommandStatus cmdStart(Console *user, args_t &args);
 	CommandStatus cmdStep(Console *user, args_t &args);
 	CommandStatus cmdStop(Console *user, args_t &args);
