@@ -63,6 +63,11 @@ private:
 	Device *dialedSystem   = nullptr;
 	Device *dialedDevice   = nullptr;
 
+	// Continuously output for last command
+	command_t *lastCommand = nullptr;
+	Device    *lastDevice  = nullptr;
+	offs_t     lastAddress = 0;
+
 	// Machines
 	static vector<Machine *> machines;
 
