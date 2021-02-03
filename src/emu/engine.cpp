@@ -82,7 +82,7 @@ Device *SystemEngine::findDevice(cstag_t name)
 // G = gigabyte - 1024*1024*1024 bytes
 // T = terabyte - 1024*1024*1024*1024 bytes
 
-ctag_t *byteScale = " kmgt";
+static ctag_t *byteScale = " kmgt";
 
 uint64_t SystemEngine::getValue(cstag_t sValue)
 {
@@ -174,7 +174,7 @@ CommandStatus SystemEngine::cmdDial(Console *user, args_t &args)
 }
 
 // debug <device> <option|all> <on|off>
-// debug <device> log <slot|all|console> <on|off>
+// debug <device> log <slot|all|{console|cty}> <on|off>
 CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 {
 	Device *dev = nullptr;
@@ -195,6 +195,69 @@ CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 	}
 	Debug *dbg = devDebug->getDebugSetting();
 
+	args.next();
+	if (args.current() == "log")
+	{
+		// Parse cty, all or slot parameter
+		int slot;
+		args.next();
+		if (args.current() == "console" || args.current() == "cty")
+			slot = LOG_CTYSLOT;
+		else if (args.current() == "all")
+			slot = LOG_ALLSLOTS;
+		else if (sscanf(args.current().c_str(), "%d", &slot) != 1)
+		{
+			user->printf("%s(%s): Invalid slot option\n",
+				dev->getDeviceName(), args[0]);
+			return cmdOk;
+		}
+		else if ((slot < 0) || (slot >= LOG_NFILES))
+		{
+			user->printf("%s(%s): Invalid slot number (0-%d)\n",
+				dev->getDeviceName(), args[0], LOG_NFILES-1);
+			return cmdOk;
+		}
+
+		// Parse on/off parameter
+		bool onFlag;
+		args.next();
+		if (args.current() == "on")
+			onFlag = true;
+		else if (args.current() == "off")
+			onFlag = false;
+		else {
+			user->printf("%s(%s): Invalid log on/off option\n",
+				dev->getDeviceName(), args[0]);
+			return cmdOk;
+		}
+
+		// Update logging parameters
+		dbg->setLogFlag(slot, onFlag);
+	}
+	else
+	{
+		string option = args.current();
+
+		// Parse on/off parameter
+		bool onFlag;
+		args.next();
+		if (args.current() == "on")
+			onFlag = true;
+		else if (args.current() == "off")
+			onFlag = false;
+		else {
+			user->printf("%s(%s): Invalid debug on/off option\n",
+				dev->getDeviceName(), args[0]);
+			return cmdOk;
+		}
+
+		if (!dbg->setOptionFlag(option, onFlag))
+		{
+			user->printf("%s(%s): Invalid '%s' option argument\n",
+				dev->getDeviceName(), args[0], option);
+			return cmdOk;
+		}
+	}
 
 	return cmdOk;
 }
@@ -524,6 +587,9 @@ CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
 		return cmdOk;
 	}
 	log->open(fname, slot);
+
+	user->printf("%s(%s): Opened log '%s' file\n",
+		sys->getDeviceName(), args[0], fname);
 
 	return cmdOk;
 }

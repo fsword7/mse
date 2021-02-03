@@ -40,7 +40,7 @@ class LogFile
 {
 public:
 	LogFile() = default;
-	~LogFile() = default;
+	~LogFile();
 
 	void out(uint32_t flags, cstag_t &message);
 
@@ -55,8 +55,17 @@ private:
 class Debug
 {
 public:
+	struct DebugOption
+	{
+		cstag_t  dbgName;
+		uint64_t dbgFlag;
+	};
+
 	Debug() = default;
 	~Debug() = default;
+
+	void setLogFlag(int slot, bool enable);
+	bool setOptionFlag(cstag_t &option, bool enable);
 
 	template <typename... Args>
 	void log(string format, Args... args)
@@ -69,4 +78,11 @@ public:
 	//		user->printf(format, args...);
 	}
 
+private:
+	uint64_t dbgFlags = 0;
+	uint32_t logFlags = 0;
+
+	static DebugOption dbgList[2];
 };
+
+using dbgOption = Debug::DebugOption;

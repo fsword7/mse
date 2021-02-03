@@ -8,6 +8,12 @@
 #include "emu/core.h"
 #include "emu/debug.h"
 
+LogFile::~LogFile()
+{
+	// Close all logging files
+	close(-1);
+}
+
 bool LogFile::open(fs::path fname, int slot)
 {
 	if (slot < 0 || slot >= LOG_NFILES)
@@ -21,7 +27,7 @@ bool LogFile::open(fs::path fname, int slot)
 	}
 
 	// Open new log file at appending mode
-	fout[slot].open(fname, ios::ate);
+	fout[slot].open(fname, ios::app);
 	fout[slot] << "------ Start of logging ------" << endl << flush;
 
 	logFlags |= (1u << slot);
@@ -68,3 +74,42 @@ void LogFile::out(const uint32_t flags, cstag_t &message)
 }
 
 // *********************************************************
+
+void Debug::setLogFlag(int slot, bool enable)
+{
+	uint32_t flags = 0;
+
+	if (slot >= 0 && slot < LOG_NFILES)
+		flags = 1u << slot;
+	else if (slot == LOG_CTYSLOT)
+		flags = LOG_CONSOLE;
+	else if (slot == LOG_ALLSLOTS)
+		flags = LOG_ALLFILES;
+
+	if (enable == true)
+		logFlags |= flags;
+	else
+		logFlags &= ~flags;
+}
+
+dbgOption Debug::dbgList[2] =
+{
+		{ "trace",		DBG_TRACE },
+		{ "all",		DBG_ALL }
+};
+
+bool Debug::setOptionFlag(cstag_t &option, bool enable)
+{
+	uint64_t flags = 0;
+
+	for (auto &dbg : dbgList)
+		if (option == dbg.dbgName)
+			flags = dbg.dbgFlag;
+
+	if (enable == true)
+		dbgFlags |= flags;
+	else
+		dbgFlags &= ~flags;
+
+	return flags ? true : false;
+}
