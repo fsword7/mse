@@ -7,8 +7,8 @@
 
 #pragma once
 
-#define ES40_NCPU	4
-#define ES45_NCPU	4
+#define ES40_NCPU	1 /* up to 4 processors */
+#define ES45_NCPU	1 /* up to 32 processors */
 
 class tsunami_device : public SystemDevice
 {
