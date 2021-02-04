@@ -71,6 +71,14 @@ void LogFile::setConsole(Console *user)
 		logFlags &= ~LOG_CONSOLE;
 }
 
+void LogFile::flushAll()
+{
+	// Flush all remaining buffers
+	for (int idx = 0; idx < LOG_NFILES; idx++)
+		if (logFlags & (1u << idx))
+			fout[idx] << flush;
+}
+
 void LogFile::out(const uint32_t flags, cstag_t &message)
 {
 	if ((logFlags & (flags & LOG_ALLFILES)) == 0)
@@ -79,7 +87,7 @@ void LogFile::out(const uint32_t flags, cstag_t &message)
 	// Record message into some logging files
 	for (int idx = 0; idx < LOG_NFILES; idx++)
 		if (logFlags & (flags & (1u << idx)))
-			fout[idx] << message << flush;
+			fout[idx] << message;
 
 	// Print message on operator's terminal
 	if (logFlags & (flags & LOG_CONSOLE))

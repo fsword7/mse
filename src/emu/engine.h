@@ -43,13 +43,13 @@ public:
 	CommandStatus cmdDial(Console *user, args_t &args);
 	CommandStatus cmdDebug(Console *user, args_t &args);
 	CommandStatus cmdDump(Console *user, args_t &args);
+	CommandStatus cmdExecute(Console *user, args_t &args);
 	CommandStatus cmdExit(Console *user, args_t &args);
 	CommandStatus cmdHalt(Console *user, args_t &args);
 	CommandStatus cmdList(Console *user, args_t &args);
 	CommandStatus cmdLoad(Console *user, args_t &args);
 	CommandStatus cmdLog(Console *user, args_t &args);
 	CommandStatus cmdReset(Console *user, args_t &args);
-	CommandStatus cmdRun(Console *user, args_t &args);
 	CommandStatus cmdSet(Console *user, args_t &args);
 	CommandStatus cmdShow(Console *user, args_t &args);
 	CommandStatus cmdShowDevice(Console *user, args_t &args);

@@ -33,7 +33,7 @@ public:
 //	virtual bool save(ofstream &fout) = 0;
 
 //	void boot();
-	void runx();
+	void execute();
 	void halt();
 
 protected:

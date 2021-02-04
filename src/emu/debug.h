@@ -45,6 +45,7 @@ public:
 
 	void setConsole(Console *user);
 	void out(uint32_t flags, cstag_t &message);
+	void flushAll();
 
 	bool open(fs::path fname, int slot);
 	void close(int slot);
@@ -72,6 +73,20 @@ public:
 
 	inline void setLogFile(LogFile *log) { logFile = log; }
 
+	inline void setLogFlags(uint32_t flags)     { logFlags |= flags; }
+	inline void clearLogFlags(uint32_t flags)   { logFlags &= ~flags; }
+	inline void loadLogFlags(uint32_t flags)    { logFlags = flags; }
+	inline uint32_t getLogFlags()               { return logFlags; }
+
+	inline bool checkAnyFlags(uint64_t flags)   { return (dbgFlags & flags); }
+	inline bool checkAllFlags(uint64_t flags)   { return (dbgFlags & flags) == flags; }
+	inline void setDebugFlags(uint64_t flags)   { dbgFlags |= flags; }
+	inline void clearDebugFlags(uint64_t flags) { dbgFlags &= ~flags; }
+	inline void loadDebugFlags(uint64_t flags)  { dbgFlags = flags; }
+	inline uint64_t getDebugFlags()             { return dbgFlags; }
+
+	inline void flushAll() { assert(logFile != nullptr); logFile->flushAll(); }
+
 	template <typename... Args>
 	void log(string format, Args... args)
 	{
@@ -80,7 +95,7 @@ public:
 		assert(logFile != nullptr);
 		logFile->out(logFlags, out);
 
-		cout << out << flush;
+//		cout << out << flush;
 
 	//	if ((logFlags & LOG_CONSOLE) && (user != nullptr)
 	//		user->printf(format, args...);

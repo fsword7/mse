@@ -37,11 +37,25 @@ CommandStatus cmdDump(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// execute <device> [address]
+CommandStatus cmdExecute(Console *user, args_t &args)
+{
+	user->engine.cmdExecute(user, args);
+	return cmdOk;
+}
+
 // exit
 CommandStatus cmdExit(Console *user, args_t &args)
 {
 //	user->engine.cmdExit(user, args);
 	return cmdShutdown;
+}
+
+// halt <device>
+CommandStatus cmdHalt(Console *user, args_t &args)
+{
+	user->engine.cmdHalt(user, args);
+	return cmdOk;
 }
 
 // list <device> <suboptions ...>
@@ -127,7 +141,9 @@ command_t CommandHandler::mseCommands[] =
 		{ "debug",		cmdDebug,	nullptr },
 		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
+		{ "execute",	cmdExecute, nullptr },
 		{ "exit",		cmdExit,	nullptr },
+		{ "halt",		cmdHalt,	nullptr },
 		{ "list",		cmdList,	nullptr },
 		{ "load",		cmdLoad,	nullptr },
 		{ "log",		cmdLog,		nullptr },

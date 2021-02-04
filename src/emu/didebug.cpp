@@ -15,12 +15,18 @@ diDebug::diDebug(device_t *owner)
 	owner->ifDebug = this;
 }
 
-void diDebug::ifStart()
-{
-	Machine *sys = getDevice()->getMachine();
-	assert(sys != nullptr);
+//void diDebug::ifStart()
+//{
+//	Machine *sys = getDevice()->getMachine();
+//	assert(sys != nullptr);
+//
+//#ifdef DEBUG
+//	dbg.setLogFile(sys->getLogFile());
+//#endif /* DEBUG */
+//}
 
-#ifdef DEBUG
+void diDebug::setLogFile(Machine *sys)
+{
+	assert(sys != nullptr);
 	dbg.setLogFile(sys->getLogFile());
-#endif /* DEBUG */
 }

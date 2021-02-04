@@ -183,7 +183,7 @@ public:
 	inline Machine *getMachine() { return ownMachine; }
 	inline devCommand_t *getCommands() { return devCommands; }
 
-	inline void setMachine(Machine *sys) { ownMachine = sys; }
+//	inline void setMachine(Machine *sys) { ownMachine = sys; }
 	inline void setCommands(devCommand_t *cmds) { devCommands = cmds; }
 
 	inline bool hasInterface(diExternalBus *&iface) { return (iface = ifBus) != nullptr; }
@@ -191,6 +191,8 @@ public:
 	inline bool hasInterface(diDebug *&iface)       { return (iface = ifDebug) != nullptr; }
 
 	void addInterface(DeviceInterface *iface);
+	void setMachine(Machine *sys);
+
 	inline ifList_t getInterfaces() { return ifList; }
 
 	inline bool isStarted() const { return flagStarted; }

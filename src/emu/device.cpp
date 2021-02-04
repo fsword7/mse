@@ -6,6 +6,8 @@
  */
 
 #include "emu/core.h"
+#include "emu/didebug.h"
+#include "emu/machine.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name, Device *owner, uint64_t clock)
 : sysConfig(config), type(type), devName(name), ownDevice(owner)
@@ -40,6 +42,14 @@ void Device::reset()
 	devReset();
 }
 
+void Device::setMachine(Machine *sys)
+{
+	assert(sys != nullptr);
+	ownMachine = sys;
+
+	if (ifDebug != nullptr)
+		ifDebug->setLogFile(sys);
+}
 
 void Device::addInterface(DeviceInterface *iface)
 {

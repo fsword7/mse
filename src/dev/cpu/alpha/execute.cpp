@@ -32,6 +32,7 @@ void AlphaProcessor::init()
 	state.cMode = ACC_KERNEL;
 
 	mapProgram = getAddressSpace(AS_PROGRAM);
+	cout << "Yes, Alpha initialization here\n" << flush;
 }
 
 void AlphaProcessor::setPCAddress(offs_t addr)
@@ -42,8 +43,17 @@ void AlphaProcessor::setPCAddress(offs_t addr)
 
 void AlphaProcessor::step(Console *user)
 {
+	// Save current log flags and
+	// enable console output
+	uint32_t flags = dbg.getLogFlags();
+	dbg.setLogFlags(LOG_CONSOLE);
+
+	// Execute one instruction as single step
 	log = user;
 	execute();
+
+	// Restore log flags
+	dbg.loadLogFlags(flags);
 }
 
 void AlphaProcessor::run()
@@ -51,9 +61,17 @@ void AlphaProcessor::run()
 	// Start execution state
 	pState = execRunning;
 
-	while(pState == execRunning)
+	try {
+		while(pState == execRunning)
+		{
+			execute();
+		}
+	}
+
+	catch (...)
 	{
-		execute();
+		// Flush all remaining buffers
+		dbg.flushAll();
 	}
 
 	// Stop execution state
@@ -71,7 +89,7 @@ void AlphaProcessor::execute()
 	string   dbgstr;
 
 	// Display current instruction
-	list(nullptr, state.vpcReg);
+//	list(nullptr, state.vpcReg);
 
 	state.cpcAddr = state.vpcReg;
 	opWord = readv32(state.vpcReg);

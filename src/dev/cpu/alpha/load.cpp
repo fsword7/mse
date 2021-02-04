@@ -13,6 +13,8 @@ bool AlphaProcessor::load(ifstream &fin)
 	uint8_t blkData[512];
 	offs_t  soff, off;
 
+	assert(mapProgram != nullptr);
+
 	// Check if it contains LFU image
 	fin.read((char *)blkData, sizeof(blkData));
 	if (!memcmp((char *)&blkData[4], "LFU ", 4)) {

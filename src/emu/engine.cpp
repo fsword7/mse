@@ -339,6 +339,26 @@ CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus SystemEngine::cmdExecute(Console *user, args_t &args)
+{
+	Device *dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		user->printf("%s: unknown device\n", args.current());
+		return cmdOk;
+	}
+
+	diExecute *exec;
+	if (!dev->hasInterface(exec))
+	{
+		user->printf("%s: do not have execution interface\n", dev->getDeviceName());
+		return cmdOk;
+	}
+
+	exec->execute();
+
+	return cmdOk;
+}
+
 CommandStatus SystemEngine::cmdExit(Console *user, args_t &args)
 {
 	return cmdShutdown;
@@ -524,11 +544,6 @@ CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
 	return cmdOk;
 }
 
-CommandStatus SystemEngine::cmdRun(Console *user, args_t &args)
-{
-	return cmdOk;
-}
-
 CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
@@ -660,13 +675,14 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		{ "debug",		SystemEngine::cmdDebug,		nullptr },
 		{ "dial",		SystemEngine::cmdDial,		nullptr },
 		{ "dump",		SystemEngine::cmdDump,		nullptr },
+		{ "execute",	SystemEngine::cmdExecute,	nullptr },
 		{ "exit",		SystemEngine::cmdExit,		nullptr },
 		{ "halt",		SystemEngine::cmdHalt,		nullptr },
 		{ "list",		SystemEngine::cmdList,		nullptr },
 		{ "load",		SystemEngine::cmdLoad,		nullptr },
 		{ "log",		SystemEngine::cmdLog,		nullptr },
 		{ "reset",		SystemEngine::cmdReset,		nullptr },
-		{ "run",		SystemEngine::cmdRun,		nullptr },
+		{ "run",		SystemEngine::cmdExecute,	nullptr },
 		{ "set",		SystemEngine::cmdSet,		nullptr },
 		{ "show",		SystemEngine::cmdShow,		nullptr },
 		{ "start",		SystemEngine::cmdStart,		nullptr },

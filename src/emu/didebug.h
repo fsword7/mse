@@ -16,7 +16,7 @@ public:
 	diDebug(device_t *owner);
 	virtual ~diDebug() = default;
 
-	void ifStart();
+	void setLogFile(Machine *sys); // { dbg.setLogFile(sys->getLogFile()); }
 
 	virtual int list(Console *cty, offs_t vAddr) = 0;
 
