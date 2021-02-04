@@ -34,6 +34,8 @@ public:
 	Device  *findDevice(Console *user, cstag_t name);
 	Device  *findDevice(cstag_t name);
 
+	void dial(Console *user, Machine *system);
+
 	uint64_t getValue(cstag_t sValue);
 
 	// command handlers
@@ -61,7 +63,6 @@ private:
 
 	Machine *dialedMachine = nullptr;
 	Device *dialedSystem   = nullptr;
-	Device *dialedDevice   = nullptr;
 
 	// Continuously output for last command
 	command_t *lastCommand = nullptr;

@@ -16,6 +16,8 @@ public:
 	diDebug(device_t *owner);
 	virtual ~diDebug() = default;
 
+	void ifStart();
+
 	virtual int list(Console *cty, offs_t vAddr) = 0;
 
 #ifdef DEBUG

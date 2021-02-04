@@ -35,6 +35,7 @@
 #define LOG_CTYSLOT		-1
 #define LOG_ALLSLOTS	-2
 
+class Console;
 
 class LogFile
 {
@@ -42,14 +43,16 @@ public:
 	LogFile() = default;
 	~LogFile();
 
+	void setConsole(Console *user);
 	void out(uint32_t flags, cstag_t &message);
 
 	bool open(fs::path fname, int slot);
 	void close(int slot);
 
 private:
-	uint32_t logFlags = 0;
-	ofstream fout[LOG_NFILES];
+	uint32_t  logFlags = 0;
+	Console  *cty = nullptr;
+	ofstream  fout[LOG_NFILES];
 };
 
 class Debug
@@ -67,12 +70,17 @@ public:
 	void setLogFlag(int slot, bool enable);
 	bool setOptionFlag(cstag_t &option, bool enable);
 
+	inline void setLogFile(LogFile *log) { logFile = log; }
+
 	template <typename... Args>
 	void log(string format, Args... args)
 	{
-		string out;
+		string out = fmt::sprintf(format, args...);
 
-		fmt::printf(format, args...);
+		assert(logFile != nullptr);
+		logFile->out(logFlags, out);
+
+		cout << out << flush;
 
 	//	if ((logFlags & LOG_CONSOLE) && (user != nullptr)
 	//		user->printf(format, args...);
@@ -81,6 +89,9 @@ public:
 private:
 	uint64_t dbgFlags = 0;
 	uint32_t logFlags = 0;
+
+	LogFile *logFile = nullptr;
+	Console *user = nullptr;
 
 	static DebugOption dbgList[2];
 };

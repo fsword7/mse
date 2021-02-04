@@ -22,6 +22,8 @@ public:
 	inline void setLastAddress(Device *device, offs_t addr) { cmd.lastDevice = device; cmd.lastAddress = addr; }
 	inline offs_t  getLastAddress(Device *&device) { device = cmd.lastDevice; return cmd.lastAddress; }
 
+	inline void print(cstag_t &message) { cout << message << flush; }
+
 	template <typename ... Args>
 	void printf(cstag_t &format, Args ... args)
 	{

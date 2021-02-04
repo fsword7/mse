@@ -77,6 +77,18 @@ Device *SystemEngine::findDevice(cstag_t name)
 	return nullptr;
 }
 
+void SystemEngine::dial(Console *user, Machine *system)
+{
+	assert(user != nullptr);
+	if (dialedMachine != nullptr)
+		system->setConsole(nullptr);
+	if (system != nullptr)
+		system->setConsole(user);
+
+	dialedMachine = system;
+	dialedSystem = system->getSystemDevice();
+}
+
 // K = kilobyte - 1024 bytes
 // M = megabyte - 1024*1024 bytes
 // G = gigabyte - 1024*1024*1024 bytes
@@ -142,9 +154,7 @@ CommandStatus SystemEngine::cmdCreate(Console *user, args_t &args)
 	machines.push_back(sys);
 
 	// Dial system as default
-	dialedMachine = sys;
-	dialedSystem = sys->getSystemDevice();
-	dialedDevice = nullptr;
+	dial(user, sys);
 
 	return cmdOk;
 }
@@ -155,19 +165,18 @@ CommandStatus SystemEngine::cmdDial(Console *user, args_t &args)
 	Machine *sys = nullptr;
 
 	if (devName == "none") {
-		dialedMachine = nullptr;
-		dialedSystem = nullptr;
-		dialedDevice = nullptr;
+		dial(user, nullptr);
 		user->printf("(%s): Dialed system to none\n", args[0]);
 	} else {
 		Machine *sys = findSystem(devName);
-		if (sys != nullptr) {
-			dialedMachine = sys;
-			dialedSystem = sys->getSystemDevice();
-			dialedDevice = nullptr;
-		} else
+		if (sys != nullptr)
+		{
 			user->printf("(%s): system %s not found\n",
 				args[0], devName);
+			return cmdOk;
+		}
+
+		dial(user, sys);
 	}
 
 	return cmdOk;
@@ -261,99 +270,6 @@ CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 
 	return cmdOk;
 }
-
-//// Usage: debug <device> <option|all> <on|off>
-////        debug <device> log <slot|all|cty> <on|off>
-//static int cmdDebug(Console *con, Device *cdev, args_t &args)
-//{
-//	Device *sdev, *dev;
-//	Debug  *dbg;
-//	bool    onFlag = false;
-//	int     slot = 0;
-//	int     ok;
-//
-//	// Check number of arguments
-//	if (args.size() < 3) {
-//		std::cout << "Usage: " << args[0] << " <device> <option|all> <on|off>" << std::endl;
-//		std::cout << "       " << args[0] << " <device> log <slot|all|cty> <on|off>" << std::endl;
-//		return CMD_OK;
-//	}
-//
-//	// Check current system device
-//	sdev = con->getSystemDevice();
-//	if (sdev == nullptr) {
-//		std::cerr << cdev->getName() << ": Please select system device first" << std::endl;
-//		return CMD_OK;
-//	}
-//
-//	// check existing device by using name
-//	dev = sdev->findDevice(args[1]);
-//	if (dev == nullptr) {
-//		std::cout << args[1] << ": device not found." << std::endl;
-//		return CMD_OK;
-//	}
-//
-//
-//	dbg = dev->getDebug();
-//	if (boost::iequals(args[2], "log")) {
-//		// Parse on/off argument
-//		if (boost::iequals(args[4], "on"))
-//			onFlag = true;
-//		else if (boost::iequals(args[4], "off"))
-//			onFlag = false;
-//		else {
-//			std::cout << "Invalid on/off option" << std::endl;
-//			return CMD_OK;
-//		}
-//
-//		// Parse cty, all or slot argument
-//		if (boost::iequals(args[3], "cty")) {
-//			if (onFlag == true)
-//				dbg->enableLog(LOG_CTYSLOT);
-//			else
-//				dbg->disableLog(LOG_CTYSLOT);
-//		} else if (boost::iequals(args[3], "all")) {
-//			if (onFlag == true)
-//				dbg->enableLog(LOG_ALLSLOTS);
-//			else
-//				dbg->disableLog(LOG_ALLSLOTS);
-//		} else {
-//			if (sscanf(args[3].c_str(), "%d", &slot) != 1) {
-//				std::cout << "Invalid slot argument" << std::endl;
-//				return CMD_OK;
-//			} else if ((slot < 0) || (slot > LOG_NFILES)) {
-//				std::cout << "Out of valid range (0 - " << LOG_NFILES << ")" << std::endl;
-//				return CMD_OK;
-//			}
-//			if (onFlag == true)
-//				dbg->enableLog(slot);
-//			else
-//				dbg->disableLog(slot);
-//		}
-//	} else  {
-//		// Parse on/off argument
-//		if (boost::iequals(args[3], "on"))
-//			onFlag = true;
-//		else if (boost::iequals(args[3], "off"))
-//			onFlag = false;
-//		else {
-//			std::cout << "Invalid on/off option" << std::endl;
-//			return CMD_OK;
-//		}
-//
-//		// Parse debug option argument
-//		if (onFlag == true)
-//			ok = dbg->enableFlag(args[2]);
-//		else
-//			ok = dbg->disableFlag(args[2]);
-//		if (ok == CMD_NOTFOUND) {
-//			std::cout << "Invalid debug option: " << args[2] << std::endl;
-//			return CMD_OK;
-//		}
-//	}
-//
-//	return CMD_OK;
-//}
 
 CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 {
@@ -627,12 +543,13 @@ CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 		return cmdOk;
 	}
 
+	Machine *sys = dialedMachine;
 	args.next();
 	for (int idx = 0; cmdList[idx].name; idx++) {
 		if (cmdList[idx].name == args.current()) {
 			args.next();
 			if (cmdList[idx].func != nullptr)
-				return cmdList[idx].func(user, dev, args);
+				return cmdList[idx].func(user, sys, dev, args);
 		}
 	}
 

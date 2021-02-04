@@ -62,6 +62,15 @@ void LogFile::close(int slot)
 	}
 }
 
+void LogFile::setConsole(Console *user)
+{
+	cty = user;
+	if (cty != nullptr)
+		logFlags |= LOG_CONSOLE;
+	else
+		logFlags &= ~LOG_CONSOLE;
+}
+
 void LogFile::out(const uint32_t flags, cstag_t &message)
 {
 	if ((logFlags & (flags & LOG_ALLFILES)) == 0)
@@ -71,6 +80,13 @@ void LogFile::out(const uint32_t flags, cstag_t &message)
 	for (int idx = 0; idx < LOG_NFILES; idx++)
 		if (logFlags & (flags & (1u << idx)))
 			fout[idx] << message << flush;
+
+	// Print message on operator's terminal
+	if (logFlags & (flags & LOG_CONSOLE))
+	{
+		assert(cty != nullptr);
+		cty->print(message);
+	}
 }
 
 // *********************************************************

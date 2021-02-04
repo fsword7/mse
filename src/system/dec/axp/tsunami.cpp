@@ -19,9 +19,9 @@
 
 using namespace aspace;
 
-CommandStatus es40_SetMemory(Console *cty, Device *dev, args_t &args)
+CommandStatus es40_SetMemory(Console *user, Machine *sys, Device *dev, args_t &args)
 {
-	BusManager &manager = dev->getMachine()->getExternalBusManager();
+	BusManager &manager = sys->getExternalBusManager();
 	SystemEngine engine;
 
 	string name = args.getNext();
@@ -32,7 +32,7 @@ CommandStatus es40_SetMemory(Console *cty, Device *dev, args_t &args)
 	uint64_t val = engine.getValue(size);
 
 	manager.allocateRegion(name, val, 8, LittleEndian);
-	fmt::printf("%s: Successfully allocated %lld (%llX) to region '%s'\n",
+	user->printf("%s: Successfully allocated %lld (%llX) to region '%s'\n",
 		dev->getDeviceName(), val, val, name);
 
 	return CommandStatus::cmdOk;

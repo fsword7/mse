@@ -257,6 +257,8 @@ public:
 	// virtual function calls
 	virtual void completeConfig() {}
 
+	virtual void ifStart() {}
+
 private:
 	DeviceInterface *next = nullptr;
 	device_t *owner       = nullptr;

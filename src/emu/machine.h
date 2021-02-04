@@ -21,6 +21,10 @@ public:
 	inline device_t *getSystemDevice() const { return sysDevice; }
 	inline LogFile  *getLogFile() const      { return &logFile; }
 
+	inline void setConsole(Console *user)	 { logFile.setConsole(user); }
+	inline void setDialedDevice(Device *dev) { dialedDevice = dev; }
+	inline Device *getDialedDevice() const   { return dialedDevice; }
+
 	inline aspace::BusManager &getExternalBusManager() { return busManager; }
 
 	static Machine *create(ostream &out, const SystemDriver *driver, cstag_t &devName);
@@ -33,6 +37,7 @@ public:
 private:
 	const SystemConfig &config;
 	SystemDevice *sysDevice = nullptr;
+	mutable Device *dialedDevice = nullptr;
 
 	cstag_t devName;
 

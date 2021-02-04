@@ -8,6 +8,7 @@
 #pragma once
 
 class Console;
+class Machine;
 class Device;
 
 enum CommandStatus
@@ -44,7 +45,7 @@ private:
 };
 
 typedef CommandStatus (*cmdFunc_t)(Console *, args_t &);
-typedef CommandStatus (*cmdDevice_t)(Console *, Device *, args_t &);
+typedef CommandStatus (*cmdDevice_t)(Console *, Machine *, Device *, args_t &);
 
 struct command_t
 {

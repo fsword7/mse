@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "emu/didebug.h"
+#include "emu/machine.h"
 
 diDebug::diDebug(device_t *owner)
 : DeviceInterface(owner, "debug")
@@ -14,5 +15,12 @@ diDebug::diDebug(device_t *owner)
 	owner->ifDebug = this;
 }
 
+void diDebug::ifStart()
+{
+	Machine *sys = getDevice()->getMachine();
+	assert(sys != nullptr);
 
-
+#ifdef DEBUG
+	dbg.setLogFile(sys->getLogFile());
+#endif /* DEBUG */
+}
