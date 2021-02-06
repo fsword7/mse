@@ -29,10 +29,24 @@ void AlphaProcessor::init()
 	for (int idx = 0; idx < AXP_NFREGS*2; idx++)
 		state.fRegs[idx] = 0;
 
+	// Clear all instruction cache
+	for (int idx = 0; idx < ICACHE_ENTRIES; idx++)
+	{
+		state.iCache[idx].valid = false;
+		state.iCache[idx].asn = 0;
+		state.iCache[idx].asmb = false;
+		state.iCache[idx].vAddr = 0;
+		state.iCache[idx].pAddr = 0;
+		for (int didx = 0; didx < ICACHE_LINE_SIZE; didx++)
+			state.iCache[idx].data[didx] = 0;
+	}
+	state.iCacheLast   = 0;
+	state.iCacheNext   = 0;
+	state.iCacheEnable = true;
+
 	state.cMode = ACC_KERNEL;
 
 	mapProgram = getAddressSpace(AS_PROGRAM);
-	cout << "Yes, Alpha initialization here\n" << flush;
 }
 
 void AlphaProcessor::setPCAddress(offs_t addr)
@@ -78,6 +92,76 @@ void AlphaProcessor::run()
 	pState = execStopped;
 }
 
+int AlphaProcessor::fetchi(uint64_t addr, uint32_t &data)
+{
+	int      idx = state.iCacheLast;
+	bool     asmBit = false;
+	uint64_t vAddr, pAddr;
+
+	if (state.iCacheEnable == true)
+	{
+		vAddr = addr & ICACHE_MATCH_MASK;
+
+		// instruction cache hit
+		if (state.iCache[idx].valid &&
+			(state.iCache[idx].asn == state.asn || state.iCache[idx].asmb) &&
+			(state.iCache[idx].vAddr == vAddr))
+		{
+			data = state.iCache[idx].data[(addr >> 2) & ICACHE_INDEX_MASK];
+			return 0;
+		}
+
+		// instruction cache search
+		for (idx = 0; idx < ICACHE_ENTRIES; idx++)
+		{
+			if (state.iCache[idx].valid &&
+				(state.iCache[idx].asn == state.asn || state.iCache[idx].asmb) &&
+				(state.iCache[idx].vAddr == vAddr))
+			{
+				state.iCacheLast = idx;
+				data = state.iCache[idx].data[(addr >> 2) & ICACHE_INDEX_MASK];
+				return 0;
+			}
+		}
+
+		if (vAddr & 1)
+		{
+			pAddr  = vAddr & ~0x1ull;
+			asmBit = true;
+		}
+		else
+		{
+//			pAddr = probev(vAddr, ACC_EXEC, 0, asmBit, status);
+//			if (status != 0)
+//				return status;
+			pAddr  = vAddr & ~0x1ull;
+		}
+
+		// Instruction cache miss - setup now
+		idx = state.iCacheNext++;
+		if (state.iCacheNext == ICACHE_ENTRIES)
+			state.iCacheNext = 0;
+
+		state.iCache[idx].valid = true;
+		state.iCache[idx].asn   = state.asn;
+		state.iCache[idx].asmb  = asmBit;
+		state.iCache[idx].vAddr = vAddr;
+		state.iCache[idx].pAddr = pAddr;
+
+		// Fetch 2048-byte data block from memeory
+		mapProgram->readBlock(state.iCache[idx].pAddr,
+			(uint8_t *)&state.iCache[idx].data, ICACHE_LINE_SIZE*4);
+
+		state.iCacheLast = idx;
+		data = state.iCache[idx].data[(addr >> 2) & ICACHE_INDEX_MASK];
+	}
+
+	// Instruction cache disabled
+
+	data = mapProgram->read32(state.vpcReg, this);
+	return 0;
+}
+
 void AlphaProcessor::execute()
 {
 	uint32_t opWord;
@@ -92,7 +176,8 @@ void AlphaProcessor::execute()
 //	list(nullptr, state.vpcReg);
 
 	state.cpcAddr = state.vpcReg;
-	opWord = readv32(state.vpcReg);
+//	opWord = readv32(state.vpcReg);
+	fetchi(state.vpcReg, opWord);
 	nextPC();
 
 	// R31/F31 register - always zero
@@ -445,7 +530,9 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_MFPR:	// 19 - HW_MFPR instruction
-		goto unimpl;
+		func = (opWord >> 8) & 0xFF;
+		OPC_EXEC2(HW_MFPR, MFPR);
+		break;
 
 	case OPC_JSR:		// 1A - JSR instruction
 		OPC_EXEC2(JMP, JMP);
@@ -461,7 +548,11 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_FPTI:		// 1C - Floating/Integer instructions
+		goto unimpl;
+
 	case OPC_HW_MTPR:	// 1D - HW_MTPR instruction
+		func = (opWord >> 8) & 0xFF;
+		OPC_EXEC2(HW_MTPR, MTPR);
 		break;
 
 	case OPC_RET:		// 1E - RET instruction

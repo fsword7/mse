@@ -205,6 +205,15 @@
 #define MSKQ_LONG 0x00000000FFFFFFFFULL
 #define MSKQ_QUAD 0xFFFFFFFFFFFFFFFFULL
 
+// Instruction cache definitions
+#define ICACHE_ENTRIES		1024
+#define ICACHE_LINE_SIZE	512
+#define ICACHE_MATCH_MASK	(1ull - (ICACHE_LINE_SIZE * 4))
+#define ICACHE_INDEX_MASK	(ICACHE_LINE_SIZE - 1ull)
+#define ICACHE_BYTE_MASK	(ICACHE_INDEX_MASK << 2)
+
+#define TB_ENTRIES			16
+
 struct opcAlpha
 {
 	ctag_t   *opName;	// Instruction name
@@ -232,6 +241,8 @@ public:
 	bool load(ifstream &fin) override;
 
 	void devReset() override { init(); }
+
+	int fetchi(uint64_t vAddr, uint32_t &opc);
 
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
 	inline void addPC(int32_t disp) { state.vpcReg += disp; }
@@ -278,6 +289,21 @@ protected:
 		uint64_t palBase;				// Current PAL base address
 		int      cMode;                 // Current access mode
 		bool     sde;                   // Shadow register enable
+		int      asn;					// Address Space Number
+
+		// Onchip instruction cache
+		bool iCacheEnable; // Instruction Cache Enable
+		int  iCacheLast;   // Last ICACHE entry (current)
+		int  iCacheNext;   // Next ICACHE entry to use
+		struct ICache
+		{
+			bool     valid;						// Valid bit
+			bool     asmb;						// Address Space Match bit
+			int      asn;						// Address Space Number
+			uint64_t vAddr;						// Virtual address
+			uint64_t pAddr;						// Physical address
+			uint32_t data[ICACHE_LINE_SIZE];	// Instruction data
+		} iCache[ICACHE_ENTRIES];
 
 	} state;
 

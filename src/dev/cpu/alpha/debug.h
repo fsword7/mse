@@ -79,33 +79,35 @@
 
 
 #define PRE_HW_LD(opcode)                                   \
+	dbgstr = #opcode;                                       \
 	switch (func & ~1)                                      \
 	{                                                       \
-	case 0: dbgstr = "/P"; break;                           \
-	case 2: dbgstr = "/PL"; break;                          \
-	case 4: dbgstr = "/V"; break;                           \
-	case 10: dbgstr = "/C"; break;                          \
-	case 12: dbgstr = "/A"; break;                          \
-	case 14: dbgstr = "/AC"; break;                         \
-	default: dbgstr = fmt::sprintf("(%d)", func); break;    \
+	case 0: dbgstr += "/P"; break;                          \
+	case 2: dbgstr += "/PL"; break;                         \
+	case 4: dbgstr += "/V"; break;                          \
+	case 10: dbgstr += "/C"; break;                         \
+	case 12: dbgstr += "/A"; break;                         \
+	case 14: dbgstr += "/AC"; break;                        \
+	default: dbgstr += fmt::sprintf("(%d)", func); break;   \
 	}                                                       \
-	dbg.log("%016llX %-8s%s r%d,%04X(r%d)", state.cpcAddr,  \
-		#opcode, dbgstr, RA, ZXTW(DISP12), RB);             \
+	dbg.log("%016llX %-8s r%d,%04X(r%d)", state.cpcAddr,    \
+		dbgstr, RA, ZXTW(DISP12), RB);                      \
 	dbg.log(" : (%llX)", RBV + DISP12)
 
 
 #define POST_HW_LD POST_X64(RAV)
 
 #define PRE_HW_ST(opcode)                                   \
+	dbgstr = #opcode;                                       \
 	switch (func & ~1)                                      \
 	{                                                       \
-	case 0: dbgstr = "/P"; break;                           \
-	case 2: dbgstr = "/PC"; break;                          \
-	case 12: dbgstr = "/A"; break;                          \
-	default: dbgstr = fmt::sprintf("(%d)", func); break;    \
+	case 0: dbgstr += "/P"; break;                          \
+	case 2: dbgstr += "/PC"; break;                         \
+	case 12: dbgstr += "/A"; break;                         \
+	default: dbgstr += fmt::sprintf("(%d)", func); break;   \
 	}                                                       \
-	dbg.log("%016llX %-8s%s r%d,%04X(r%d)", state.cpcAddr,  \
-		#opcode, dbgstr, RA, ZXTW(DISP12), RB);             \
+	dbg.log("%016llX %-8s r%d,%04X(r%d)", state.cpcAddr,    \
+		dbgstr, RA, ZXTW(DISP12), RB);                      \
 	dbg.log(" : (%llX)", RBV + DISP12)
 
 //#define PRE_HW_STL(opcode) PRE_HE_ST(opcode)
@@ -113,6 +115,18 @@
 //
 //#define POST_HW_STL POST_X32S(RAV)
 #define POST_HW_ST POST_X64S(RAV)
+
+#define PRE_MFPR(opcode)                             \
+	dbg.log("%016llX %-8s R%d,#%02X", state.cpcAddr, \
+		#opcode, RA, func);
+
+#define POST_MFPR POST_X64(RAV)
+
+#define PRE_MTPR(opcode)                             \
+	dbg.log("%016llX %-8s R%d,#%02X", state.cpcAddr, \
+		#opcode, RB, func);
+
+#define POST_MTPR POST_X64S(RBV)
 
 #define PRE_NOP(opcode) \
 	dbg.log("%016llX %-8s\n", state.cpcAddr, #opcode);
