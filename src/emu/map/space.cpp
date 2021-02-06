@@ -92,6 +92,15 @@ namespace aspace {
 			return unmapValue;
 		}
 
+		void readBlock(offs_t addr, uint8_t *data, uint64_t size)
+		{
+			if (addr < memSize) {
+				if ((addr + size) > memSize)
+					size = memSize - addr;
+				memcpy(data, &memData[addr], size);
+			}
+		}
+
 		// **** Write access function calls ****
 
 		void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu)

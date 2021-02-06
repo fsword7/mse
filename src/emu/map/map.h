@@ -151,6 +151,7 @@ namespace aspace
 		virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
 		virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
 		virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void     readBlock(offs_t addr, uint8_t *data, uint64_t size) = 0;
 
 		virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr) = 0;
 		virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
