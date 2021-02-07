@@ -479,7 +479,7 @@ CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 //		user->printf("%s: Loaded %s into %llX-%llX (length: %d bytes)\n",
 //			dev->getDeviceName(), fname, soff, off, off - soff);
 
-		exec->load(fin);
+		exec->load(fin, off);
 		fin.close();
 	}
 

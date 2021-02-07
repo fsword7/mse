@@ -29,7 +29,7 @@ public:
 
 	virtual void setPCAddress(offs_t addr) = 0;
 
-	virtual bool load(ifstream &fin) = 0;
+	virtual bool load(ifstream &fin, offs_t off) = 0;
 //	virtual bool save(ofstream &fout) = 0;
 
 //	void boot();
