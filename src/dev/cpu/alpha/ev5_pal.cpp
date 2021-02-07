@@ -10,7 +10,7 @@
 
 void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 {
-	int fnc = (opWord >> 8) & 0xFF;
+	int fnc = opWord & 0xFFFF;
 
 	switch (fnc)
 	{
@@ -28,7 +28,7 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 
 void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 {
-	int fnc = (opWord >> 8) & 0xFF;
+	int fnc = opWord & 0xFFFF;
 	uint64_t rbv;
 
 	switch (fnc)

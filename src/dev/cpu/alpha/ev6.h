@@ -18,8 +18,11 @@ public:
 	~dec21264_cpuDevice() = default;
 
 	// Virtual PAL hardware instruction calls
-	void hw_mtpr(uint32_t opWord) override;
-	void hw_mfpr(uint32_t opWord) override;
+	void hw_mfpr(uint32_t opWord) override;  // PAL19 instruction
+	void hw_mtpr(uint32_t opWord) override;  // PAL1D instruction
+//	void hw_ld(uint32_t opWord) override;    // PAL1B instruction
+//	void hw_st(uint32_t opWord) override;    // PAL1F instruction
+//	void hw_ret(uint32_t opWord) override;   // PAL1E instruction
 
 //	void run();
 };

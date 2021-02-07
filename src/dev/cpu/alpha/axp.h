@@ -271,8 +271,11 @@ public:
 	void     writev(uint64_t vAddr, uint64_t data, int size);
 
 	// Virtual PAL hardware instruction function calls
-	virtual void hw_mtpr(uint32_t opWord) = 0;
-	virtual void hw_mfpr(uint32_t opWord) = 0;
+	virtual void hw_mfpr(uint32_t opWord) = 0;  // PAL19 instruction
+	virtual void hw_mtpr(uint32_t opWord) = 0;  // PAL1D instruction
+//	virtual void hw_ld(uint32_t opWord) = 0;    // PAL1B instruction
+//	virtual void hw_st(uint32_t opWord) = 0;    // PAL1F instruction
+//	virtual void hw_ret(uint32_t opWord) = 0;   // PAL1E instruction
 
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
 	inline void addPC(int32_t disp) { state.vpcReg += disp; }

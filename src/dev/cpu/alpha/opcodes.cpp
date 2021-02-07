@@ -389,15 +389,21 @@ opcAlpha AlphaProcessor::axp_opCodes[] =
 
 	INST("MF_FPCR",       OP_FOP, 0x17, 0x025),
 	INST("MT_FPCR",       OP_FOP, 0x17, 0x024),
-
-	// Hardware instructions
 	INST("CALL_PAL",      OP_PAL, 0x00, 0),
+
+	// EV5 Hardware instructions
 	INST("HW_LD",         OP_MEM, 0x1B, 0),
 	INST("HW_ST",         OP_MEM, 0x1F, 0),
 	INST("HW_MFPR",       OP_IPR, 0x19, 0),
 	INST("HW_MTPR",       OP_IPR, 0x1D, 0),
 	INST("HW_REI",        OP_MEM, 0x1E, 0),
 
+	// EV6 hardware instructions
+//	INST("HW_LD",         OP_MEM, 0x1B, 0),
+//	INST("HW_ST",         OP_MEM, 0x1F, 0),
+//	INST("HW_MFPR",       OP_IPR, 0x19, 0),
+//	INST("HW_MTPR",       OP_IPR, 0x1D, 0),
+//	INST("HW_RET",        OP_MEM, 0x1E, 0),
 
 	// Null terminator
 	nullptr
