@@ -31,7 +31,7 @@
 
 // Comparison instructions
 #define DOPC_CMPEQ		RCV = (RAV == RBVL) ? 1 : 0
-#define DOPC_CMPULE		RCV = (ZXTQ(RAV) < ZXTQ(RBVL)) ? 1 : 0
-#define DOPC_CMPULT		RCV = (ZXTQ(RAV) <= ZXTQ(RBVL)) ? 1 : 0
+#define DOPC_CMPULT		RCV = (ZXTQ(RAV) < ZXTQ(RBVL)) ? 1 : 0
+#define DOPC_CMPULE		RCV = (ZXTQ(RAV) <= ZXTQ(RBVL)) ? 1 : 0
 #define DOPC_CMPLT		RCV = (SXTQ(RAV) < SXTQ(RBVL)) ? 1 : 0
 #define DOPC_CMPLE		RCV = (SXTQ(RAV) <= SXTQ(RBVL)) ? 1 : 0
