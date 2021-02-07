@@ -7,9 +7,10 @@
 
 #include "emu/core.h"
 #include "dev/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/ev6.h"
 #include "dev/cpu/alpha/ev6_ipr.h"
 
-void AlphaProcessor::hw_mfpr(uint32_t opWord)
+void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 {
 	int fnc = (opWord >> 8) & 0xFF;
 
@@ -29,7 +30,7 @@ void AlphaProcessor::hw_mfpr(uint32_t opWord)
 	}
 }
 
-void AlphaProcessor::hw_mtpr(uint32_t opWord)
+void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 {
 	int fnc = (opWord >> 8) & 0xFF;
 	uint64_t rbv;
@@ -53,6 +54,3 @@ void AlphaProcessor::hw_mtpr(uint32_t opWord)
 		break;
 	}
 }
-
-
-

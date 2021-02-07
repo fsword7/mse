@@ -249,8 +249,8 @@ public:
 	int fetchi(uint64_t vAddr, uint32_t &opc);
 
 	// Virtual PAL hardware instruction function calls
-	virtual void hw_mtpr(uint32_t opWord);
-	virtual void hw_mfpr(uint32_t opWord);
+	virtual void hw_mtpr(uint32_t opWord) = 0;
+	virtual void hw_mfpr(uint32_t opWord) = 0;
 
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
 	inline void addPC(int32_t disp) { state.vpcReg += disp; }

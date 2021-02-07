@@ -1,10 +1,10 @@
 set(MSE_CPP_SRCS
-	dev/cpu/alpha/21264cb.cpp
 	dev/cpu/alpha/axp.cpp
-	dev/cpu/alpha/axp21264_ipr.cpp
 	dev/cpu/alpha/debug.cpp
 	dev/cpu/alpha/ev5.cpp
 	dev/cpu/alpha/ev5_pal.cpp
+	dev/cpu/alpha/ev6.cpp
+	dev/cpu/alpha/ev6_ipr.cpp
 	dev/cpu/alpha/ev6_pal.cpp
 	dev/cpu/alpha/execute.cpp
 	dev/cpu/alpha/load.cpp
@@ -37,7 +37,6 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
-	dev/cpu/alpha/21264cb.h
 	dev/cpu/alpha/axp.h
 	dev/cpu/alpha/axp_arith.h
 	dev/cpu/alpha/axp_branch.h
@@ -47,6 +46,10 @@ set(MSE_H_SRCS
 	dev/cpu/alpha/axp_misc.h
 	dev/cpu/alpha/axp_pal.h
 	dev/cpu/alpha/debug.h
+	dev/cpu/alpha/ev5.h
+	dev/cpu/alpha/ev5_ipr.h
+	dev/cpu/alpha/ev6.h
+	dev/cpu/alpha/ev6_ipr.h
 	dev/cpu/alpha/opcode.h
 	emu/map/addrmap.h
 	emu/map/he.h
