@@ -165,6 +165,12 @@
 #define ACC_SUPERVISOR	2	// Supervisor
 #define ACC_USER		3	// User
 
+// Read/write access flags
+#define ACC_READ		0	// read access
+#define ACC_WRITE		1	// write access
+#define ACC_EXEC		2	// execute access
+#define ACC_MODE		3	// access mode mask
+
 // PC field definition
 #define PC_PAL_MODE		1	// PC PAL mode field
 
@@ -247,6 +253,10 @@ public:
 	void devReset() override { init(); }
 
 	int fetchi(uint64_t vAddr, uint32_t &opc);
+
+	uint64_t probev(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
+	uint64_t readv(uint64_t vAddr, int size);
+	void     writev(uint64_t vAddr, uint64_t data, int size);
 
 	// Virtual PAL hardware instruction function calls
 	virtual void hw_mtpr(uint32_t opWord) = 0;
