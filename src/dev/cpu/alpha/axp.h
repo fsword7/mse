@@ -200,15 +200,25 @@
 #define SXT12(val) SXTL((int32_t)(((val) & 0x800) ? ((val) | 0xFFFFF000) : ((val) & 0x00000FFF)))
 #define SXT21(val) SXTL((int32_t)(((val) & 0x100000) ? ((val) | 0xFFE00000) : ((val) & 0x001FFFFF)))
 
-#define readv8(vAddr)  mapProgram->read8(vAddr, this)
-#define readv16(vAddr) mapProgram->read16(vAddr, this)
-#define readv32(vAddr) mapProgram->read32(vAddr, this)
-#define readv64(vAddr) mapProgram->read64(vAddr, this)
+//#define readv8(vAddr)  mapProgram->read8(vAddr, this)
+//#define readv16(vAddr) mapProgram->read16(vAddr, this)
+//#define readv32(vAddr) mapProgram->read32(vAddr, this)
+//#define readv64(vAddr) mapProgram->read64(vAddr, this)
+//
+//#define writev8(vAddr, data)  mapProgram->write8(vAddr, data, this)
+//#define writev16(vAddr, data) mapProgram->write16(vAddr, data, this)
+//#define writev32(vAddr, data) mapProgram->write32(vAddr, data, this)
+//#define writev64(vAddr, data) mapProgram->write64(vAddr, data, this)
 
-#define writev8(vAddr, data)  mapProgram->write8(vAddr, data, this)
-#define writev16(vAddr, data) mapProgram->write16(vAddr, data, this)
-#define writev32(vAddr, data) mapProgram->write32(vAddr, data, this)
-#define writev64(vAddr, data) mapProgram->write64(vAddr, data, this)
+#define readv8(vAddr)  readv(vAddr, LN_BYTE)
+#define readv16(vAddr) readv(vAddr, LN_WORD)
+#define readv32(vAddr) readv(vAddr, LN_LONG)
+#define readv64(vAddr) readv(vAddr, LN_QUAD)
+
+#define writev8(vAddr, data)  writev(vAddr, data, LN_BYTE)
+#define writev16(vAddr, data) writev(vAddr, data, LN_WORD)
+#define writev32(vAddr, data) writev(vAddr, data, LN_LONG)
+#define writev64(vAddr, data) writev(vAddr, data, LN_QUAD)
 
 #define MSKQ_BYTE 0x00000000000000FFULL
 #define MSKQ_WORD 0x000000000000FFFFULL
@@ -254,8 +264,10 @@ public:
 
 	int fetchi(uint64_t vAddr, uint32_t &opc);
 
-	uint64_t probev(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
+	uint64_t checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
+	uint64_t readp(uint64_t pAddr, int size);
 	uint64_t readv(uint64_t vAddr, int size);
+	void     writep(uint64_t pAddr, uint64_t data, int size);
 	void     writev(uint64_t vAddr, uint64_t data, int size);
 
 	// Virtual PAL hardware instruction function calls

@@ -45,6 +45,13 @@ enum endian_t { LittleEndian, BigEndian };
 
 #include "emu/templates.h"
 
+// Data access length
+#define LN_BYTE		1
+#define LN_WORD		2
+#define LN_LONG		4
+#define LN_QUAD		8
+#define LN_OCTA		16
+
 // sign extension definition
 #define SXTB(val)	int8_t(val)
 #define SXTW(val)	int16_t(val)
