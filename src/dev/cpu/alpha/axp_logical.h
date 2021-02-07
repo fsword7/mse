@@ -13,14 +13,14 @@
 #define DOPC_BIC		RCV = RAV & ~RBVL
 #define DOPC_BIS		RCV = RAV | RBVL
 
-#define DOPC_CMOVEQ		if (RAV != 0) RCV = RBVL
-#define DOPC_CMOVGE		if (RAV >= 0) RCV = RBVL
-#define DOPC_CMOVGT		if (RAV > 0) RCV = RBVL
+#define DOPC_CMOVEQ		if (SXTQ(RAV) == 0) RCV = RBVL
+#define DOPC_CMOVGE		if (SXTQ(RAV) >= 0) RCV = RBVL
+#define DOPC_CMOVGT		if (SXTQ(RAV) > 0) RCV = RBVL
 #define DOPC_CMOVLBC	if ((RAV & 1) == 0) RCV = RBVL
 #define DOPC_CMOVLBS	if ((RAV & 1) == 1) RCV = RBVL
-#define DOPC_CMOVLE		if (RAV <= 0) RCV = RBVL
-#define DOPC_CMOVLT		if (RAV < 0) RCV = RBVL
-#define DOPC_CMOVNE		if (RAV != 0) RCV = RBVL
+#define DOPC_CMOVLE		if (SXTQ(RAV) <= 0) RCV = RBVL
+#define DOPC_CMOVLT		if (SXTQ(RAV) < 0) RCV = RBVL
+#define DOPC_CMOVNE		if (SXTQ(RAV) != 0) RCV = RBVL
 
 #define DOPC_SLL		RCV = RAV << (RBVL & 0x3F)
 #define DOPC_SRL		RCV = RAV >> (RBVL & 0x3F)
