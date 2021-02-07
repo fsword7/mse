@@ -61,6 +61,10 @@ namespace aspace {
 
 		uint16_t read16u(offs_t addr, ProcessorDevice *cpu)
 		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint16_t *)ptr);
+			}
 			return unmapValue;
 		}
 
@@ -75,6 +79,10 @@ namespace aspace {
 
 		uint32_t read32u(offs_t addr, ProcessorDevice *cpu)
 		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint32_t *)ptr);
+			}
 			return unmapValue;
 		}
 
@@ -89,6 +97,10 @@ namespace aspace {
 
 		uint64_t read64u(offs_t addr, ProcessorDevice *cpu)
 		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint64_t *)ptr);
+			}
 			return unmapValue;
 		}
 
@@ -119,7 +131,10 @@ namespace aspace {
 
 		void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint16_t *)ptr) = data;
+			}
 		}
 
 		void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu)
@@ -132,7 +147,10 @@ namespace aspace {
 
 		void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint32_t *)ptr) = data;
+			}
 		}
 
 		void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu)
@@ -145,7 +163,10 @@ namespace aspace {
 
 		void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu)
 		{
-
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint64_t *)ptr) = data;
+			}
 		}
 
 		void writeBlock(offs_t addr, uint8_t *data, uint64_t size)
