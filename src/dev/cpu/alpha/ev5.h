@@ -13,15 +13,15 @@
 
 #define CPUID_AXP21164
 
-class ev5_device : public AlphaProcessor
+class dec21164_cpuDevice : public AlphaProcessor
 {
 public:
-	ev5_device(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
-	~ev5_device() = default;
+	dec21164_cpuDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
+	~dec21164_cpuDevice() = default;
 
 	// Virtual PAL hardware instruction calls
 	void hw_mtpr(uint32_t opWord) override;
 	void hw_mfpr(uint32_t opWord) override;
 };
 
-DECLARE_DEVICE_TYPE(ev5, ev5_device)
+DECLARE_DEVICE_TYPE(dec21164, dec21164_cpuDevice);

@@ -8,7 +8,7 @@
 #include "emu/core.h"
 #include "dev/cpu/alpha/ev5.h"
 
-void ev5_device::hw_mfpr(uint32_t opWord)
+void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 {
 	int fnc = (opWord >> 8) & 0xFF;
 
@@ -26,7 +26,7 @@ void ev5_device::hw_mfpr(uint32_t opWord)
 
 }
 
-void ev5_device::hw_mtpr(uint32_t opWord)
+void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 {
 	int fnc = (opWord >> 8) & 0xFF;
 	uint64_t rbv;

@@ -30,6 +30,7 @@ set(MSE_CPP_SRCS
 	emu/syslist.cpp
 	emu/systems.cpp
 	main/main.cpp
+	system/dec/axp/alphapc.cpp
 	system/dec/axp/tsunami.cpp
 	system/dec/vax/ka650.cpp
 	system/dec/vax/ka655.cpp
@@ -69,6 +70,7 @@ set(MSE_H_SRCS
 	emu/sysconfig.h
 	emu/syslist.h
 	system/dec/axp/externs.h
+	system/dec/axp/alphapc.h
 	system/dec/axp/tsunami.h
 	system/dec/vax/externs.h
 	system/dec/vax/ka650.h

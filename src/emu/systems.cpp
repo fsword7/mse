@@ -15,6 +15,10 @@ const SystemDriver *SystemList::sysList[] =
 {
 		// Digital Electric Corporation (DEC)
 		// AXP family series
+		&SYSTEM_NAME(pc164),
+		&SYSTEM_NAME(pc164lx),
+		&SYSTEM_NAME(pc164sx),
+
 		&SYSTEM_NAME(es40),
 		&SYSTEM_NAME(es45),
 
