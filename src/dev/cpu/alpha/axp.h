@@ -8,6 +8,7 @@
 #pragma once
 
 #include "emu/devproc.h"
+#include "dev/cpu/alpha/axp21264_ipr.h"
 
 #define AXP_NIREGS 32  // 32 general purpose registers
 #define AXP_NFREGS 32  // 32 floating registers
@@ -175,10 +176,13 @@
 #define RREG(reg)	((reg) & REG_MASK)
 //#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
 
+#define RREG2(reg) (((reg) & REG_MASK) + \
+	(((state.vpcReg & 1) && (((reg) & 0x0C) == 0x04) && (state.ictl.sde & 2)) ? (REG_MASK+1) : 0))
+
 // executing instruction definitions
-#define RA		OP_GETRA(opWord)
-#define RB		OP_GETRB(opWord)
-#define RC		OP_GETRC(opWord)
+#define RA		RREG2(OP_GETRA(opWord))
+#define RB		RREG2(OP_GETRB(opWord))
+#define RC		RREG2(OP_GETRC(opWord))
 #define RAV		state.iRegs[RA]
 #define RBV		state.iRegs[RB]
 #define RBVL	((opWord & OPC_LIT) ? OP_GETLIT(opWord) : state.iRegs[RB])
@@ -238,11 +242,15 @@ public:
 	// Virtual function calls from execution interface
 	void step(Console *user) override;
 	void setPCAddress(offs_t addr) override;
-	bool load(ifstream &fin) override;
+	bool load(ifstream &fin, offs_t off) override;
 
 	void devReset() override { init(); }
 
 	int fetchi(uint64_t vAddr, uint32_t &opc);
+
+	// Virtual PAL hardware instruction function calls
+	virtual void hw_mtpr(uint32_t opWord);
+	virtual void hw_mfpr(uint32_t opWord);
 
 	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
 	inline void addPC(int32_t disp) { state.vpcReg += disp; }
@@ -287,9 +295,12 @@ protected:
 		uint64_t cpcAddr;               // Current program counter address
 
 		uint64_t palBase;				// Current PAL base address
+		uint64_t excAddr;				// Exception address
 		int      cMode;                 // Current access mode
 		bool     sde;                   // Shadow register enable
 		int      asn;					// Address Space Number
+
+		iCtl_t   ictl;					// Ibox Control register
 
 		// Onchip instruction cache
 		bool iCacheEnable; // Instruction Cache Enable

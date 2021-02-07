@@ -1,7 +1,11 @@
 set(MSE_CPP_SRCS
 	dev/cpu/alpha/21264cb.cpp
 	dev/cpu/alpha/axp.cpp
+	dev/cpu/alpha/axp21264_ipr.cpp
 	dev/cpu/alpha/debug.cpp
+	dev/cpu/alpha/ev5.cpp
+	dev/cpu/alpha/ev5_pal.cpp
+	dev/cpu/alpha/ev6_pal.cpp
 	dev/cpu/alpha/execute.cpp
 	dev/cpu/alpha/load.cpp
 	dev/cpu/alpha/opcodes.cpp
