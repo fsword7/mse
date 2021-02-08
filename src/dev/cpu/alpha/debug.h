@@ -64,6 +64,20 @@
 
 #define POST_RAB_RC POST_X64(RCV)
 
+#define PRE_X_RA(opcode)                                        \
+	{                                                           \
+		dbg.log("%llX %-8s R%d\n", state.cpcAddr, #opcode, RA); \
+	}
+
+#define POST_X_RA POST_X64(RAV)
+
+#define PRE_X_RC(opcode)                                        \
+	{                                                           \
+		dbg.log("%llX %-8s R%d\n", state.cpcAddr, #opcode, RC); \
+	}
+
+#define POST_X_RC POST_X64(RCV)
+
 #define PRE_PAL(opcode)                                           \
 	{                                                             \
 		dbg.log("%llX %-8s #%X\n", state.cpcAddr, #opcode, func); \
@@ -139,20 +153,20 @@
 //#define POST_HW_STL POST_X32S(RAV)
 #define POST_HW_ST POST_X64S(RAV)
 
-#define PRE_MFPR(opcode)                                 \
-	{                                                    \
-		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,    \
-			#opcode, RB, (ahType == AHT_EV6) ?           \
-			(opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
+#define PRE_MFPR(opcode)                                  \
+	{                                                     \
+		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,     \
+			#opcode, RB, (ahType == AHT_EV6) ?            \
+			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 
 #define POST_MFPR POST_X64(RAV)
 
-#define PRE_MTPR(opcode)                                 \
-	{                                                    \
-		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,    \
-			#opcode, RB, (ahType == AHT_EV6) ?           \
-			(opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
+#define PRE_MTPR(opcode)                                  \
+	{                                                     \
+		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,     \
+			#opcode, RB, (ahType == AHT_EV6) ?            \
+			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 
 #define POST_MTPR POST_X64S(RBV)

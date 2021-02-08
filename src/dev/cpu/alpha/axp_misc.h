@@ -7,6 +7,11 @@
 
 #pragma once
 
+#define DOPC_RPCC	RAV = (ccOffset << 32) | (ccReg & 0xFFFFFFFF)
+
+#define DOPC_RC_	RAV = bIntrFlag ? 1 : 0; bIntrFlag = false;
+#define DOPC_RS		RAV = bIntrFlag ? 1 : 0; bIntrFlag = true;
+
 // Do nothing at this time until multi-processing are supported
 #define DOPC_MB
 #define DOPC_WMB

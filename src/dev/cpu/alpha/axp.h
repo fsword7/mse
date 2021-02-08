@@ -280,6 +280,11 @@ private:
 
 protected:
 
+	uint64_t ccOffset = 0;
+	uint64_t ccReg = 0;
+
+	bool     bIntrFlag = false;
+
 	// Register definitions (state file package)
 	struct stateFile {
 		uint64_t iRegs[AXP_NIREGS*2];	// Integer registers  (0-31 - regular, 32-63 - shadow)

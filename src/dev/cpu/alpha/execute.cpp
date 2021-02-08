@@ -540,18 +540,18 @@ void AlphaProcessor::execute()
 		case 0xA000: // FETCH_M
 			OPC_EXEC2(FETCH_M, NOP);
 			break;
-//		case 0xC000: // RPCC
-//			OPC_EXEC2(RPCC, X_R1);
-//			break;
-//		case 0xE000: // RC
-//			OPC_EXEC2(RC, X_R1);
-//			break;
+		case 0xC000: // RPCC
+			OPC_EXEC2(RPCC, X_RA);
+			break;
+		case 0xE000: // RC
+			OPC_EXEC2(RC_, X_RA);
+			break;
 		case 0xE800: // ECB
 			OPC_EXEC2(ECB, NOP);
 			break;
-//		case 0xF000: // RS
-//			OPC_EXEC2(RS, X_R1);
-//			break;
+		case 0xF000: // RS
+			OPC_EXEC2(RS, X_RA);
+			break;
 		case 0xF800: // WH64
 			OPC_EXEC2(WH64, NOP);
 			break;
