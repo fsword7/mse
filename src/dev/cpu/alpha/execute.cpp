@@ -195,9 +195,16 @@ void AlphaProcessor::execute()
 	uint64_t dbgval;
 	string   dbgstr;
 
+	// For debugging at this time.
+	// To be removed later...
 	if (((state.vpcReg & ~0x3ull) == 0xC000) ||
 		((state.vpcReg & ~0x3ull) == 0x8000))
+	{
 		dbg.setDebugFlags(DBG_TRACE);
+		fmt::printf("%s: Starting trace at %X\n",
+			getDeviceName(), state.vpcReg);
+		cout << flush;
+	}
 
 	// Display current instruction
 //	list(nullptr, state.vpcReg);

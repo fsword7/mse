@@ -17,6 +17,9 @@
 		{                                                      \
 			dbg.log("%s: *** HALT instruction at %X\n",        \
 				getDeviceName(), state.vpcReg);                \
+			fmt::printf("%s: *** HALT instruction at %X\n",    \
+				getDeviceName(), state.vpcReg);                \
+			dbg.flushAll();                                    \
 			pState = execStopping;                             \
 			break;                                             \
 		}                                                      \
