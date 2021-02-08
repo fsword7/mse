@@ -541,16 +541,16 @@ void AlphaProcessor::execute()
 			OPC_EXEC2(FETCH_M, NOP);
 			break;
 //		case 0xC000: // RPCC
-//			OPC_EXEC(RPCC, X_R1);
+//			OPC_EXEC2(RPCC, X_R1);
 //			break;
 //		case 0xE000: // RC
-//			OPC_EXEC(RC, X_R1);
+//			OPC_EXEC2(RC, X_R1);
 //			break;
 		case 0xE800: // ECB
 			OPC_EXEC2(ECB, NOP);
 			break;
 //		case 0xF000: // RS
-//			OPC_EXEC(RS, X_R1);
+//			OPC_EXEC2(RS, X_R1);
 //			break;
 		case 0xF800: // WH64
 			OPC_EXEC2(WH64, NOP);
@@ -565,8 +565,6 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_MFPR:	// 19 - HW_MFPR instruction
-		func = (opWord >> 8) & 0xFF;
-//		OPC_EXEC2(HW_MFPR, MFPR);
 		OPC_FUNC(HW_MFPR, hw_mfpr, MFPR);
 		break;
 
@@ -587,8 +585,6 @@ void AlphaProcessor::execute()
 		goto unimpl;
 
 	case OPC_HW_MTPR:	// 1D - HW_MTPR instruction
-		func = (opWord >> 8) & 0xFF;
-//		OPC_EXEC2(HW_MTPR, MTPR);
 		OPC_FUNC(HW_MTPR, hw_mtpr, MTPR);
 		break;
 

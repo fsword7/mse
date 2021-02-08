@@ -139,18 +139,20 @@
 //#define POST_HW_STL POST_X32S(RAV)
 #define POST_HW_ST POST_X64S(RAV)
 
-#define PRE_MFPR(opcode)                               \
-	{                                                  \
-		dbg.log("%llX %-8s R%d,#%02X", state.cpcAddr,  \
-			#opcode, RA, func);                        \
+#define PRE_MFPR(opcode)                                 \
+	{                                                    \
+		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,    \
+			#opcode, RB, (ahType == AHT_EV6) ?           \
+			(opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 
 #define POST_MFPR POST_X64(RAV)
 
-#define PRE_MTPR(opcode)                               \
-	{                                                  \
-		dbg.log("%llX %-8s R%d,#%02X", state.cpcAddr,  \
-			#opcode, RB, func);                        \
+#define PRE_MTPR(opcode)                                 \
+	{                                                    \
+		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,    \
+			#opcode, RB, (ahType == AHT_EV6) ?           \
+			(opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 
 #define POST_MTPR POST_X64S(RBV)
