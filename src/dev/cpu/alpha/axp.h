@@ -55,6 +55,11 @@
 //  3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
 //  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
 
+// Architecture Types
+#define AHT_EV4		4	// EV4 architecture (21064 series)
+#define AHT_EV5		5	// EV5 architecture (21164 series)
+#define AHT_EV6		6	// EV6 architecture (21264 series)
+
 // Instruction Flags
 // Opcode Modes
 #define CLS_GRP    0    // Instructions w/Function Codes
@@ -115,49 +120,6 @@
 #define OP_GETMDP(opc) ((opc) & 0xFFFF)
 #define OP_GETMEM(opc) ((opc) & 0xFFFF)
 #define OP_GETMJP(opc) ((opc) & 0x3FFF)
-
-//#define OPP_CODE   26
-//#define OPM_CODE   0x3F
-//#define OPP_RA     21
-//#define OPP_RB     16
-//#define OPP_RC     0
-//#define OPP_MDSP   0
-//#define OPM_MDSP   0xFFFF
-//#define OPP_BDSP   0
-//#define OPM_BDSP   0x1FFFFF
-//#define OPP_LIT8   13
-//#define OPM_LIT8   0xFF
-//#define OPM_LIT    0x1000
-//
-//#define OPP_IFNC   5
-//#define OPM_IFNC   0x3F
-//#define OPP_FFNC   5
-//#define OPM_FFNC   0x3F
-//#define OPP_FRND   11
-//#define OPM_FRND   0x3
-//#define OPP_PALCD  0
-//#define OPM_PALCD  0x3FFFFFF
-//
-//#define OPP_FTRP   13
-//#define OPM_FTRP   0x7
-//
-//#define OP_GETCD(op)   (((op) >> OPP_CODE) & OPM_CODE)
-//#define OP_GETRA(op)   ((op) >> OPP_RA)
-//#define OP_GETRB(op)   ((op) >> OPP_RB)
-//#define OP_GETRC(op)   ((op) >> OPP_RC)
-//#define OP_GETPAL(op)  (((op) >> OPP_PALCD) & OPM_PALCD)
-//#define OP_GETIFNC(op) (((op) >> OPP_IFNC) & OPM_IFNC)
-//#define OP_GETFFNC(op) (((op) >> OPP_FFNC) & OPM_FFNC)
-//#define OP_GETFRND(op) (((op) >> OPP_FRND) & OPM_FRND)
-//#define OP_GETLIT8(op) (((op) >> OPP_LIT8) & OPM_LIT8)
-//#define OP_GETMDSP(op) (((op) >> OPP_MDSP) & OPM_MDSP)
-//#define OP_GETBDSP(op) (((op) >> OPP_BDSP) & OPM_BDSP)
-//
-//// PALcode Mode
-//#define PAL_UNDF	0	// Undefined
-//#define PAL_VMS		1	// VMS
-//#define PAL_UNIX	2	// UNIX
-//#define PAL_NT		3	// Windows NT
 
 // Access Mode
 #define ACC_KERNEL		0	// Kernel
@@ -251,6 +213,10 @@ public:
 
 	void initOpcodeTable();
 
+	// Architecture function calls
+	void setArchType(int type) { ahType = type; }
+	int getArchType() const    { return ahType; }
+
 	void init();
 	void execute();
 	void run();
@@ -308,6 +274,9 @@ public:
 	opcAlpha *axpCodes18[256];
 	opcAlpha *axpCodes1A[4];
 	opcAlpha *axpCodes1C[128];
+
+private:
+	int ahType = 0;
 
 protected:
 

@@ -14,4 +14,5 @@ dec21264_cpuDevice::dec21264_cpuDevice(const SystemConfig &config,
 		cstag_t &tagName, Device *owner, uint64_t clock)
 : AlphaProcessor(config, dec21264, tagName, owner, clock, 44)
 {
+	setArchType(AHT_EV6);
 }
