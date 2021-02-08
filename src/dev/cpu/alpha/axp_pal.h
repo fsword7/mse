@@ -13,6 +13,13 @@
 	if (((func < 0x40) && (state.cMode == ACC_KERNEL)) ||      \
        ((func >= 0x80) && (func < 0xC0)))                      \
 	{                                                          \
+		if (func == 0)                                         \
+		{                                                      \
+			dbg.log("%s: *** HALT instruction at %X\n",        \
+				getDeviceName(), state.vpcReg);                \
+			pState = execStopping;                             \
+			break;                                             \
+		}                                                      \
 		state.iRegs[32 + 23] = state.vpcReg;                   \
 		pAddr = state.palBase | (1u << 13) | 1 |               \
 			((func & 0x80) << 5) | ((func & 0x3F) << 6);       \
