@@ -195,6 +195,10 @@ void AlphaProcessor::execute()
 	uint64_t dbgval;
 	string   dbgstr;
 
+	if (((state.vpcReg & ~0x3ull) == 0xC000) ||
+		((state.vpcReg & ~0x3ull) == 0x8000))
+		dbg.setDebugFlags(DBG_TRACE);
+
 	// Display current instruction
 //	list(nullptr, state.vpcReg);
 
