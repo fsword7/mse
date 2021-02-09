@@ -49,7 +49,7 @@ void AddressSpace::prepare(Console *cty)
 				device.getDeviceName(), asInfo[space], map->gaddrMask, config.getAddrWidth(), addrMask);
 		addrMask = map->gaddrMask;
 	}
-	unmapValue = 0xA5A5A5A5A5A5A5A5ull;
+//	unmapValue = 0xA5A5A5A5A5A5A5A5ull;
 
 	for (AddressEntry *entry : map->list)
 	{
