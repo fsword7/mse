@@ -35,6 +35,11 @@ private:
 	struct ev5state
 	{
 		uint64_t icsr = ICSR_MBO;
+		uint64_t mcsr = 0;
+
+		uint64_t dc_test = 0;
+		uint64_t dc_mode = 0;
+		uint64_t maf_mode = 0;
 
 		uint64_t PALtemp[24]; // PALtemp registers
 	} ev5;

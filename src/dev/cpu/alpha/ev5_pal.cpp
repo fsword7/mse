@@ -77,6 +77,22 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = ev5.icsr;
 		break;
 
+	case IPR_MCSR: // Mbox Control and Status Register
+		RAV = ev5.mcsr;
+		break;
+
+	case IPR_DC_TEST_CTL: // Dcache Test Register
+		RAV = ev5.dc_test;
+		break;
+
+	case IPR_DC_MODE: // Dcache Mode Register
+		RAV = ev5.dc_mode;
+		break;
+
+	case IPR_MAF_MODE: // Missing Address
+		RAV = ev5.maf_mode;
+		break;
+
 	case IPR_PALtemp0:  case IPR_PALtemp1:  case IPR_PALtemp2:  case IPR_PALtemp3:
 	case IPR_PALtemp4:  case IPR_PALtemp5:  case IPR_PALtemp6:  case IPR_PALtemp7:
 	case IPR_PALtemp8:  case IPR_PALtemp9:  case IPR_PALtemp10: case IPR_PALtemp11:
@@ -132,6 +148,26 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 	case IPR_DTB_IAP:
 	case IPR_DTB_IS:
 		// Clear all translation buffers
+		break;
+
+	case IPR_MCSR: // Mbox Control and Status Register
+		ev5.mcsr = RBV & MCSR_RW;
+		break;
+
+	case IPR_DC_FLUSH:
+//		flushDCache();
+		break;
+
+	case IPR_DC_TEST_CTL: // DCache Test Tag
+		ev5.dc_test = RBV & DC_TEST_RW;
+		break;
+
+	case IPR_DC_MODE:
+		ev5.dc_mode = RBV & DC_MODE_RW;
+		break;
+
+	case IPR_MAF_MODE:
+		ev5.maf_mode = RBV;
 		break;
 
 	case IPR_PALtemp0:  case IPR_PALtemp1:  case IPR_PALtemp2:  case IPR_PALtemp3:

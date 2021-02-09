@@ -39,3 +39,27 @@
 #define ICSR_PME   0x0000000000000300LL // (RW,0) Performance Meter Enable
 
 #define ICSR_RW    0x0000009FFFF20300LL // Writable Mask
+
+// MBOX Control and Status Register (MCSR)
+// For more information, Check pages 5-54 to 5-55
+// (Section 5.2.14) on 21164 Hardware Reference Manual.
+#define MCSR_MBE  0x0000000000000010LL
+#define MCSR_SP   0x0000000000000006LL
+#define MCSR_EBE  0x0000000000000001LL
+
+#define MCSR_RW   0x0000000000000017LL
+
+// Dcache Test Register (DC_TEST_CTL)
+#define DC_TEST_BANK0      0x0000000000000001LL
+#define DC_TEST_BANK1      0x0000000000000002LL
+#define DC_TEST_INDEX      0x0000000000001FF8LL
+
+#define DC_TEST_RW         0x0000000000001FFBLL
+
+// Dcache Mode Register (DC_MODE)
+#define DC_PERR_DISABLE     0x0000000000000008LL
+#define DC_BAD_PARITY    	0x0000000000000004LL
+#define DC_FHIT				0x0000000000000002LL
+#define DC_ENA				0x0000000000000001LL
+
+#define DC_MODE_RW			0x000000000000000FLL

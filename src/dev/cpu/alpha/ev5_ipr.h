@@ -77,12 +77,12 @@
 #define IPR_CC_CTL				0x20E	// (W)
 #define IPR_MCSR				0x20F	// (R/W)
 #define IPR_DC_FLUSH			0x210	// (W)
-#define IPR_PERR_STAT			0x212	// (R/W1C)
-#define IPR_TEST_CTL			0x213	// (R/W)
-#define IPR_TEST_TAG			0x214	// (R/W)
-#define IPR_TEST_TAG_TEMP		0x215	// (R/W)
+#define IPR_DC_PERR_STAT		0x212	// (R/W1C)
+#define IPR_DC_TEST_CTL			0x213	// (R/W)
+#define IPR_DC_TEST_TAG			0x214	// (R/W)
+#define IPR_DC_TEST_TAG_TEMP	0x215	// (R/W)
 #define IPR_DC_MODE				0x216	// (R/W)
 #define IPR_MAF_MODE			0x217	// (R/W)
 
 
-#define PAL_BASE_MASK  0x00000FFFFFFF8000ull
+#define PAL_BASE_MASK  0x000000FFFFFFC000ull
