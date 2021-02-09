@@ -15,4 +15,5 @@ dec21264_cpuDevice::dec21264_cpuDevice(const SystemConfig &config,
 : AlphaProcessor(config, dec21264, tagName, owner, clock, 44)
 {
 	setArchType(ARCH_EV6);
+	setArchFlags(ARCH_PFM|ARCH_PRC|ARCH_MVI|ARCH_CIX|ARCH_BWX);
 }

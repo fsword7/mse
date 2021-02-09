@@ -198,7 +198,7 @@
 #define PRE_MFPR(opcode)                                  \
 	{                                                     \
 		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
-			#opcode, RB, (ahType == AHT_EV6) ?            \
+			#opcode, RB, (ahType == ARCH_EV6) ?           \
 			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 
@@ -207,7 +207,7 @@
 #define PRE_MTPR(opcode)                                  \
 	{                                                     \
 		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
-			#opcode, RB, (ahType == AHT_EV6) ?            \
+			#opcode, RB, (ahType == ARCH_EV6) ?           \
 			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
 

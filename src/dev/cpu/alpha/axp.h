@@ -93,11 +93,6 @@
 //  3 3 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0
 //  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
 
-// Architecture Types
-#define AHT_EV4		4	// EV4 architecture (21064 series)
-#define AHT_EV5		5	// EV5 architecture (21164 series)
-#define AHT_EV6		6	// EV6 architecture (21264 series)
-
 // Instruction Flags
 // Opcode Modes
 #define CLS_GRP    0    // Instructions w/Function Codes
