@@ -17,3 +17,29 @@ dec21264_cpuDevice::dec21264_cpuDevice(const SystemConfig &config,
 	setArchType(ARCH_EV6);
 	setArchFlags(ARCH_PFM|ARCH_PRC|ARCH_MVI|ARCH_CIX|ARCH_BWX);
 }
+
+void dec21264_cpuDevice::preset()
+{
+	// Initialize Ibox control register
+	ev6.ictl.spce = 0;
+	ev6.ictl.ic_en = 3;
+	ev6.ictl.spe = 0;
+	ev6.ictl.sde = 0;
+	ev6.ictl.sbe = 0;
+	ev6.ictl.bpMode = 0;
+	ev6.ictl.hwe = 0;
+	ev6.ictl.sl_xmit = 0;
+	ev6.ictl.sl_rcv = 0;
+	ev6.ictl.va48 = 0;
+	ev6.ictl.vaForm32 = 0;
+	ev6.ictl.single_issue_h = 0;
+	ev6.ictl.pct0_en = 0;
+	ev6.ictl.pct1_en = 0;
+	ev6.ictl.call_pal_r23 = 0;
+	ev6.ictl.mchk_en = 0;
+	ev6.ictl.tb_mb_en = 0;
+	ev6.ictl.bist_fail = 1;
+	ev6.ictl.chip_id = 5;
+	ev6.ictl.vptb = 0;
+	ev6.ictl.sext_vptb = 0;
+}

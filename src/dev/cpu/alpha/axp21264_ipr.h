@@ -40,7 +40,7 @@ struct iCtl_t
 };
 
 #define READ_ICTL(dest) \
-	{ union { uint64_t tmp1; iCtl_t tmp2; } src = { .tmp2 = state.ictl }; dest = src.tmp1; }
+	{ union { uint64_t tmp1; iCtl_t tmp2; } src = { .tmp2 = ev6.ictl }; dest = src.tmp1; }
 
 #define WRITE_ICTL(src) \
-	{ union { uint64_t tmp1; iCtl_t tmp2; } dest = { .tmp1 = src }; state.ictl = dest.tmp2; }
+	{ union { uint64_t tmp1; iCtl_t tmp2; } dest = { .tmp1 = src }; ev6.ictl = dest.tmp2; }

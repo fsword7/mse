@@ -17,6 +17,8 @@ public:
 	dec21264_cpuDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
 	~dec21264_cpuDevice() = default;
 
+	void preset() override; // individual processor reset
+
 	// Virtual PAL hardware instruction calls
 	void call_pal(uint32_t opWord) override; // PAL00 instruction
 	void hw_mfpr(uint32_t opWord) override;  // PAL19 instruction
@@ -26,6 +28,13 @@ public:
 	void hw_ret(uint32_t opWord) override;   // PAL1E instruction
 
 //	void run();
+
+private:
+	// Internal processor registers
+	struct ev6state
+	{
+		iCtl_t ictl;
+	} ev6;
 };
 
 DECLARE_DEVICE_TYPE(dec21264, dec21264_cpuDevice)

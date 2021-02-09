@@ -48,30 +48,10 @@ void AlphaProcessor::init()
 	state.iCacheNext   = 0;
 	state.iCacheEnable = true;
 
-	// Initialize Ibox control register
-	state.ictl.spce = 0;
-	state.ictl.ic_en = 3;
-	state.ictl.spe = 0;
-	state.ictl.sde = 0;
-	state.ictl.sbe = 0;
-	state.ictl.bpMode = 0;
-	state.ictl.hwe = 0;
-	state.ictl.sl_xmit = 0;
-	state.ictl.sl_rcv = 0;
-	state.ictl.va48 = 0;
-	state.ictl.vaForm32 = 0;
-	state.ictl.single_issue_h = 0;
-	state.ictl.pct0_en = 0;
-	state.ictl.pct1_en = 0;
-	state.ictl.call_pal_r23 = 0;
-	state.ictl.mchk_en = 0;
-	state.ictl.tb_mb_en = 0;
-	state.ictl.bist_fail = 1;
-	state.ictl.chip_id = 5;
-	state.ictl.vptb = 0;
-	state.ictl.sext_vptb = 0;
-
 	state.cMode = ACC_KERNEL;
+
+	// procesor-specific reset
+	preset();
 
 	mapProgram = getAddressSpace(AS_PROGRAM);
 }

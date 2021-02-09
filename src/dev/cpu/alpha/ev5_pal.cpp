@@ -73,6 +73,19 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.palBase;
 		break;
 
+	case IPR_ICSR: // Ibox Control and Status Register
+		RAV = ev5.icsr;
+		break;
+
+	case IPR_PALtemp0:  case IPR_PALtemp1:  case IPR_PALtemp2:  case IPR_PALtemp3:
+	case IPR_PALtemp4:  case IPR_PALtemp5:  case IPR_PALtemp6:  case IPR_PALtemp7:
+	case IPR_PALtemp8:  case IPR_PALtemp9:  case IPR_PALtemp10: case IPR_PALtemp11:
+	case IPR_PALtemp12: case IPR_PALtemp13: case IPR_PALtemp14: case IPR_PALtemp15:
+	case IPR_PALtemp16: case IPR_PALtemp17: case IPR_PALtemp18: case IPR_PALtemp19:
+	case IPR_PALtemp20: case IPR_PALtemp21: case IPR_PALtemp22: case IPR_PALtemp23:
+		RAV = ev5.PALtemp[fnc - IPR_PALtemp0];
+		break;
+
 	default:
 #ifdef DEBUG
 		if (dbg.checkAnyFlags(DBG_TRACE))
@@ -93,8 +106,41 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	switch (fnc)
 	{
+	case IPR_ITB_IA:
+	case IPR_ITB_IAP:
+	case IPR_ITB_IS:
+		// Clear all translation buffers
+		break;
+
 	case IPR_PAL_BASE: // PAL base address register
 		state.palBase = RBV & PAL_BASE_MASK;
+		break;
+
+	case IPR_ICSR: // Ibox Control and Status Register
+		ev5.icsr = (RBV & ICSR_RW) | ICSR_MBO;
+
+		// Update internal registers
+		state.sde = (ev5.icsr & ICSR_SDE) ? 1 : 0;
+
+		break;
+
+	case IPR_IC_FLUSH_CTL: // Flush ICache
+//		flushICache();
+		break;
+
+	case IPR_DTB_IA:
+	case IPR_DTB_IAP:
+	case IPR_DTB_IS:
+		// Clear all translation buffers
+		break;
+
+	case IPR_PALtemp0:  case IPR_PALtemp1:  case IPR_PALtemp2:  case IPR_PALtemp3:
+	case IPR_PALtemp4:  case IPR_PALtemp5:  case IPR_PALtemp6:  case IPR_PALtemp7:
+	case IPR_PALtemp8:  case IPR_PALtemp9:  case IPR_PALtemp10: case IPR_PALtemp11:
+	case IPR_PALtemp12: case IPR_PALtemp13: case IPR_PALtemp14: case IPR_PALtemp15:
+	case IPR_PALtemp16: case IPR_PALtemp17: case IPR_PALtemp18: case IPR_PALtemp19:
+	case IPR_PALtemp20: case IPR_PALtemp21: case IPR_PALtemp22: case IPR_PALtemp23:
+		ev5.PALtemp[fnc - IPR_PALtemp0] = RBV;
 		break;
 
 	default:

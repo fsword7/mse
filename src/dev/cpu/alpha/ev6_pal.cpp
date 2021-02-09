@@ -160,6 +160,9 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	case IPR_I_CTL: // Ibox control register
 		WRITE_ICTL(RBV);
+
+		// Update internal registers
+		state.sde = (ev6.ictl.sde & 2) ? 1 : 0;
 		break;
 
 	case IPR_IC_FLUSH_ASM: // IC_FLUSH_ASM

@@ -17,3 +17,8 @@ dec21164_cpuDevice::dec21164_cpuDevice(const SystemConfig &config,
 	setArchType(ARCH_EV5);
 	setArchFlags(ARCH_BWX|ARCH_PRC);
 }
+
+void dec21164_cpuDevice::preset()
+{
+	ev5.icsr = ICSR_MBO;
+}

@@ -180,7 +180,7 @@
 //#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
 
 #define RREG2(reg) (((reg) & REG_MASK) + \
-	(((state.pcAddr & 1) && (((reg) & 0x0C) == 0x04) && (state.ictl.sde & 2)) ? (REG_MASK+1) : 0))
+	(((state.pcAddr & 1) && (((reg) & 0x0C) == 0x04) && state.sde) ? (REG_MASK+1) : 0))
 
 // executing instruction definitions
 #define RA		RREG2(OP_GETRA(opWord))
@@ -295,6 +295,8 @@ protected:
 	void     writep(uint64_t pAddr, uint64_t data, int size);
 	void     writev(uint64_t vAddr, uint64_t data, int size);
 
+	virtual void preset() = 0;
+
 	// Virtual PAL hardware instruction function calls
 	virtual void call_pal(uint32_t opWord) = 0; // PAL00 instruction
 	virtual void hw_mfpr(uint32_t opWord) = 0;  // PAL19 instruction
@@ -348,8 +350,6 @@ protected:
 		int      asn;					// Address Space Number
 
 		uint64_t fpcr;                  // Floating-point control register
-
-		iCtl_t   ictl;					// Ibox Control register
 
 		// Onchip instruction cache
 		bool iCacheEnable; // Instruction Cache Enable
