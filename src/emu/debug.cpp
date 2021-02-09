@@ -86,8 +86,14 @@ void LogFile::out(const uint32_t flags, cstag_t &message)
 
 	// Record message into some logging files
 	for (int idx = 0; idx < LOG_NFILES; idx++)
+	{
 		if (logFlags & (flags & (1u << idx)))
+		{
 			fout[idx] << message;
+			if (logFlags & LOG_FLUSH)
+				fout[idx] << flush;
+		}
+	}
 
 	// Print message on operator's terminal
 	if (logFlags & (flags & LOG_CONSOLE))

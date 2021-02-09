@@ -13,6 +13,44 @@
 #define AXP_NIREGS 32  // 32 general purpose registers
 #define AXP_NFREGS 32  // 32 floating registers
 
+// Implementation Version
+#define ARCH_EV4   0
+#define ARCH_EV5   1
+#define ARCH_EV6   2
+#define ARCH_EV7   3
+
+// Architectural Feature Bits
+#define ARCH_PFM   0x1000
+#define ARCH_PRC   0x0200
+#define ARCH_MVI   0x0100 // Multimedia Extension
+#define ARCH_CIX   0x0004 // Count Extension
+#define ARCH_FIX   0x0002 // SQR/FP Convert Extension
+#define ARCH_BWX   0x0001 // Byte/Word Extensions
+
+// Exceptions
+#define EXC_RSVIN   0x01  // Reserved Instruction
+#define EXC_RSVOPR  0x02  // Reserved Operand
+#define EXC_ALIGN   0x03  // Operand Alignment
+#define EXC_FPDIS   0x04  // Floating-Point Disable
+#define EXC_TBM     0x08  // Translation Buffer Miss
+#define EXC_FOX     0x10  // Fault on Read/Write/Execute
+#define EXC_ACV     0x14  // Access Control Violation
+#define EXC_TNV     0x18  // Translation Not Valid
+#define EXC_BVA     0x1C  // Bad Virtual Address
+#define EXC_EXECUTE 0x00  // Offset for Execute
+#define EXC_READ    0x01  // Offset for Read
+#define EXC_WRITE   0x02  // Offset for Write
+
+// Traps
+#define TRAP_SWC     0x01 // Software Completion
+#define TRAP_INV     0x02 // Invalid Operand
+#define TRAP_DZE     0x04 // Divide By Zero
+#define TRAP_OVF     0x08 // Overflow
+#define TRAP_UNF     0x10 // Underflow
+#define TRAP_INE     0x20 // Inexact
+#define TRAP_IOV     0x40 // Integer Overflow
+#define TRAP_SUMM_RW 0x7F // Trap Summary Mask
+
 // Alpha Processor Instruction Field
 //
 // PALcode Format
@@ -133,6 +171,8 @@
 #define ACC_EXEC		2	// execute access
 #define ACC_MODE		3	// access mode mask
 
+#define FPSTART
+
 // PC field definition
 #define PC_PAL_MODE		1	// PC PAL mode field
 
@@ -145,7 +185,7 @@
 //#define RREG(reg)	((reg) & REG_MASK) + (state.vpcReg & PC_PAL_MODE) && ((reg) & 0x0c) == 0x04) && state.sde ? (REG_MASK+1) : 0)
 
 #define RREG2(reg) (((reg) & REG_MASK) + \
-	(((state.vpcReg & 1) && (((reg) & 0x0C) == 0x04) && (state.ictl.sde & 2)) ? (REG_MASK+1) : 0))
+	(((state.pcAddr & 1) && (((reg) & 0x0C) == 0x04) && (state.ictl.sde & 2)) ? (REG_MASK+1) : 0))
 
 // executing instruction definitions
 #define RA		RREG2(OP_GETRA(opWord))
@@ -155,6 +195,14 @@
 #define RBV		state.iRegs[RB]
 #define RBVL	((opWord & OPC_LIT) ? OP_GETLIT(opWord) : state.iRegs[RB])
 #define RCV		state.iRegs[RC]
+
+#define FA		OP_GETRA(opWord)
+#define FB		OP_GETRB(opWord)
+#define FC		OP_GETRC(opWord)
+#define FAV		state.fRegs[RA]
+#define FBV		state.fRegs[RB]
+#define FCV		state.fRegs[RC]
+
 #define DISP12  SXT12(opWord)
 #define DISP16	OP_GETMDP(opWord)
 #define DISP21  SXT21(opWord)
@@ -213,10 +261,6 @@ public:
 
 	void initOpcodeTable();
 
-	// Architecture function calls
-	void setArchType(int type) { ahType = type; }
-	int getArchType() const    { return ahType; }
-
 	void init();
 	void execute();
 	void run();
@@ -228,29 +272,6 @@ public:
 
 	void devReset() override { init(); }
 
-	int fetchi(uint64_t vAddr, uint32_t &opc);
-
-	uint64_t checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
-	uint64_t readp(uint64_t pAddr, int size);
-	uint64_t readv(uint64_t vAddr, int size);
-	void     writep(uint64_t pAddr, uint64_t data, int size);
-	void     writev(uint64_t vAddr, uint64_t data, int size);
-
-	// Virtual PAL hardware instruction function calls
-	virtual void hw_mfpr(uint32_t opWord) = 0;  // PAL19 instruction
-	virtual void hw_mtpr(uint32_t opWord) = 0;  // PAL1D instruction
-//	virtual void hw_ld(uint32_t opWord) = 0;    // PAL1B instruction
-//	virtual void hw_st(uint32_t opWord) = 0;    // PAL1F instruction
-//	virtual void hw_ret(uint32_t opWord) = 0;   // PAL1E instruction
-
-	inline void setPC(uint64_t addr) { state.vpcReg = addr; }
-	inline void addPC(int32_t disp) { state.vpcReg += disp; }
-
-	inline void nextPC()
-	{
-		state.vpcReg += 4;
-		state.ppcReg += 4;
-	}
 
 	inline void setPALAddress(offs_t addr) { state.palBase = addr; }
 
@@ -261,6 +282,37 @@ public:
 	int list(Console *cty, offs_t vAddr) override;
 
 	static opcAlpha axp_opCodes[];
+
+protected:
+	// Architecture function calls
+	void setArchType(int type)        { ahType = type; }
+	void setArchFlags(uint16_t flags) { ahFlags = flags; }
+
+	int getArchType() const           { return ahType; }
+	uint16_t getArchFlags() const     { return ahFlags; }
+
+
+	int fetchi(uint64_t vAddr, uint32_t &opc);
+
+	uint64_t checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
+	uint64_t readp(uint64_t pAddr, int size);
+	uint64_t readv(uint64_t vAddr, int size);
+	void     writep(uint64_t pAddr, uint64_t data, int size);
+	void     writev(uint64_t vAddr, uint64_t data, int size);
+
+	// Virtual PAL hardware instruction function calls
+	virtual void call_pal(uint32_t opWord) = 0; // PAL00 instruction
+	virtual void hw_mfpr(uint32_t opWord) = 0;  // PAL19 instruction
+	virtual void hw_mtpr(uint32_t opWord) = 0;  // PAL1D instruction
+	virtual void hw_ld(uint32_t opWord) = 0;    // PAL1B instruction
+	virtual void hw_st(uint32_t opWord) = 0;    // PAL1F instruction
+	virtual void hw_ret(uint32_t opWord) = 0;   // PAL1E instruction
+
+	// inline function calls - program counter address register
+	inline void setPC(uint64_t addr) { state.pcAddr = addr; }
+	inline void addPC(int32_t disp)  { state.pcAddr += disp; }
+	inline void nextPC()             { state.pcAddr += 4; }
+
 
 	opcAlpha *axpCodes[64];
 	opcAlpha *axpCodes10[128];
@@ -276,7 +328,8 @@ public:
 	opcAlpha *axpCodes1C[128];
 
 private:
-	int ahType = 0;
+	int      ahType = 0;
+	uint16_t ahFlags = 0;
 
 protected:
 
@@ -288,16 +341,18 @@ protected:
 	// Register definitions (state file package)
 	struct stateFile {
 		uint64_t iRegs[AXP_NIREGS*2];	// Integer registers  (0-31 - regular, 32-63 - shadow)
-		uint64_t fRegs[AXP_NFREGS*2];	// Floating registers (0-31 - regular, 32-63 - shadow)
-		uint64_t vpcReg;            	// Virtual program counter register
-		uint64_t ppcReg;				// Physical program counter register
-		uint64_t cpcAddr;               // Current program counter address
+		uint64_t fRegs[AXP_NFREGS];	    // Floating registers (0-31 - regular)
+
+		uint64_t pcAddr;				// Program counter address (virtual)
+		uint64_t fpcAddr;				// Faulting program counter address (current)
 
 		uint64_t palBase;				// Current PAL base address
 		uint64_t excAddr;				// Exception address
 		int      cMode;                 // Current access mode
 		bool     sde;                   // Shadow register enable
 		int      asn;					// Address Space Number
+
+		uint64_t fpcr;                  // Floating-point control register
 
 		iCtl_t   ictl;					// Ibox Control register
 

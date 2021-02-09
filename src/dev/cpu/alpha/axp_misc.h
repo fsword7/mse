@@ -7,6 +7,9 @@
 
 #pragma once
 
+#define DOPC_IMPLVER	RAV = getArchType();
+#define DOPC_AMASK		RAV = RBVL & ~getArchFlags();
+
 #define DOPC_RPCC	RAV = (ccOffset << 32) | (ccReg & 0xFFFFFFFF)
 
 #define DOPC_RC_	RAV = bIntrFlag ? 1 : 0; bIntrFlag = false;

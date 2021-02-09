@@ -28,20 +28,29 @@
 #define POST_X64S(val) ONTRACE dbg.log(" <== %016llX\n", ZXTQ(val))
 
 // Condition instructions
-#define PRE_COND(opcode)                                  \
-	{                                                     \
-		dbgval = state.vpcReg + (DISP21 << 2) & ~0x3;     \
-		dbg.log("%llX %-8s R%d,%llX : (%016llX)\n",       \
-				state.cpcAddr, #opcode, RA, dbgval, RAV); \
+#define PRE_COND(opcode)                                   \
+	{                                                      \
+		dbgval = state.pcAddr + (DISP21 << 2) & ~0x3;      \
+		dbg.log("%llX %-8s R%d,%llX : (%016llX)\n",        \
+				state.fpcAddr, #opcode, RA, dbgval, RAV);  \
 	}
 
 #define POST_COND
+
+#define PRE_FCOND(opcode)                                  \
+	{                                                      \
+		dbgval = state.pcAddr + (DISP21 << 2) & ~0x3;      \
+		dbg.log("%llX %-8s F%d,%llX : (%016llX)\n",        \
+				state.fpcAddr, #opcode, FA, dbgval, FAV);  \
+	}
+
+#define POST_FCOND
 
 // Memory instructions
 #define PRE_MEM(opcode) 				                      \
 	{                                                         \
 		dbg.log("%llX %-8s R%d,%04X(R%d)",                    \
-			state.cpcAddr, #opcode, RA, ZXTW(opWord), RB);    \
+			state.fpcAddr, #opcode, RA, ZXTW(opWord), RB);    \
 			dbg.log(" : (%016llX)", RBV + SXTW(opWord));      \
 	}
 
@@ -50,10 +59,23 @@
 #define PRE_MEMS  PRE_MEM
 #define POST_MEMS POST_X64S(RAV)
 
+// Memory instructions (floating)
+#define PRE_FMEM(opcode) 				                      \
+	{                                                         \
+		dbg.log("%llX %-8s F%d,%04X(R%d)",                    \
+			state.fpcAddr, #opcode, FA, ZXTW(opWord), RB);    \
+			dbg.log(" : (%016llX)", RBV + SXTW(opWord));      \
+	}
+
+#define POST_FMEM POST_X64(FAV)
+
+#define PRE_FMEMS  PRE_FMEM
+#define POST_FMEMS POST_X64S(FAV)
+
 // Operate instructions
 #define PRE_RAB_RC(opcode)                                        \
 	{                                                             \
-		dbg.log("%llX %-8s R%d,", state.cpcAddr, #opcode, RA);    \
+		dbg.log("%llX %-8s R%d,", state.fpcAddr, #opcode, RA);    \
 		if (opWord & OPC_LIT)                                     \
 			dbg.log("#%02X,", OP_GETLIT(opWord));                 \
 		else                                                      \
@@ -64,31 +86,51 @@
 
 #define POST_RAB_RC POST_X64(RCV)
 
+#define PRE_RB_RC(opcode)                                         \
+	{                                                             \
+		dbg.log("%llX %-8s ", state.fpcAddr, #opcode, RA);        \
+		if (opWord & OPC_LIT)                                     \
+			dbg.log("#%02X,", OP_GETLIT(opWord));                 \
+		else                                                      \
+			dbg.log("R%d,", RB);                                  \
+		dbg.log("R%d", RC);                                       \
+		dbg.log(" : (%016llX)", RBVL);                            \
+	}
+
+#define POST_RB_RC POST_X64(RCV)
+
 #define PRE_X_RA(opcode)                                        \
 	{                                                           \
-		dbg.log("%llX %-8s R%d\n", state.cpcAddr, #opcode, RA); \
+		dbg.log("%llX %-8s R%d", state.fpcAddr, #opcode, RA); \
 	}
 
 #define POST_X_RA POST_X64(RAV)
 
 #define PRE_X_RC(opcode)                                        \
 	{                                                           \
-		dbg.log("%llX %-8s R%d\n", state.cpcAddr, #opcode, RC); \
+		dbg.log("%llX %-8s R%d", state.fpcAddr, #opcode, RC); \
 	}
 
 #define POST_X_RC POST_X64(RCV)
 
+#define PRE_X_FA(opcode)                                        \
+	{                                                           \
+		dbg.log("%llX %-8s F%d", state.fpcAddr, #opcode, FA); \
+	}
+
+#define POST_X_FA POST_X64(FAV)
+
 #define PRE_PAL(opcode)                                           \
 	{                                                             \
-		dbg.log("%llX %-8s #%X\n", state.cpcAddr, #opcode, func); \
+		dbg.log("%llX %-8s #%X\n", state.fpcAddr, #opcode, func); \
 	}
 
 #define POST_PAL
 
 #define PRE_BR(opcode)                                  \
 	{                                                   \
-		dbgval = state.vpcReg + (DISP21 << 2) & ~0x3;   \
-		dbg.log("%llX %-8s R%d,%llX\n", state.cpcAddr,  \
+		dbgval = state.pcAddr + (DISP21 << 2) & ~0x3;   \
+		dbg.log("%llX %-8s R%d,%llX\n", state.fpcAddr,  \
 			#opcode, RA, dbgval);                       \
 	}
 
@@ -96,7 +138,7 @@
 
 #define PRE_JMP(opcode)                                               \
 	{                                                                 \
-		dbg.log("%llX %-8s R%d,R%d", state.cpcAddr, #opcode, RA, RB); \
+		dbg.log("%llX %-8s R%d,R%d", state.fpcAddr, #opcode, RA, RB); \
 		dbg.log(" : (%llX)\n", RBV);                                  \
 	}
 
@@ -104,7 +146,7 @@
 
 #define PRE_RET(opcode)                                       \
 	{                                                         \
-		dbg.log("%llX %-8s R%d", state.cpcAddr, #opcode, RB); \
+		dbg.log("%llX %-8s R%d", state.fpcAddr, #opcode, RB); \
 		dbg.log(" : (%llX)\n", RBV);                          \
 	}
 
@@ -124,7 +166,7 @@
 		case 14: dbgstr += "/AC"; break;                        \
 		default: dbgstr += fmt::sprintf("(%d)", func); break;   \
 		}                                                       \
-		dbg.log("%llX %-8s R%d,%04X(R%d)", state.cpcAddr,       \
+		dbg.log("%llX %-8s R%d,%04X(R%d)", state.fpcAddr,       \
 			dbgstr, RA, ZXTW(DISP12), RB);                      \
 		dbg.log(" : (%llX)", RBV + DISP12);                     \
 	}
@@ -142,7 +184,7 @@
 		case 12: dbgstr += "/A"; break;                         \
 		default: dbgstr += fmt::sprintf("(%d)", func); break;   \
 		}                                                       \
-		dbg.log("%llX %-8s R%d,%04X(R%d)", state.cpcAddr,       \
+		dbg.log("%llX %-8s R%d,%04X(R%d)", state.fpcAddr,       \
 			dbgstr, RA, ZXTW(DISP12), RB);                      \
 		dbg.log(" : (%llX)", RBV + DISP12);                     \
 	}
@@ -155,7 +197,7 @@
 
 #define PRE_MFPR(opcode)                                  \
 	{                                                     \
-		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,     \
+		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
 			#opcode, RB, (ahType == AHT_EV6) ?            \
 			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
@@ -164,7 +206,7 @@
 
 #define PRE_MTPR(opcode)                                  \
 	{                                                     \
-		dbg.log("%llX %-8s R%d,#%04X", state.cpcAddr,     \
+		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
 			#opcode, RB, (ahType == AHT_EV6) ?            \
 			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
 	}
@@ -173,14 +215,12 @@
 
 #define PRE_NOP(opcode)                                 \
 	{                                                   \
-		dbg.log("%llX %-8s\n", state.cpcAddr, #opcode); \
+		dbg.log("%llX %-8s\n", state.fpcAddr, #opcode); \
 	}
 
 #define POST_NOP
 
-#define OPC_EXEC(opcode, format) DOPC_##opcode
-
-#define OPC_EXEC2(opcode, format)      \
+#define OPC_EXEC(opcode, format)       \
 	ONTRACE PRE_##format(opcode);      \
 	DOPC_##opcode;                     \
 	POST_##format;
@@ -196,6 +236,6 @@
 #define UNKNOWN_OPCODE2
 
 #define OPC_EXEC(opcode, format) DOPC_##opcode
-#define OPC_FUNC(opcode, format)
+#define OPC_FUNC(opcode, call, format)
 
 #endif

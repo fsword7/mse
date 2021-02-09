@@ -15,15 +15,13 @@
 	{                                                          \
 		if (func == 0)                                         \
 		{                                                      \
-			dbg.log("%s: *** HALT instruction at %X\n",        \
-				getDeviceName(), state.vpcReg);                \
-			fmt::printf("%s: *** HALT instruction at %X\n",    \
-				getDeviceName(), state.vpcReg);                \
+			dbg.logf(LOG_CONSOLE, "%s: *** HALT instruction at %X\n", \
+				getDeviceName(), state.fpcAddr);               \
 			dbg.flushAll();                                    \
 			pState = execStopping;                             \
 			break;                                             \
 		}                                                      \
-		state.iRegs[32 + 23] = state.vpcReg;                   \
+		state.iRegs[32 + 23] = state.pcAddr;                   \
 		pAddr = state.palBase | (1u << 13) | 1 |               \
 			((func & 0x80) << 5) | ((func & 0x3F) << 6);       \
 		setPC(pAddr);                                          \

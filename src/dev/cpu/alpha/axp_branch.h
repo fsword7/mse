@@ -23,7 +23,7 @@
 #define DOPC_BSR		DOPC_BR
 #define DOPC_BR									\
 	{											\
-		RAV = state.vpcReg & ~0x03LL;			\
+		RAV = state.pcAddr & ~0x03LL;			\
 		addPC(DISP21 << 2);						\
 	}
 
@@ -35,6 +35,6 @@
 #define DOPC_JMP								\
 	{											\
 		uint64_t temp = RBV & ~0x03LL;			\
-		RAV = state.vpcReg & ~0x03LL; 			\
-		setPC(temp | (state.vpcReg & 0x03LL));	\
+		RAV = state.pcAddr & ~0x03LL; 			\
+		setPC(temp | (state.pcAddr & 0x03LL));	\
 	}

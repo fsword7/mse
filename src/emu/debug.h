@@ -21,6 +21,7 @@
 
 // Log flags
 #define LOG_CONSOLE		0x80000000 // Console output
+#define LOG_FLUSH		0x40000000 // Flushing buffers
 #define LOG_ALLFILES	0x000000FF
 #define LOG_FILE8		0x00000080
 #define LOG_FILE7		0x00000040
@@ -94,11 +95,15 @@ public:
 
 		assert(logFile != nullptr);
 		logFile->out(logFlags, out);
+	}
 
-//		cout << out << flush;
+	template <typename... Args>
+	void logf(uint32_t flags, string format, Args... args)
+	{
+		string out = fmt::sprintf(format, args...);
 
-	//	if ((logFlags & LOG_CONSOLE) && (user != nullptr)
-	//		user->printf(format, args...);
+		assert(logFile != nullptr);
+		logFile->out(logFlags | flags, out);
 	}
 
 private:

@@ -8,6 +8,57 @@
 #include "emu/core.h"
 #include "dev/cpu/alpha/ev5.h"
 
+// CALL_PALL instruction
+void dec21164_cpuDevice::call_pal(uint32_t opWord)
+{
+	uint32_t func = OP_GETPAL(opWord);
+	uint64_t pAddr;
+
+	if (((func < 0x40) && (state.cMode == ACC_KERNEL)) ||
+       ((func >= 0x80) && (func < 0xC0)))
+	{
+		if (func == 0)
+		{
+			dbg.logf(LOG_CONSOLE, "%s: *** HALT instruction at %X\n",
+				getDeviceName(), state.fpcAddr);
+			dbg.flushAll();
+			pState = execStopping;
+			return;
+		}
+
+		// Save current PC address for HW_REI instruction
+		state.excAddr = state.pcAddr;
+		pAddr = state.palBase | (1u << 13) | 1 |
+			((func & 0x80) << 5) | ((func & 0x3F) << 6);
+		setPC(pAddr);
+	}
+//	else {
+//		UNKNOWN_OPCODE2;
+//	}
+
+}
+
+// HW_REI instruction
+void dec21164_cpuDevice::hw_ret(uint32_t opWord)
+{
+	setPC(state.excAddr);
+}
+
+// HW_LD Instruction
+void dec21164_cpuDevice::hw_ld(uint32_t opWord)
+{
+//#define DOPC_HW_LDL		RAV = mapProgram->read32(RBV + DISP12);
+//#define DOPC_HW_LDQ		RAV = mapProgram->read64(RBV + DISP12);
+}
+
+// HW_ST instruction
+void dec21164_cpuDevice::hw_st(uint32_t opWord)
+{
+//#define DOPC_HW_STL		mapProgram->write32(RBV + DISP12, RAV);
+//#define DOPC_HW_STQ		mapProgram->write64(RBV + DISP12, RAV);
+}
+
+// HW_MTPR instruction
 void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 {
 	int fnc = opWord & 0xFFFF;
@@ -22,10 +73,19 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.palBase;
 		break;
 
+	default:
+#ifdef DEBUG
+		if (dbg.checkAnyFlags(DBG_TRACE))
+			dbg.log("%s(HW_MTPR): Undefined function code #%04X\n",
+				getDeviceName(), fnc);
+#endif /* DEBUG */
+		RAV = 0;
+		break;
 	}
 
 }
 
+// HW_MFPR instruction
 void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 {
 	int fnc = opWord & 0xFFFF;
@@ -35,6 +95,14 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 	{
 	case IPR_PAL_BASE: // PAL base address register
 		state.palBase = RBV & PAL_BASE_MASK;
+		break;
+
+	default:
+#ifdef DEBUG
+		if (dbg.checkAnyFlags(DBG_TRACE))
+			dbg.log("%s(HW_MTPR): Undefined function code #%04X\n",
+				getDeviceName(), fnc);
+#endif /* DEBUG */
 		break;
 	}
 }
