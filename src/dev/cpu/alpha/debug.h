@@ -120,9 +120,10 @@
 
 #define POST_X_FA POST_X64(FAV)
 
-#define PRE_PAL(opcode)                                           \
-	{                                                             \
-		dbg.log("%llX %-8s #%X\n", state.fpcAddr, #opcode, func); \
+#define PRE_PAL(opcode)                             \
+	{                                               \
+		dbg.log("%llX %-8s #%X\n", state.fpcAddr,   \
+			#opcode, OP_GETPAL(opWord));            \
 	}
 
 #define POST_PAL
@@ -195,20 +196,26 @@
 //#define POST_HW_STL POST_X32S(RAV)
 #define POST_HW_ST POST_X64S(RAV)
 
-#define PRE_MFPR(opcode)                                  \
-	{                                                     \
-		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
-			#opcode, RB, (ahType == ARCH_EV6) ?           \
-			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
+#define PRE_MFPR(opcode)                                   \
+	{                                                      \
+		if (ahType == ARCH_EV6)                            \
+			dbg.log("%llX %-8s R%d,#%02X", state.fpcAddr,  \
+				#opcode, RB, ((opWord >> 8) & 0xFF));      \
+		else                                               \
+			dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,  \
+				#opcode, RB, (opWord & 0xFFFF));           \
 	}
 
 #define POST_MFPR POST_X64(RAV)
 
-#define PRE_MTPR(opcode)                                  \
-	{                                                     \
-		dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,     \
-			#opcode, RB, (ahType == ARCH_EV6) ?           \
-			((opWord >> 8) & 0xFF) : (opWord & 0xFFFF));  \
+#define PRE_MTPR(opcode)                                   \
+	{                                                      \
+		if (ahType == ARCH_EV6)                            \
+			dbg.log("%llX %-8s R%d,#%02X", state.fpcAddr,  \
+				#opcode, RB, ((opWord >> 8) & 0xFF));      \
+		else                                               \
+			dbg.log("%llX %-8s R%d,#%04X", state.fpcAddr,  \
+				#opcode, RB, (opWord & 0xFFFF));           \
 	}
 
 #define POST_MTPR POST_X64S(RBV)

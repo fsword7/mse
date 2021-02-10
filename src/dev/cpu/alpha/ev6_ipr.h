@@ -44,12 +44,18 @@
 #define IPR_I_STAT							0x16
 #define IPR_SLEEP							0x17
 
-#define IPR_DTB_TAG0						0x20
-#define IPR_DTB_PTE0						0x21
-
+#define IPR_DTB_IA							0xA3
+#define IPR_DTB_IAP							0xA2
 #define IPR_DTB_IS0							0x24
+#define IPR_DTB_IS1							0xA4
+#define IPR_DTB_TAG0						0x20
+#define IPR_DTB_TAG1						0xA0
+#define IPR_DTB_PTE0						0x21
+#define IPR_DTB_PTE1						0xA1
 #define IPR_DTB_ASN0						0x25
+#define IPR_DTB_ASN1						0xA5
 #define IPR_DTB_ALTMODE						0x26
+
 #define IPR_MM_STAT							0x27
 #define IPR_M_CTL							0x28
 #define IPR_DC_CTL							0x29
@@ -58,67 +64,17 @@
 #define IPR_C_SHFT							0x2C
 
 #define IPR_PCXT0							0x40
-#define IPR_PCXT0_ASN						0x41
-#define IPR_PCXT0_ASTER						0x42
-#define IPR_PCXT0_ASTER_ASN					0x43
-#define IPR_PCXT0_ASTRR						0x44
-#define IPR_PCXT0_ASTRR_ASN					0x45
-#define IPR_PCXT0_ASTRR_ASTER				0x46
-#define IPR_PCXT0_ASTRR_ASTER_ASN			0x47
-#define IPR_PCXT0_PPCE						0x48
-#define IPR_PCXT0_PPCE_ASN					0x49
-#define IPR_PCXT0_PPCE_ASTER				0x4A
-#define IPR_PCXT0_PPCE_ASTER_ASN			0x4B
-#define IPR_PCXT0_PPCE_ASTRR				0x4C
-#define IPR_PCXT0_PPCE_ASTRR_ASN			0x4D
-#define IPR_PCXT0_PPCE_ASTRR_ASTER			0x4E
-#define IPR_PCXT0_PPCE_ASTRR_ASTER_ASN		0x4F
-#define IPR_PCXT0_FPE						0x50
-#define IPR_PCXT0_FPE_ASN					0x51
-#define IPR_PCXT0_FPE_ASTER					0x52
-#define IPR_PCXT0_FPE_ASTER_ASN				0x53
-#define IPR_PCXT0_FPE_ASTRR					0x54
-#define IPR_PCXT0_FPE_ASTRR_ASN				0x55
-#define IPR_PCXT0_FPE_ASTRR_ASTER			0x56
-#define IPR_PCXT0_FPE_ASTRR_ASTER_ASN		0x57
-#define IPR_PCXT0_FPE_PPCE					0x58
-#define IPR_PCXT0_FPE_PPCE_ASN				0x59
-#define IPR_PCXT0_FPE_PPCE_ASTER			0x5A
-#define IPR_PCXT0_FPE_PPCE_ASTER_ASN		0x5B
-#define IPR_PCXT0_FPE_PPCE_ASTRR			0x5C
-#define IPR_PCXT0_FPE_PPCE_ASTRR_ASN		0x5D
-#define IPR_PCXT0_FPE_PPCE_ASTRR_ASTER		0x5E
-#define IPR_PCXT0_FPE_PPCE_ASTRR_ASTER_ASN	0x5F
-
 #define IPR_PCXT1							0x60
-#define IPR_PCXT1_ASN						0x61
-#define IPR_PCXT1_ASTER						0x62
-#define IPR_PCXT1_ASTER_ASN					0x63
-#define IPR_PCXT1_ASTRR						0x64
-#define IPR_PCXT1_ASTRR_ASN					0x65
-#define IPR_PCXT1_ASTRR_ASTER				0x66
-#define IPR_PCXT1_ASTRR_ASTER_ASN			0x67
-#define IPR_PCXT1_PPCE						0x68
-#define IPR_PCXT1_PPCE_ASN					0x69
-#define IPR_PCXT1_PPCE_ASTER				0x6A
-#define IPR_PCXT1_PPCE_ASTER_ASN			0x6B
-#define IPR_PCXT1_PPCE_ASTRR				0x6C
-#define IPR_PCXT1_PPCE_ASTRR_ASN			0x6D
-#define IPR_PCXT1_PPCE_ASTRR_ASTER			0x6E
-#define IPR_PCXT1_PPCE_ASTRR_ASTER_ASN		0x6F
-#define IPR_PCXT1_FPE						0x70
-#define IPR_PCXT1_FPE_ASN					0x71
-#define IPR_PCXT1_FPE_ASTER					0x72
-#define IPR_PCXT1_FPE_ASTER_ASN				0x73
-#define IPR_PCXT1_FPE_ASTRR					0x74
-#define IPR_PCXT1_FPE_ASTRR_ASN				0x75
-#define IPR_PCXT1_FPE_ASTRR_ASTER			0x76
-#define IPR_PCXT1_FPE_ASTRR_ASTER_ASN		0x77
-#define IPR_PCXT1_FPE_PPCE					0x78
-#define IPR_PCXT1_FPE_PPCE_ASN				0x79
-#define IPR_PCXT1_FPE_PPCE_ASTER			0x7A
-#define IPR_PCXT1_FPE_PPCE_ASTER_ASN		0x7B
-#define IPR_PCXT1_FPE_PPCE_ASTRR			0x7C
-#define IPR_PCXT1_FPE_PPCE_ASTRR_ASN		0x7D
-#define IPR_PCXT1_FPE_PPCE_ASTRR_ASTER		0x7E
-#define IPR_PCXT1_FPE_PPCE_ASTRR_ASTER_ASN	0x7F
+
+#define PCXT_ASN
+#define PCXT_ASTER
+#define PCXT_ASTRR
+#define PCXT_PPCE
+#define PCXT_FPE
+
+// Ebox IPR registers
+#define IPR_CC								0xC0
+#define IPR_CC_CTL							0xC1
+#define IPR_VA								0xC2
+#define IPR_VA_FORM							0xC3
+#define IPR_VA_CTL							0xC4

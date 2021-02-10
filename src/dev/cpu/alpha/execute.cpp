@@ -48,7 +48,7 @@ void AlphaProcessor::init()
 	state.iCacheNext   = 0;
 	state.iCacheEnable = true;
 
-	state.cMode = ACC_KERNEL;
+	state.cm = ACC_KERNEL;
 
 	// procesor-specific reset
 	preset();
@@ -206,8 +206,7 @@ void AlphaProcessor::execute()
 	switch (opCode)
 	{
 	case OPC_PAL:		// 00 - CALL_PAL instruction
-		func = OP_GETPAL(opWord);
-		OPC_EXEC(CALL_PAL, PAL);
+		OPC_FUNC(CALL_PAL, call_pal, PAL);
 		break;
 
 	case OPC_LDA:		// 08 - LDA instruction
@@ -231,15 +230,15 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_STW:		// 0D - STW instruction
-		OPC_EXEC(STW, MEM);
+		OPC_EXEC(STW, MEMS);
 		break;
 
 	case OPC_STB:		// 0E - STB instruction
-		OPC_EXEC(STB, MEM);
+		OPC_EXEC(STB, MEMS);
 		break;
 
 	case OPC_STQ_U:		// OF - STQ_U instruction
-		OPC_EXEC(STQ_U, MEM);
+		OPC_EXEC(STQ_U, MEMS);
 		break;
 
 	case OPC_INTA:		// 10 - Arithmetic instructions
@@ -621,8 +620,8 @@ void AlphaProcessor::execute()
 		OPC_FUNC(HW_MTPR, hw_mtpr, MTPR);
 		break;
 
-	case OPC_RET:		// 1E - RET instruction
-		OPC_EXEC(HW_REI, RET);
+	case OPC_RET:		// 1E - HW_REI/HW_RET instruction
+		OPC_FUNC(HW_REI, hw_ret, RET);
 		break;
 
 	case OPC_HW_ST:		// 1F - HW_ST instruction
@@ -683,19 +682,19 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_STL:		// 2C - STL instruction
-		OPC_EXEC(STL, MEM);
+		OPC_EXEC(STL, MEMS);
 		break;
 
 	case OPC_STQ:		// 2D - STQ instruction
-		OPC_EXEC(STQ, MEM);
+		OPC_EXEC(STQ, MEMS);
 		break;
 
 	case OPC_STL_C:		// 2E - STL_C instruction
-		OPC_EXEC(STL_C, MEM);
+		OPC_EXEC(STL_C, MEMS);
 		break;
 
 	case OPC_STQ_C:		// 2F - STQ_C instruction
-		OPC_EXEC(STQ_C, MEM);
+		OPC_EXEC(STQ_C, MEMS);
 		break;
 
 	case OPC_BR:		// 30 - BR instruction

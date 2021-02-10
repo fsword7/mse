@@ -1,5 +1,6 @@
 set(MSE_CPP_SRCS
 	dev/cpu/alpha/axp.cpp
+	dev/cpu/alpha/axp_tb.cpp
 	dev/cpu/alpha/axp_mem.cpp
 	dev/cpu/alpha/debug.cpp
 	dev/cpu/alpha/ev5.cpp

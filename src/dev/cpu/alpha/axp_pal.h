@@ -10,7 +10,7 @@
 // Call PAL instruction
 
 #define DOPC_CALL_PAL \
-	if (((func < 0x40) && (state.cMode == ACC_KERNEL)) ||      \
+	if (((func < 0x40) && (state.cm == ACC_KERNEL)) ||         \
        ((func >= 0x80) && (func < 0xC0)))                      \
 	{                                                          \
 		if (func == 0)                                         \

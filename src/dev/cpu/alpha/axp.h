@@ -289,6 +289,10 @@ protected:
 
 	int fetchi(uint64_t vAddr, uint32_t &opc);
 
+	void tbia(int acc);
+	void tbiap(int acc);
+	void tbis(uint64_t addr, int acc);
+
 	uint64_t checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
 	uint64_t readp(uint64_t pAddr, int size);
 	uint64_t readv(uint64_t vAddr, int size);
@@ -345,9 +349,39 @@ protected:
 
 		uint64_t palBase;				// Current PAL base address
 		uint64_t excAddr;				// Exception address
-		int      cMode;                 // Current access mode
+		int      cm;                    // Current access mode
+		int      altcm;
+
 		bool     sde;                   // Shadow register enable
 		int      asn;					// Address Space Number
+		int      astrr;
+		int      aster;
+		int      fpen;
+		int      ppcen;
+		int      asten;
+		int      sien;
+		int      pcen;
+		int      cren;
+		int      slen;
+		int      eien;
+
+		bool     irq;
+		uint32_t sir;
+		uint32_t pcr;
+		uint32_t crr;
+		uint32_t sum;
+
+		int      asn0;
+		int      asn1;
+
+		uint64_t pctr;
+		int      istat;
+		int      mmstat;
+		int      dcstat;
+
+		int      ccen;
+		uint32_t ccOffset;
+		uint32_t cc;
 
 		uint64_t fpcr;                  // Floating-point control register
 
