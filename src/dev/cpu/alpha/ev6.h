@@ -18,6 +18,9 @@ public:
 	~dec21264_cpuDevice() = default;
 
 	void preset() override; // individual processor reset
+	int abort(int why); // Aborting with internal exception codes
+
+	int translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags);
 
 	// Virtual PAL hardware instruction calls
 	void call_pal(uint32_t opWord) override; // PAL00 instruction

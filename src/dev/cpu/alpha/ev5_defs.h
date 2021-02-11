@@ -16,6 +16,20 @@
 #define HW_LOCK  0x0400
 #define HW_DISP  0x03FF // 10-bit displacement
 
+// PALcode Trap Entry Points (21164 HRM section 6.4.2)
+#define PAL_RESET          0x0000 // Reset
+#define PAL_IACCVIO        0x0080 // Instream access violation
+#define PAL_INTERRUPT      0x0100 // Interrupts (hardware, software and AST)
+#define PAL_ITB_MISS       0x0180 // Istream TB miss
+#define PAL_DTBM_SINGLE    0x0200 // Dstream TB miss
+#define PAL_DTBM_DOUBLE    0x0280 // Dstream TB miss during VPTE fetch
+#define PAL_UNALIGN        0x0300 // Dstream unaligned reference
+#define PAL_DFAULT         0x0380 // Dstream fault/sign check error on virtual address
+#define PAL_MCHK           0x0400 // Uncorrected hardware error
+#define PAL_OPCDEC         0x0480 // Illegal opcode
+#define PAL_ARITH          0x0500 // Arithmetic exception
+#define PAL_FEN            0x0580 // Floating-point operation attempted
+
 
 #define ITB_TAG_MASK 0x0000007FFFFFFE000LL
 

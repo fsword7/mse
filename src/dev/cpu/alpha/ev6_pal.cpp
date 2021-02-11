@@ -377,7 +377,7 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_CC_CTL:
-			state.ccen = (RBV >> 32) & 1;
+			state.cc_ena = (RBV >> 32) & 1;
 			state.cc = RBV & 0xFFFFFFF0;
 			break;
 

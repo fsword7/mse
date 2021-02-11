@@ -65,14 +65,14 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 
 	switch (fnc)
 	{
-	case IPR_ISR:
-	case IPR_ITB_PTE:
-	case IPR_ITB_ASN:
-	case IPR_ITB_PTE_TEMP:
-	case IPR_SIRR:
-	case IPR_ASTRR:
-	case IPR_ASTER:
-		break;
+//	case IPR_ISR:
+//	case IPR_ITB_PTE:
+//	case IPR_ITB_ASN:
+//	case IPR_ITB_PTE_TEMP:
+//	case IPR_SIRR:
+//	case IPR_ASTRR:
+//	case IPR_ASTER:
+//		break;
 
 	case IPR_EXC_ADDR: // Exception address register
 		RAV = state.excAddr;
@@ -83,25 +83,43 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		break;
 
 	case IPR_EXC_MASK:
-		RAV = 0; // state.excMask;
+		RAV = state.excMask;
 		break;
 
 	case IPR_PAL_BASE: // PAL base address register
 		RAV = state.palBase;
 		break;
 
+//	case IPR_INTID:
+//	case IPR_IFAULT_VA_FORM:
+//	case IPR_IVPTBR:
+//	case IPR_SL_RCV:
+//	case IPR_ICPERR_STAT:
+//	case IPR_PMCTR:
+//		break;
+
 	case IPR_ICM:
-	case IPR_IPLR:
-	case IPR_INTID:
-	case IPR_IFAULT_VA_FORM:
-	case IPR_IVPTBR:
-	case IPR_SL_RCV:
-	case IPR_ICPERR_STAT:
-	case IPR_PMCTR:
+		RAV = state.cm;
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
 		RAV = ev5.icsr;
+		break;
+
+	case IPR_IPLR:
+		RAV = state.ipl;
+		break;
+
+	case IPR_MM_STAT:
+		RAV = state.mmstat;
+		break;
+
+	case IPR_VA:
+		RAV = state.fpcAddr;
+		break;
+
+	case IPR_VA_FORM:
+		RAV = 0;
 		break;
 
 	case IPR_MCSR: // Mbox Control and Status Register
@@ -199,8 +217,17 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		state.excAddr = RBV;
 		break;
 
+	case IPR_EXC_SUM:
+		state.sum = 0;
+		state.excMask = 0;
+		break;
+
 	case IPR_PAL_BASE: // PAL base address register
 		state.palBase = RBV & PAL_BASE_MASK;
+		break;
+
+	case IPR_ICM:
+		state.cm = (RBV >> 3) & 3;
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
@@ -211,6 +238,10 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		state.fpen = (ev5.icsr & ICSR_FPE) ? 1 : 0;
 		state.ispe = (ev5.icsr & ICSR_SPE) >> 28;
 
+		break;
+
+	case IPR_IPLR:
+		state.ipl = RBV & 0x1F;
 		break;
 
 	case IPR_IC_FLUSH_CTL: // Flush ICache
@@ -227,6 +258,19 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	case IPR_DTB_IS:
 		tbis(RBV, ACC_READ);
+		break;
+
+	case IPR_ALT_MODE:
+		state.altcm = (RBV >> 3) & 3;
+		break;
+
+	case IPR_CC:
+		state.ccOffset = RBV >> 32;
+		break;
+
+	case IPR_CC_CTL:
+		state.cc     = RBV & 0xFFFFFFF0;
+		state.cc_ena = (RBV >> 32) & 1;
 		break;
 
 	case IPR_MCSR: // Mbox Control and Status Register

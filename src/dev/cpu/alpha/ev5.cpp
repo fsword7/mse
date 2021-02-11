@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "dev/cpu/alpha/ev5.h"
+#include "dev/cpu/alpha/axp_mmu.h"
 
 DEFINE_DEVICE_TYPE(dec21164, dec21164_cpuDevice, "21164", "DEC 21164 Alpha Processor")
 
@@ -21,4 +22,77 @@ dec21164_cpuDevice::dec21164_cpuDevice(const SystemConfig &config,
 void dec21164_cpuDevice::preset()
 {
 	ev5.icsr = ICSR_MBO;
+}
+
+int dec21164_cpuDevice::abort(int why)
+{
+	switch (why)
+	{
+	case EXC_OPCODE:   // Illegal opcode
+		break;
+	case EXC_ITBMISS:  // Istream TB miss
+		break;
+	case EXC_DTBMISS1: // Dstream TB miss single
+		break;
+	case EXC_DTBMISS2: // Dstream TB miss double with VPTE
+		break;
+	case EXC_IACV:     // Istream access violation
+		break;
+	case EXC_FPDIS:    // Floating-point operation attempted
+		break;
+	}
+
+	// Always return error code
+	return -1;
+}
+
+int dec21164_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags)
+{
+	int spe = (accFlags & ACC_EXEC) ? state.ispe : state.mspe;
+	int cm  = (accFlags & ACC_ALTCM) ? state.altcm : state.cm;
+
+	// Try super page translation first
+	if (spe & cm != ACC_KERNEL)
+	{
+		if (((vAddr & SPE1_MASK) == SPE1_MATCH) && (spe & 2))
+		{
+			asmb  = false;
+			pAddr = (vAddr & SPE1_MAP) | (vAddr & SPE1_TEST) ? SPE1_ADD : 0;
+			return 0;
+		}
+		else if (((vAddr & SPE0_MASK) == SPE0_MATCH) && (spe & 1))
+		{
+			asmb  = false;
+			pAddr = vAddr & SPE0_MAP;
+			return 0;
+		}
+	}
+
+	int eidx;
+	if ((eidx = findTBEntry(vAddr, accFlags)) < 0)
+	{
+		// TB miss (page fault) - issue PAL exception
+		if (accFlags & ACC_VPTE)
+		{
+			state.fpcAddr = vAddr;
+			state.excMask = 1u << RA;
+			setPC(state.palBase + PAL_DTBM_DOUBLE + 1);
+		}
+		else if (accFlags & ACC_EXEC)
+		{
+			setPC(state.palBase + PAL_ITB_MISS + 1);
+		}
+		else
+		{
+			state.fpcAddr = vAddr;
+			state.excMask = 1u << RA;
+			int opCode = OP_GETOP(state.opWord);
+			state.mmstat = (((opCode == 0x1B) || (opCode == 0x1F)) ? opCode - 0x18 : opCode) << 11 |
+					(RA << 6) | (accFlags & ACC_WRITE);
+			setPC(state.palBase + PAL_DTBM_SINGLE + 1);
+		}
+
+		return -1;
+	}
+	return 0;
 }

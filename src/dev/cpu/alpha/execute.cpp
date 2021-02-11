@@ -48,6 +48,23 @@ void AlphaProcessor::init()
 	state.iCacheNext   = 0;
 	state.iCacheEnable = true;
 
+	// Clear all translation buffers
+	for (int tbidx = 0; tbidx < 2; tbidx++)
+	{
+		for (int eidx = 0; eidx < TB_ENTRIES; eidx++)
+		{
+			state.tb[tbidx][eidx].valid = false;
+			state.tb[tbidx][eidx].asmb  = false;
+			state.tb[tbidx][eidx].asn   = 0;
+			state.tb[tbidx][eidx].matchMask = 0;
+			state.tb[tbidx][eidx].keepMask = 0;
+			state.tb[tbidx][eidx].vAddr = 0;
+			state.tb[tbidx][eidx].pAddr = 0;
+		}
+		state.tbLast[tbidx][0] = 0;
+		state.tbLast[tbidx][1] = 0;
+	}
+
 	state.cm = ACC_KERNEL;
 	state.fpen = 1;
 
@@ -172,7 +189,6 @@ int AlphaProcessor::fetchi(uint64_t addr, uint32_t &data)
 
 void AlphaProcessor::execute()
 {
-	uint32_t opWord;
 	int opCode;
 	uint32_t func;
 	uint64_t pAddr;
@@ -192,7 +208,7 @@ void AlphaProcessor::execute()
 	}
 
 	// Count cycle if enable
-	if (state.ccen)
+	if (state.cc_ena)
 		state.cc++;
 
 	// Display current instruction
@@ -200,14 +216,14 @@ void AlphaProcessor::execute()
 
 	state.fpcAddr = state.pcAddr;
 //	opWord = readv32(state.pcAddr);
-	fetchi(state.pcAddr, opWord);
+	fetchi(state.pcAddr, state.opWord);
 	nextPC();
 
 	// R31/F31 register - always zero
 	state.iRegs[REG_ZERO] = 0;
 	state.fRegs[REG_ZERO] = 0;
 
-	opCode = OP_GETOP(opWord);
+	opCode = OP_GETOP(state.opWord);
 	switch (opCode)
 	{
 	case OPC_PAL:		// 00 - CALL_PAL instruction
@@ -247,7 +263,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTA:		// 10 - Arithmetic instructions
-		func = (opWord >> 5) & 0x7F;
+		func = (state.opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		case 0x00:
@@ -330,7 +346,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTL:		// 11 - Logical instructions
-		func = (opWord >> 5) & 0x7F;
+		func = (state.opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		case 0x00:
@@ -388,7 +404,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTS:		// 12 - Shift instructions
-		func = (opWord >> 5) & 0x7F;
+		func = (state.opWord >> 5) & 0x7F;
 		switch (func)
 		{
 	    case 0x02:
@@ -476,7 +492,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_INTM:		// 13 - Multiply instructions
-		func = (opWord >> 5) & 0x7F;
+		func = (state.opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		case 0x00:
@@ -501,7 +517,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_ITFP:		// 14 - Integer/Floating instructions
-		func = (opWord >> 5) & 0x7FF;
+		func = (state.opWord >> 5) & 0x7FF;
 		switch (func)
 		{
 		default:
@@ -511,7 +527,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_FLTV:		// 15 - Floating VAX instructions
-		func = (opWord >> 5) & 0x7FF;
+		func = (state.opWord >> 5) & 0x7FF;
 		switch (func)
 		{
 		default:
@@ -521,7 +537,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_FLTI:		// 16 - Floating IEEE instructions
-		func = (opWord >> 5) & 0x7FF;
+		func = (state.opWord >> 5) & 0x7FF;
 		switch (func)
 		{
 		default:
@@ -531,7 +547,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_FLTL:		// 17 - FLTL instruction
-		func = (opWord >> 5) & 0x7FF;
+		func = (state.opWord >> 5) & 0x7FF;
 		switch (func)
 		{
 		case 0x24: // MT_FPCR
@@ -549,7 +565,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_MISC:		// 18 - Miscellaneous instructions
-		func = opWord & 0xFFFF;
+		func = state.opWord & 0xFFFF;
 		switch (func)
 		{
 		case 0x0000: // 0000 - TRAPB
@@ -603,7 +619,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_LD:		// 1B - HW_LD instruction
-		func = (opWord >> 12) & 0xF;
+		func = (state.opWord >> 12) & 0xF;
 		if (func & 1) {
 			OPC_EXEC(HW_LDQ, HW_LD);
 		} else {
@@ -612,7 +628,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_FPTI:		// 1C - Floating/Integer instructions
-		func = (opWord >> 5) & 0x7F;
+		func = (state.opWord >> 5) & 0x7F;
 		switch (func)
 		{
 		default:
@@ -630,7 +646,7 @@ void AlphaProcessor::execute()
 		break;
 
 	case OPC_HW_ST:		// 1F - HW_ST instruction
-		func = (opWord >> 12) & 0xF;
+		func = (state.opWord >> 12) & 0xF;
 		if (func & 1) {
 			OPC_EXEC(HW_STQ, HW_ST);
 		} else {

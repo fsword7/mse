@@ -28,18 +28,26 @@
 #define ARCH_BWX   0x0001 // Byte/Word Extensions
 
 // Exceptions
-#define EXC_RSVIN   0x01  // Reserved Instruction
-#define EXC_RSVOPR  0x02  // Reserved Operand
-#define EXC_ALIGN   0x03  // Operand Alignment
-#define EXC_FPDIS   0x04  // Floating-Point Disable
-#define EXC_TBM     0x08  // Translation Buffer Miss
-#define EXC_FOX     0x10  // Fault on Read/Write/Execute
-#define EXC_ACV     0x14  // Access Control Violation
-#define EXC_TNV     0x18  // Translation Not Valid
-#define EXC_BVA     0x1C  // Bad Virtual Address
-#define EXC_EXECUTE 0x00  // Offset for Execute
-#define EXC_READ    0x01  // Offset for Read
-#define EXC_WRITE   0x02  // Offset for Write
+//#define EXC_RSVIN   0x01  // Reserved Instruction
+//#define EXC_RSVOPR  0x02  // Reserved Operand
+//#define EXC_ALIGN   0x03  // Operand Alignment
+//#define EXC_FPDIS   0x04  // Floating-Point Disable
+//#define EXC_TBM     0x08  // Translation Buffer Miss
+//#define EXC_FOX     0x10  // Fault on Read/Write/Execute
+//#define EXC_ACV     0x14  // Access Control Violation
+//#define EXC_TNV     0x18  // Translation Not Valid
+//#define EXC_BVA     0x1C  // Bad Virtual Address
+//#define EXC_EXECUTE 0x00  // Offset for Execute
+//#define EXC_READ    0x01  // Offset for Read
+//#define EXC_WRITE   0x02  // Offset for Write
+
+// Internal exception codes for all processors
+#define EXC_OPCODE    1    // Illegal opcode
+#define EXC_ITBMISS   2    // Istream TB miss
+#define EXC_DTBMISS1  3    // Dstream TB miss single
+#define EXC_DTBMISS2  4    // Dstream TB miss double w/VPTE
+#define EXC_IACV      5    // Istream access violation
+#define EXC_FPDIS     6    // Floating-point attempted operation
 
 // Traps
 #define TRAP_SWC     0x01 // Software Completion
@@ -167,6 +175,7 @@
 
 #define ACC_MODE		0x0003	 // Access mode mask
 #define ACC_ALTCM		0x0004   // Alternate current mode flag
+#define ACC_VPTE        0x0008   // Virtual page table entry
 
 #define ABORT(why)
 
@@ -187,24 +196,24 @@
 	(((state.pcAddr & 1) && (((reg) & 0x0C) == 0x04) && state.sde) ? (REG_MASK+1) : 0))
 
 // executing instruction definitions
-#define RA		RREG2(OP_GETRA(opWord))
-#define RB		RREG2(OP_GETRB(opWord))
-#define RC		RREG2(OP_GETRC(opWord))
+#define RA		RREG2(OP_GETRA(state.opWord))
+#define RB		RREG2(OP_GETRB(state.opWord))
+#define RC		RREG2(OP_GETRC(state.opWord))
 #define RAV		state.iRegs[RA]
 #define RBV		state.iRegs[RB]
-#define RBVL	((opWord & OPC_LIT) ? OP_GETLIT(opWord) : state.iRegs[RB])
+#define RBVL	((state.opWord & OPC_LIT) ? OP_GETLIT(state.opWord) : state.iRegs[RB])
 #define RCV		state.iRegs[RC]
 
-#define FA		OP_GETRA(opWord)
-#define FB		OP_GETRB(opWord)
-#define FC		OP_GETRC(opWord)
+#define FA		OP_GETRA(state.opWord)
+#define FB		OP_GETRB(state.opWord)
+#define FC		OP_GETRC(state.opWord)
 #define FAV		state.fRegs[RA]
 #define FBV		state.fRegs[RB]
 #define FCV		state.fRegs[RC]
 
-#define DISP12  SXT12(opWord)
-#define DISP16	OP_GETMDP(opWord)
-#define DISP21  SXT21(opWord)
+#define DISP12  SXT12(state.opWord)
+#define DISP16	OP_GETMDP(state.opWord)
+#define DISP21  SXT21(state.opWord)
 
 #define SXT12(val) SXTL((int32_t)(((val) & 0x800) ? ((val) | 0xFFFFF000) : ((val) & 0x00000FFF)))
 #define SXT21(val) SXTL((int32_t)(((val) & 0x100000) ? ((val) | 0xFFE00000) : ((val) & 0x001FFFFF)))
@@ -294,7 +303,8 @@ protected:
 	int fetchi(uint64_t vAddr, uint32_t &opc);
 
 	// Virtual address translation function calls
-	uint64_t translate(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
+	int findTBEntry(uint64_t vAddr, uint32_t accFlags);
+
 	void tbia(int acc);
 	void tbiap(int acc);
 	void tbis(uint64_t addr, int acc);
@@ -306,6 +316,7 @@ protected:
 	void     writev(uint64_t vAddr, uint64_t data, int size);
 
 	virtual void preset() = 0;
+	virtual int  translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags) = 0;
 
 	// Virtual PAL hardware instruction function calls
 	virtual void call_pal(uint32_t opWord) = 0; // PAL00 instruction
@@ -350,14 +361,17 @@ protected:
 		uint64_t pcAddr;				// Program counter address (virtual)
 		uint64_t fpcAddr;				// Faulting program counter address (current)
 
-		uint64_t palBase;				// Current PAL base address
-		uint64_t excAddr;				// Exception address
+		uint64_t palBase;				// PAL base address
+		uint64_t excAddr;				// Exception - PC Address
+		uint64_t excMask;               // Exception - Destination of registers
+
+		uint32_t opWord;                // Current Instruction Register
 
 		bool     sde;                   // Shadow register enable
 		int      fpen;					// Floating-point enable
 		uint64_t fpcr;                  // Floating-point control register
 
-		int      ccen;                  // Cycle counter enable
+		int      cc_ena;                // Cycle counter enable
 		uint32_t ccOffset;              // Counter offset
 		uint32_t cc;                    // Counter
 
@@ -377,6 +391,7 @@ protected:
 		int      eien;
 
 		bool     irq;
+		int      ipl;
 		uint32_t sir;
 		uint32_t pcr;
 		uint32_t crr;
@@ -405,7 +420,7 @@ protected:
 		} iCache[ICACHE_ENTRIES];
 
 		// Translation buffer
-		int tbLast[2];
+		int tbLast[2][2];
 		int tbNext[2];
 		struct tbEntry
 		{
