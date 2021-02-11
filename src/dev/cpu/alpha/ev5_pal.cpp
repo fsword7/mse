@@ -14,7 +14,7 @@ void dec21164_cpuDevice::call_pal(uint32_t opWord)
 	uint32_t func = OP_GETPAL(opWord);
 	uint64_t pAddr;
 
-	if (((func < 0x40) && (state.cm == ACC_KERNEL)) ||
+	if (((func < 0x40) && (state.icm == ACC_KERNEL)) ||
        ((func >= 0x80) && (func < 0xC0)))
 	{
 		if (func == 0)
@@ -91,15 +91,13 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		break;
 
 //	case IPR_INTID:
-//	case IPR_IFAULT_VA_FORM:
-//	case IPR_IVPTBR:
 //	case IPR_SL_RCV:
 //	case IPR_ICPERR_STAT:
 //	case IPR_PMCTR:
 //		break;
 
 	case IPR_ICM:
-		RAV = state.cm;
+		RAV = state.icm;
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
@@ -110,16 +108,24 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.ipl;
 		break;
 
+	case IPR_IFAULT_VA_FORM:
+		RAV = getVAForm(state.excAddr, true);
+		break;
+
+	case IPR_IVPTBR:
+		RAV = state.ivptb;
+		break;
+
 	case IPR_MM_STAT:
 		RAV = state.mmstat;
 		break;
 
 	case IPR_VA:
-		RAV = state.fpcAddr;
+		RAV = state.fvAddr;
 		break;
 
 	case IPR_VA_FORM:
-		RAV = 0;
+		RAV = getVAForm(state.fvAddr, false);
 		break;
 
 	case IPR_MCSR: // Mbox Control and Status Register
@@ -239,7 +245,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 
 	case IPR_ICM:
-		state.cm = (RBV >> 3) & 3;
+		state.icm = (RBV >> 3) & 3;
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
@@ -254,6 +260,11 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	case IPR_IPLR:
 		state.ipl = RBV & 0x1F;
+		break;
+
+	case IPR_IVPTBR:
+//		state.ivptb = RBV & 0xFFFFFFFE0000000LL; // NT mode
+		state.ivptb = RBV & 0xFFFFFFFFC000000LL;
 		break;
 
 	case IPR_IC_FLUSH_CTL: // Flush ICache
@@ -273,7 +284,12 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 
 	case IPR_DTB_CM:
-		state.cm = (RBV >> 3) & 3;
+		state.dcm = (RBV >> 3) & 3;
+		break;
+
+	case IPR_MVPTBR:
+//		state.dvptb = RBV & 0xFFFFFFFE0000000LL; // NT mode
+		state.dvptb = RBV & 0xFFFFFFFFC000000LL;
 		break;
 
 	case IPR_DTB_IA:

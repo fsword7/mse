@@ -57,6 +57,17 @@ void AlphaProcessor::init()
 			state.tb[tbidx][eidx].asmb  = false;
 			state.tb[tbidx][eidx].asn   = 0;
 			state.tb[tbidx][eidx].matchMask = 0;
+			state.tb[tbidx][eidx].fault[0] = 0;
+			state.tb[tbidx][eidx].fault[1] = 0;
+			state.tb[tbidx][eidx].fault[2] = 0;
+			state.tb[tbidx][eidx].access[0][0] = 0;
+			state.tb[tbidx][eidx].access[1][0] = 0;
+			state.tb[tbidx][eidx].access[0][1] = 0;
+			state.tb[tbidx][eidx].access[1][1] = 0;
+			state.tb[tbidx][eidx].access[0][2] = 0;
+			state.tb[tbidx][eidx].access[1][2] = 0;
+			state.tb[tbidx][eidx].access[0][3] = 0;
+			state.tb[tbidx][eidx].access[1][3] = 0;
 			state.tb[tbidx][eidx].keepMask = 0;
 			state.tb[tbidx][eidx].vAddr = 0;
 			state.tb[tbidx][eidx].pAddr = 0;
@@ -65,7 +76,8 @@ void AlphaProcessor::init()
 		state.tbLast[tbidx][1] = 0;
 	}
 
-	state.cm = ACC_KERNEL;
+	state.icm = ACC_KERNEL;
+	state.dcm = ACC_KERNEL;
 	state.fpen = 1;
 
 	// procesor-specific reset

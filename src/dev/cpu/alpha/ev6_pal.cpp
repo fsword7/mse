@@ -16,7 +16,7 @@ void dec21264_cpuDevice::call_pal(uint32_t opWord)
 	uint32_t func = OP_GETPAL(opWord);
 	uint64_t pAddr;
 
-	if (((func < 0x40) && (state.cm == ACC_KERNEL)) ||
+	if (((func < 0x40) && (state.icm == ACC_KERNEL)) ||
        ((func >= 0x80) && (func < 0xC0)))
 	{
 		if (func == 0)
@@ -139,7 +139,7 @@ void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 			break;
 
 		case IPR_IVA_FORM:
-			RAV = 0; // (get_va_form(state.excAddr, true);
+			RAV = getVAForm(state.excAddr, true);
 			break;
 
 //		case IPR_IER_CM:
@@ -149,7 +149,7 @@ void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 			RAV = (uint64_t(state.eien) << 33) | (uint64_t(state.slen) << 32) |
 			      (uint64_t(state.cren) << 31) | (uint64_t(state.pcen) << 29) |
 				  (uint64_t(state.sien) << 13) | (uint64_t(state.asten) << 13) |
-				  (uint64_t(state.cm) << 3);
+				  (uint64_t(state.icm) << 3);
 			break;
 
 		case IPR_SIRR:
@@ -196,11 +196,11 @@ void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 			break;
 
 		case IPR_VA:
-			RAV = 0; // state.fvAddr;
+			RAV = state.fvAddr;
 			break;
 
 		case IPR_VA_FORM:
-			RAV = 0; // get_va_form(state.fvAddr, false);
+			RAV = getVAForm(state.fvAddr, false);
 			break;
 
 		default:
@@ -264,11 +264,11 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_CM:
-			state.cm = (RBV >> 3) & 3;
+			state.icm = (RBV >> 3) & 3;
 			break;
 
 		case IPR_IER_CM:
-			state.cm = (RBV >> 3) & 3;
+			state.icm = (RBV >> 3) & 3;
 		case IPR_IER:
 			state.asten = (RBV >> 13) & 1;
 			state.sien  = (RBV >> 13) & 0xFFFE;
@@ -298,7 +298,11 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			WRITE_ICTL(RBV);
 
 			// Update internal registers
-			state.sde = (ev6.ictl.sde & 2) ? 1 : 0;
+			state.sde      = (RBV >> 7) & 1;
+			state.hwe      = (RBV >> 12) & 1;
+			state.iva_mode = (RBV >> 15) & 3;
+			state.ivptb    = SXT48(RBV & 0x0000FFFFC000000LL);
+			state.ispe     = (RBV << 3) & 3;
 			break;
 
 		case IPR_IC_FLUSH_ASM: // IC_FLUSH_ASM
@@ -389,6 +393,8 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_VA_CTL:
+			state.dva_mode = (RBV >> 1) & 3;
+			state.dvptb    = SXT48(RBV & 0x0000FFFFC000000LL);
 			break;
 
 		default:

@@ -49,7 +49,7 @@ int dec21164_cpuDevice::abort(int why)
 int dec21164_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags)
 {
 	int spe = (accFlags & ACC_EXEC) ? state.ispe : state.mspe;
-	int cm  = (accFlags & ACC_ALTCM) ? state.altcm : state.cm;
+	int cm  = (accFlags & ACC_ALTCM) ? state.altcm : state.icm;
 
 	// Try super page translation first
 	if (spe & cm != ACC_KERNEL)

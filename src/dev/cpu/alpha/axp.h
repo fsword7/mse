@@ -218,6 +218,9 @@
 #define SXT12(val) SXTL((int32_t)(((val) & 0x800) ? ((val) | 0xFFFFF000) : ((val) & 0x00000FFF)))
 #define SXT21(val) SXTL((int32_t)(((val) & 0x100000) ? ((val) | 0xFFE00000) : ((val) & 0x001FFFFF)))
 
+#define SXT48(val) (((val) & 0x0000800000000000LL) \
+	? ((val) | 0xFFFF000000000000LL) : ((val) & 0x0000FFFFFFFFFFFFLL))
+
 //#define readv8(vAddr)  mapProgram->read8(vAddr, this)
 //#define readv16(vAddr) mapProgram->read16(vAddr, this)
 //#define readv32(vAddr) mapProgram->read32(vAddr, this)
@@ -307,6 +310,7 @@ protected:
 	void addTBEntry(uint64_t vAddr, uint64_t pteAddr, uint64_t pteFlags, int accFlags);
 	void addITBEntry(uint64_t vAddr, uint64_t pteAddr);
 	void addDTBEntry(uint64_t vAddr, uint64_t pteAddr);
+	uint64_t getVAForm(uint64_t vAddr, bool type);
 
 	void tbia(int acc);
 	void tbiap(int acc);
@@ -367,10 +371,10 @@ protected:
 		uint64_t palBase;				// PAL base address
 		uint64_t excAddr;				// Exception - PC Address
 		uint64_t excMask;               // Exception - Destination of registers
-		uint64_t tbvAddr;
 
 		uint32_t opWord;                // Current Instruction Register
 
+		bool     hwe;                   // Hardware instruction enable
 		bool     sde;                   // Shadow register enable
 		int      fpen;					// Floating-point enable
 		uint64_t fpcr;                  // Floating-point control register
@@ -379,7 +383,8 @@ protected:
 		uint32_t ccOffset;              // Counter offset
 		uint32_t cc;                    // Counter
 
-		int      cm;                    // Current access mode
+		int      icm;                   // Istream access mode
+		int      dcm;                   // Dstream access mode
 		int      altcm;
 
 		int      ispe, mspe;            // Super page enable
@@ -401,12 +406,19 @@ protected:
 		uint32_t crr;
 		uint32_t sum;
 
-		int      asn0;
-		int      asn1;
+		int       asn0;
+		int       asn1;
+		int       iva_mode;
+		int       dva_mode;
+
+		uint64_t  tbvAddr;
+		uint64_t  ivptb;                // IBox Virtual Process Table Base
+		uint64_t  dvptb;                // MBox Virtual Process Table Base
+		uint64_t  fvAddr;               // Faulting virtual address
+		int       mmstat;               // Memory Management Status
 
 		uint64_t pctr;
 		int      istat;
-		int      mmstat;
 		int      dcstat;
 
 		// Onchip instruction cache

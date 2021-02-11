@@ -67,6 +67,11 @@ void AlphaProcessor::writev(uint64_t vAddr, uint64_t data, int size)
 	writep(pAddr, data, size);
 }
 
+uint64_t AlphaProcessor::getVAForm(uint64_t vAddr, bool type)
+{
+	return 0;
+}
+
 int AlphaProcessor::findTBEntry(uint64_t vAddr, uint32_t accFlags)
 {
 	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;

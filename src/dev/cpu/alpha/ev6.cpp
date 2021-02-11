@@ -70,7 +70,7 @@ int dec21264_cpuDevice::abort(int why)
 int dec21264_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags)
 {
 	int spe = (accFlags & ACC_EXEC) ? state.ispe : state.mspe;
-	int cm  = (accFlags & ACC_ALTCM) ? state.altcm : state.cm;
+	int cm  = (accFlags & ACC_ALTCM) ? state.altcm : state.icm;
 
 	// Try super page translation first
 	if (spe & cm != ACC_KERNEL)
@@ -101,7 +101,7 @@ int dec21264_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, i
 //		// TB miss (page fault) - issue PAL exception
 //		if (accFlags & ACC_VPTE)
 //		{
-//			state.fpcAddr = vAddr;
+//			state.fvAddr = vAddr;
 //			state.sum = RA << 8;
 //			setPC(state.palBase + PAL_DTBM_DOUBLE_3 + 1);
 //		}
@@ -111,7 +111,7 @@ int dec21264_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, i
 //		}
 //		else
 //		{
-//			state.fpcAddr = vAddr;
+//			state.fvAddr = vAddr;
 //			state.sum = RA << 8;
 //			int opCode = OP_GETOP(state.opWord);
 //			state.mmstat = (((opCode == 0x1B) || (opCode == 0x1F)) ? opCode - 0x18 : opCode) << 4 |
@@ -137,7 +137,7 @@ int dec21264_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, i
 //			else
 //			{
 //				state.excAddr = state.pcAddr;
-//				state.fpcAddr = vAddr;
+//				state.fvAddr  = vAddr;
 //				state.excSum = RA << 8;
 //
 //				uint32_t opCode = OP_GETOP(state.opWord);
@@ -159,8 +159,8 @@ int dec21264_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, i
 //			else
 //			{
 //				state.excAddr = state.pcAddr;
-//				state.fpcAddr = vAddr;
-//				state.excSum = RA << 8;
+//				state.fvAddr  = vAddr;
+//				state.excSum  = RA << 8;
 //
 //				uint32_t opCode = OP_GETOP(state.opWord);
 //				state.mmstat = (((opCode == 0x1B) || (opCode == 0x1F)) ? opCode - 0x18 : opCode) << 4 |
