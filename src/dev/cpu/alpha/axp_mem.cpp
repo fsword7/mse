@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "dev/cpu/alpha/axp.h"
+#include "dev/cpu/alpha/axp_mmu.h"
 
 // Virtual address to physical conversion
 uint64_t AlphaProcessor::checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status)
@@ -64,4 +65,40 @@ void AlphaProcessor::writev(uint64_t vAddr, uint64_t data, int size)
 		dbg.log("** Unaligned write access **");
 
 	writep(pAddr, data, size);
+}
+
+// Translate virtual address to physical conversion
+uint64_t AlphaProcessor::translate(uint64_t vAddr, uint32_t flags, bool &asmb, int &status)
+{
+	int spe = (flags & ACC_EXEC) ? state.ispe : state.mspe;
+	int cm  = (flags & ACC_ALTCM) ? state.altcm : state.cm;
+	uint64_t pAddr;
+
+	asmb   = true;
+	status = 0;
+
+	// Try super page translation first
+	if (spe & cm != ACC_KERNEL)
+	{
+		if (((vAddr & SPE2_MASK) == SPE2_MATCH) && (spe & 4))
+		{
+			asmb   = false;
+			status = 0;
+			return vAddr & SPE2_MAP;
+		}
+		else if (((vAddr & SPE1_MASK) == SPE1_MATCH) && (spe & 2))
+		{
+			asmb   = false;
+			status = 0;
+			return (vAddr & SPE1_MAP) | (vAddr & SPE1_TEST) ? SPE1_ADD : 0;
+		}
+		else if (((vAddr & SPE0_MASK) == SPE0_MATCH) && (spe & 1))
+		{
+			asmb   = false;
+			status = 0;
+			return vAddr & SPE0_MAP;
+		}
+	}
+
+	return vAddr;
 }

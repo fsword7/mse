@@ -164,7 +164,9 @@
 #define ACC_READ		0	// read access
 #define ACC_WRITE		1	// write access
 #define ACC_EXEC		2	// execute access
-#define ACC_MODE		3	// access mode mask
+
+#define ACC_MODE		0x0003	 // Access mode mask
+#define ACC_ALTCM		0x0004   // Alternate current mode flag
 
 #define ABORT(why)
 
@@ -291,6 +293,8 @@ protected:
 
 	int fetchi(uint64_t vAddr, uint32_t &opc);
 
+	// Virtual address translation function calls
+	uint64_t translate(uint64_t vAddr, uint32_t flags, bool &asmb, int &status);
 	void tbia(int acc);
 	void tbiap(int acc);
 	void tbis(uint64_t addr, int acc);
@@ -360,6 +364,7 @@ protected:
 		int      cm;                    // Current access mode
 		int      altcm;
 
+		int      ispe, mspe;            // Super page enable
 		int      asn;					// Address Space Number
 		int      astrr;
 		int      aster;
@@ -398,6 +403,22 @@ protected:
 			uint64_t pAddr;						// Physical address
 			uint32_t data[ICACHE_LINE_SIZE];	// Instruction data
 		} iCache[ICACHE_ENTRIES];
+
+		// Translation buffer
+		int tbLast[2];
+		int tbNext[2];
+		struct tbEntry
+		{
+			bool     valid;
+			bool     asmb;
+			int      asn;
+			int      access[2][4];
+			int      fault[3];
+			uint64_t matchMask;
+			uint64_t keepMask;
+			uint64_t vAddr;
+			uint64_t pAddr;
+		} tb[2][TB_ENTRIES];
 
 	} state;
 

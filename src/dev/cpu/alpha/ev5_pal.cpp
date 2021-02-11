@@ -79,7 +79,11 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		break;
 
 	case IPR_EXC_SUM:
+		RAV = state.sum;
+		break;
+
 	case IPR_EXC_MASK:
+		RAV = 0; // state.excMask;
 		break;
 
 	case IPR_PAL_BASE: // PAL base address register
@@ -203,8 +207,9 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		ev5.icsr = (RBV & ICSR_RW) | ICSR_MBO;
 
 		// Update internal registers
-		state.sde = (ev5.icsr & ICSR_SDE) ? 1 : 0;
+		state.sde  = (ev5.icsr & ICSR_SDE) ? 1 : 0;
 		state.fpen = (ev5.icsr & ICSR_FPE) ? 1 : 0;
+		state.ispe = (ev5.icsr & ICSR_SPE) >> 28;
 
 		break;
 
@@ -226,6 +231,9 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	case IPR_MCSR: // Mbox Control and Status Register
 		ev5.mcsr = RBV & MCSR_RW;
+
+		// Update internal registers
+		state.mspe = (ev5.mcsr & MCSR_SP) >> 1;
 		break;
 
 	case IPR_DC_FLUSH:
