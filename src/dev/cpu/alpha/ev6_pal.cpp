@@ -244,9 +244,11 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 	switch (fnc)
 	{
 		case IPR_ITB_TAG:
+			state.tbvAddr = RBV;
 			break;
 
 		case IPR_ITB_PTE:
+			addITBEntry(state.tbvAddr, RBV);
 			break;
 
 		case IPR_ITB_IAP:
@@ -324,8 +326,11 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_DTB_TAG0:
+			state.tbvAddr = RBV;
 			break;
+
 		case IPR_DTB_PTE0:
+			addDTBEntry(state.tbvAddr, RBV);
 			break;
 
 		case IPR_DTB_IS0:
@@ -351,9 +356,11 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_DTB_TAG1:
+			state.tbvAddr = RBV;
 			break;
 
 		case IPR_DTB_PTE1:
+			addDTBEntry(state.tbvAddr, RBV);
 			break;
 
 		case IPR_DTB_IAP:

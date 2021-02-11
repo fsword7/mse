@@ -7,18 +7,3 @@
 
 #include "emu/core.h"
 #include "dev/cpu/alpha/axp.h"
-
-void AlphaProcessor::tbia(int acc)
-{
-
-}
-
-void AlphaProcessor::tbiap(int acc)
-{
-
-}
-
-void AlphaProcessor::tbis(uint64_t addr, int acc)
-{
-
-}

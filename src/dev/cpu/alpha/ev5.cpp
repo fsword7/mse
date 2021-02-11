@@ -94,5 +94,56 @@ int dec21164_cpuDevice::translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, i
 
 		return -1;
 	}
+
+	// Got TB entry now, check access flags for any access violation
+	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
+
+	{
+		if (!state.tb[tbidx][eidx].access[accFlags & ACC_WRITE][cm])
+		{
+			if (accFlags & ACC_EXEC)
+			{
+				state.excAddr = state.pcAddr;
+				setPC(state.palBase + PAL_IACCVIO + 1);
+			}
+			else
+			{
+				state.excAddr = state.pcAddr;
+				state.fpcAddr = vAddr;
+
+				uint32_t opCode = OP_GETOP(state.opWord);
+				state.mmstat = (((opCode == 0x1B) || (opCode == 0x1F)) ? opCode - 0x18 : opCode) << 11 |
+					(RA << 6) | (accFlags & ACC_WRITE) | 2;
+				setPC(state.palBase + PAL_DFAULT + 1);
+			}
+			return -1;
+		}
+
+		if (state.tb[tbidx][eidx].fault[accFlags & ACC_MODE])
+		{
+			if (accFlags & ACC_EXEC)
+			{
+				state.excAddr = state.pcAddr;
+				setPC(state.palBase + PAL_IACCVIO + 1);
+			}
+			else
+			{
+				state.excAddr = state.pcAddr;
+				state.fpcAddr = vAddr;
+
+				uint32_t opCode = OP_GETOP(state.opWord);
+				state.mmstat = (((opCode == 0x1B) || (opCode == 0x1F)) ? opCode - 0x18 : opCode) << 11 |
+					(RA << 6) | (accFlags & ACC_WRITE) | ((accFlags & ACC_WRITE) ? 8 : 4);
+				setPC(state.palBase + PAL_DFAULT + 1);
+			}
+			return -1;
+		}
+	}
+
+	// Finally no access violations or faults
+	// Now convert to physical address
+	pAddr = state.tb[tbidx][eidx].pAddr | (vAddr & state.tb[tbidx][eidx].keepMask);
+	asmb  = state.tb[tbidx][eidx].asmb;
+
 	return 0;
 }

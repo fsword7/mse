@@ -93,3 +93,47 @@ int AlphaProcessor::findTBEntry(uint64_t vAddr, uint32_t accFlags)
 
 	return -1;
 }
+
+void AlphaProcessor::addTBEntry(uint64_t vAddr, uint64_t pteAddr, uint64_t pteFlags, int accFlags)
+{
+
+}
+
+void AlphaProcessor::addITBEntry(uint64_t vAddr, uint64_t pteAddr)
+{
+	addTBEntry(vAddr, pteAddr, pteAddr & 0xF70, ACC_EXEC);
+}
+
+void AlphaProcessor::addDTBEntry(uint64_t vAddr, uint64_t pteAddr)
+{
+	addTBEntry(vAddr, pteAddr >> (32 - 13), pteAddr, ACC_READ);
+}
+
+void AlphaProcessor::tbia(int accFlags)
+{
+	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
+
+	for (int eidx = 0; eidx < TB_ENTRIES; eidx++)
+		state.tb[tbidx][eidx].valid = false;
+	state.tbLast[tbidx][0] = 0;
+	state.tbLast[tbidx][1] = 0;
+	state.tbNext[tbidx] = 0;
+}
+
+void AlphaProcessor::tbiap(int accFlags)
+{
+	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
+
+	for (int eidx = 0; eidx < TB_ENTRIES; eidx++)
+		if (state.tb[tbidx][eidx].asmb == true)
+			state.tb[tbidx][eidx].valid = false;
+}
+
+void AlphaProcessor::tbis(uint64_t vAddr, int accFlags)
+{
+	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
+	int eidx = findTBEntry(vAddr, accFlags);
+
+	if (eidx >= 0)
+		state.tb[tbidx][eidx].valid = false;
+}

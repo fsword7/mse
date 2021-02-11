@@ -304,6 +304,9 @@ protected:
 
 	// Virtual address translation function calls
 	int findTBEntry(uint64_t vAddr, uint32_t accFlags);
+	void addTBEntry(uint64_t vAddr, uint64_t pteAddr, uint64_t pteFlags, int accFlags);
+	void addITBEntry(uint64_t vAddr, uint64_t pteAddr);
+	void addDTBEntry(uint64_t vAddr, uint64_t pteAddr);
 
 	void tbia(int acc);
 	void tbiap(int acc);
@@ -364,6 +367,7 @@ protected:
 		uint64_t palBase;				// PAL base address
 		uint64_t excAddr;				// Exception - PC Address
 		uint64_t excMask;               // Exception - Destination of registers
+		uint64_t tbvAddr;
 
 		uint32_t opWord;                // Current Instruction Register
 

@@ -201,6 +201,18 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	switch (fnc)
 	{
+	case IPR_ITB_TAG:
+		state.tbvAddr = RBV;
+		break;
+
+	case IPR_ITB_PTE:
+		addITBEntry(state.tbvAddr, RBV);
+		break;
+
+	case IPR_ITB_ASN:
+		state.asn = (RBV >> 4) & 0x7F;
+		break;
+
 	case IPR_ITB_IA:
 		tbia(ACC_EXEC);
 		break;
@@ -246,6 +258,22 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 	case IPR_IC_FLUSH_CTL: // Flush ICache
 //		flushICache();
+		break;
+
+	case IPR_DTB_TAG:
+		state.tbvAddr = RBV;
+		break;
+
+	case IPR_DTB_PTE:
+		addDTBEntry(state.tbvAddr, RBV);
+		break;
+
+	case IPR_DTB_ASN:
+		state.asn = RBV >> 56;
+		break;
+
+	case IPR_DTB_CM:
+		state.cm = (RBV >> 3) & 3;
 		break;
 
 	case IPR_DTB_IA:
