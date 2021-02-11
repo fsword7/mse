@@ -166,7 +166,9 @@
 #define ACC_EXEC		2	// execute access
 #define ACC_MODE		3	// access mode mask
 
-#define FPSTART
+#define ABORT(why)
+
+#define FPSTART if (state.fpen == 0) ABORT(EXC_FPDIS);
 
 // PC field definition
 #define PC_PAL_MODE		1	// PC PAL mode field
@@ -334,9 +336,6 @@ private:
 
 protected:
 
-	uint64_t ccOffset = 0;
-	uint64_t ccReg = 0;
-
 	bool     bIntrFlag = false;
 
 	// Register definitions (state file package)
@@ -349,14 +348,21 @@ protected:
 
 		uint64_t palBase;				// Current PAL base address
 		uint64_t excAddr;				// Exception address
+
+		bool     sde;                   // Shadow register enable
+		int      fpen;					// Floating-point enable
+		uint64_t fpcr;                  // Floating-point control register
+
+		int      ccen;                  // Cycle counter enable
+		uint32_t ccOffset;              // Counter offset
+		uint32_t cc;                    // Counter
+
 		int      cm;                    // Current access mode
 		int      altcm;
 
-		bool     sde;                   // Shadow register enable
 		int      asn;					// Address Space Number
 		int      astrr;
 		int      aster;
-		int      fpen;
 		int      ppcen;
 		int      asten;
 		int      sien;
@@ -378,12 +384,6 @@ protected:
 		int      istat;
 		int      mmstat;
 		int      dcstat;
-
-		int      ccen;
-		uint32_t ccOffset;
-		uint32_t cc;
-
-		uint64_t fpcr;                  // Floating-point control register
 
 		// Onchip instruction cache
 		bool iCacheEnable; // Instruction Cache Enable

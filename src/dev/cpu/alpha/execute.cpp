@@ -49,6 +49,7 @@ void AlphaProcessor::init()
 	state.iCacheEnable = true;
 
 	state.cm = ACC_KERNEL;
+	state.fpen = 1;
 
 	// procesor-specific reset
 	preset();
@@ -189,6 +190,10 @@ void AlphaProcessor::execute()
 			getDeviceName(), state.pcAddr);
 		cout << flush;
 	}
+
+	// Count cycle if enable
+	if (state.ccen)
+		state.cc++;
 
 	// Display current instruction
 //	list(nullptr, state.pcAddr);

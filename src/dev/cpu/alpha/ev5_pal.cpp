@@ -204,6 +204,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 
 		// Update internal registers
 		state.sde = (ev5.icsr & ICSR_SDE) ? 1 : 0;
+		state.fpen = (ev5.icsr & ICSR_FPE) ? 1 : 0;
 
 		break;
 

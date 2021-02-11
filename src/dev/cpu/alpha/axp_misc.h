@@ -10,7 +10,7 @@
 #define DOPC_IMPLVER	RAV = getArchType();
 #define DOPC_AMASK		RAV = RBVL & ~getArchFlags();
 
-#define DOPC_RPCC	RAV = (ccOffset << 32) | (ccReg & 0xFFFFFFFF)
+#define DOPC_RPCC	RAV = (uint64_t(state.ccOffset) << 32) | uint64_t(state.cc);
 
 #define DOPC_RC_	RAV = bIntrFlag ? 1 : 0; bIntrFlag = false;
 #define DOPC_RS		RAV = bIntrFlag ? 1 : 0; bIntrFlag = true;
