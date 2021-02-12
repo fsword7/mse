@@ -428,6 +428,8 @@ protected:
 		int      istat;
 		int      dcstat;
 
+		uint64_t pmctr;			// Performance Counter (not implemented yet)
+
 		// Onchip instruction cache
 		bool iCacheEnable; // Instruction Cache Enable
 		int  iCacheLast;   // Last ICACHE entry (current)

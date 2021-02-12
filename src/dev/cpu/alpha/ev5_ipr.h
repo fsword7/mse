@@ -32,7 +32,7 @@
 #define IPR_SL_RCV				0x117	// (R)
 #define IPR_ICSR				0x118	// (R/W)
 #define IPR_IC_FLUSH_CTL		0x119	// (W)
-#define IPR_ICPERR_STAT			0x11A	// (R/W1C)
+#define IPR_IC_PERR_STAT		0x11A	// (R/W1C)
 #define IPR_PMCTR				0x11C	// (R/W)
 
 #define IPR_PALtemp0			0x140	// (R/W)

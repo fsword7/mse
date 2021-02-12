@@ -65,13 +65,20 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 
 	switch (fnc)
 	{
-//	case IPR_ITB_PTE:
-//	case IPR_ITB_ASN:
-//	case IPR_ITB_PTE_TEMP:
-//		break;
-
 	case IPR_ISR:
 		RAV = (state.sir << 3);
+		break;
+
+	case IPR_ITB_PTE: // Not implemented yet
+		RAV = 0;
+		break;
+
+	case IPR_ITB_PTE_TEMP: // Not implemented yet
+		RAV = 0;
+		break;
+
+	case IPR_ITB_ASN:
+		RAV = state.asn;
 		break;
 
 	case IPR_SIRR:
@@ -106,8 +113,9 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.icm;
 		break;
 
-	case IPR_SL_RCV:
+	case IPR_SL_RCV: // Not implemented yet
 		// TODO serial line receiver
+		RAV = 0;
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
@@ -130,10 +138,17 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.ivptb;
 		break;
 
-	case IPR_ICPERR_STAT:
+	case IPR_IC_PERR_STAT: // Not implemented yet
+		RAV = 0;
 		break;
 
-	case IPR_PMCTR:
+	case IPR_PMCTR: // Not implemented yet
+		RAV = state.pmctr;
+		break;
+
+	case IPR_DTB_PTE: // Not implemented yet
+	case IPR_DTB_PTE_TEMP: // Not implemented yet
+		RAV = 0;
 		break;
 
 	case IPR_MM_STAT:
@@ -144,7 +159,7 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.fvAddr;
 		break;
 
-	case IPR_VA_FORM:
+	case IPR_VA_FORM: // Not implmented yet
 		RAV = getVAForm(state.fvAddr, false);
 		break;
 
@@ -152,8 +167,20 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = ev5.mcsr;
 		break;
 
+	case IPR_DC_PERR_STAT: // Not implemented yet
+		RAV = 0;
+		break;
+
 	case IPR_DC_TEST_CTL: // Dcache Test Register
 		RAV = ev5.dc_test;
+		break;
+
+	case IPR_DC_TEST_TAG: // Not implemented yet
+		RAV = 0;
+		break;
+
+	case IPR_DC_TEST_TAG_TEMP: // Not implemented yet
+		RAV = 0;
 		break;
 
 	case IPR_DC_MODE: // Dcache Mode Register
@@ -164,19 +191,6 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = ev5.maf_mode;
 		break;
 
-//#define IPR_DTB_PTE				0x203	// (R/W)
-//#define IPR_DTB_PTE_TEMP		0x204	// (R)
-//#define IPR_MM_STAT				0x205	// (R)
-//#define IPR_VA					0x206	// (R)
-//#define IPR_VA_FORM				0x207	// (R)
-//#define IPR_MCSR				0x20F	// (R/W)
-//#define IPR_DC_PERR_STAT		0x212	// (R/W1C)
-//#define IPR_DC_TEST_CTL			0x213	// (R/W)
-//#define IPR_DC_TEST_TAG			0x214	// (R/W)
-//#define IPR_DC_TEST_TAG_TEMP	0x215	// (R/W)
-//#define IPR_DC_MODE				0x216	// (R/W)
-//#define IPR_MAF_MODE			0x217	// (R/W)
-
 	case IPR_PALtemp0:  case IPR_PALtemp1:  case IPR_PALtemp2:  case IPR_PALtemp3:
 	case IPR_PALtemp4:  case IPR_PALtemp5:  case IPR_PALtemp6:  case IPR_PALtemp7:
 	case IPR_PALtemp8:  case IPR_PALtemp9:  case IPR_PALtemp10: case IPR_PALtemp11:
@@ -185,27 +199,6 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 	case IPR_PALtemp20: case IPR_PALtemp21: case IPR_PALtemp22: case IPR_PALtemp23:
 		RAV = ev5.PALtemp[fnc - IPR_PALtemp0];
 		break;
-
-	// Ignore write-only registers
-//	case IPR_ITB_TAG:
-//	case IPR_ITB_IA:
-//	case IPR_ITB_IAP:
-//	case IPR_ITB_IS:
-//	case IPR_HWINT_CLR:
-//	case IPR_SL_XMIT:
-//	case IPR_IC_FLUSH_CTL:
-
-//#define IPR_DTB_ASN				0x200	// (W)
-//#define IPR_DTB_CM				0x201	// (W)
-//#define IPR_DTB_TAG				0x202	// (W)
-//#define IPR_MVPTBR				0x208	// (W)
-//#define IPR_DTB_IAP				0x209	// (W)
-//#define IPR_DTB_IA				0x20A	// (W)
-//#define IPR_DTB_IS				0x20B	// (W)
-//#define IPR_ALT_MODE			0x20C	// (W)
-//#define IPR_CC					0x20D	// (W)
-//#define IPR_CC_CTL				0x20E	// (W)
-//#define IPR_DC_FLUSH			0x210	// (W)
 
 	default:
 #ifdef DEBUG
@@ -303,11 +296,17 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		state.pcr  &= ~((RBV >> 27) & 7);
 		state.crr  &= ~((RBV >> 32) & 1);
 		state.slr  &= ~((RBV >> 33) & 1);
-//		state.sisr &= ~((RBV >> 32) & 1);
 		break;
 
 	case IPR_IC_FLUSH_CTL: // Flush ICache
 //		flushICache();
+		break;
+
+	case IPR_IC_PERR_STAT: // Not implemtned yet
+		break;
+
+	case IPR_PMCTR: // Not implemented yet
+		state.pmctr = RBV;
 		break;
 
 	case IPR_DTB_TAG:
@@ -367,6 +366,9 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 //		flushDCache();
 		break;
 
+	case IPR_DC_PERR_STAT: // Not implemtned yet
+		break;
+
 	case IPR_DC_TEST_CTL: // DCache Test Tag
 		ev5.dc_test = RBV & DC_TEST_RW;
 		break;
@@ -387,58 +389,6 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 	case IPR_PALtemp20: case IPR_PALtemp21: case IPR_PALtemp22: case IPR_PALtemp23:
 		ev5.PALtemp[fnc - IPR_PALtemp0] = RBV;
 		break;
-
-//#define IPR_ISR					0x100	// (R)
-//#define IPR_ITB_TAG				0x101	// (W)   Istream Translation Buffer Tag Register
-//#define IPR_ITB_PTE				0x102	// (R/W) Instruction Translation Buffer Page Table Entry Register
-//#define IPR_ITB_ASN				0x103	// (R/W) Instruction Translation Buffer Address Space Number Register
-//#define IPR_ITB_PTE_TEMP		0x104	// (R)
-//#define IPR_ITB_IA				0x105	// (W)
-//#define IPR_ITB_IAP				0x106	// (W)
-//#define IPR_ITB_IS				0x107	// (W)
-//#define IPR_SIRR				0x108	// (R/W)
-//#define IPR_ASTRR				0x109	// (R/W)
-//#define IPR_ASTER				0x10A	// (R/W)
-//#define IPR_EXC_ADDR			0x10B	// (R/W)
-//#define IPR_EXC_SUM				0x10C	// (R/W0C)
-//#define IPR_EXC_MASK			0x10D	// (R)
-//#define IPR_PAL_BASE			0x10E	// (R/W)
-//#define IPR_ICM					0x10F	// (R/W)
-//#define IPR_IPLR				0x110	// (R/W)
-//#define IPR_INTID				0x111	// (R)
-//#define IPR_IFAULT_VA_FORM		0x112	// (R)
-//#define IPR_IVPTBR				0x113	// (R/W)
-//#define IPR_HWINT_CLR			0x115	// (W)
-//#define IPR_SL_XMIT				0x116	// (W)
-//#define IPR_SL_RCV				0x117	// (R)
-//#define IPR_ICSR				0x118	// (R/W)
-//#define IPR_IC_FLUSH_CTL		0x119	// (W)
-//#define IPR_ICPERR_STAT			0x11A	// (R/W1C)
-//#define IPR_PMCTR				0x11C	// (R/W)
-
-//#define IPR_DTB_ASN				0x200	// (W)
-//#define IPR_DTB_CM				0x201	// (W)
-//#define IPR_DTB_TAG				0x202	// (W)
-//#define IPR_DTB_PTE				0x203	// (R/W)
-//#define IPR_DTB_PTE_TEMP		0x204	// (R)
-//#define IPR_MM_STAT				0x205	// (R)
-//#define IPR_VA					0x206	// (R)
-//#define IPR_VA_FORM				0x207	// (R)
-//#define IPR_MVPTBR				0x208	// (W)
-//#define IPR_DTB_IAP				0x209	// (W)
-//#define IPR_DTB_IA				0x20A	// (W)
-//#define IPR_DTB_IS				0x20B	// (W)
-//#define IPR_ALT_MODE			0x20C	// (W)
-//#define IPR_CC					0x20D	// (W)
-//#define IPR_CC_CTL				0x20E	// (W)
-//#define IPR_MCSR				0x20F	// (R/W)
-//#define IPR_DC_FLUSH			0x210	// (W)
-//#define IPR_DC_PERR_STAT		0x212	// (R/W1C)
-//#define IPR_DC_TEST_CTL			0x213	// (R/W)
-//#define IPR_DC_TEST_TAG			0x214	// (R/W)
-//#define IPR_DC_TEST_TAG_TEMP	0x215	// (R/W)
-//#define IPR_DC_MODE				0x216	// (R/W)
-//#define IPR_MAF_MODE			0x217	// (R/W)
 
 	default:
 #ifdef DEBUG
@@ -475,7 +425,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 // 0x117, "SL_RCV","R",
 // 0x118, "ICSR","R/W",
 // 0x119, "IC_FLUSH_CTL","W",
-// 0x11A, "ICPERR_STAT","R/W1C",
+// 0x11A, "IC_PERR_STAT","R/W1C",
 // 0x11C, "PMCTR","R/W",
 //
 // 0x140, "PALtemp0","R/W", "PAL temp #0"
@@ -535,7 +485,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 //		"EXC_SUM",       "EXC_MASK",      "PAL_BASE",    "ICM",                 // 10C-10F
 //		"IPLR",          "INTID",         "IVA_FORM",    "IVPTB",               // 110-113
 //		nullptr,         "HWINT_CLR",     "SL_XMIT",     "SL_RCV",              // 114-117
-//		"ICSR",			 "IC_FLUSH_CTL",  "ICPERR_STAT", nullptr,               // 118-11B
+//		"ICSR",			 "IC_FLUSH_CTL",  "IC_PERR_STAT", nullptr,               // 118-11B
 //		"PMCTR",        nullptr,          nullptr,       nullptr,               // 11C-11F
 //
 //		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 120-127
