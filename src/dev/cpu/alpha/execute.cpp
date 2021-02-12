@@ -77,15 +77,33 @@ void AlphaProcessor::init()
 	}
 
 	state.icm = ACC_KERNEL;
-	state.dcm = ACC_KERNEL;
+	state.asn = 0;
 	state.fpen = 1;
 
-	state.sirr = 0;
-	state.sisr = 0;
-	state.astrr = 0;
+	// Clear all interrupt enables
+	state.eien = 0;
+	state.sien = 0;
+	state.asten = 0;
+	state.cren = 0;
+	state.slen = 0;
+
+	// Interrupt priority order
+	state.iplr = 0;
 	state.aster = 0;
-	state.iplr  = 0;
+
+	// Clear all interrupt requests
+	state.eir = 0;
+	state.sir = 0;
+	state.astrr = 0;
+	state.crr = 0;
+	state.slr = 0;
 	state.intid = 0;
+
+	// Clear TB registers
+	state.asn0 = 0;
+	state.asn1 = 0;
+	state.dcm = ACC_KERNEL;
+	state.altcm = ACC_KERNEL;
 
 	// procesor-specific reset
 	preset();
@@ -229,6 +247,16 @@ void AlphaProcessor::execute()
 	// Count cycle if enable
 	if (state.cc_ena)
 		state.cc++;
+
+
+//	{
+//		// Check any external interrupts, software interrupts and AST interrupts
+//		if ((state.eien & state.eir) || (state.sien & state.sir) ||
+//			(state.asten & (state.aster & state.astrr & ((1 << (state.icm  + 1)) - 1))))
+//		{
+//			enterPALMode(EXC_INTERRUPT);
+//		}
+//	}
 
 	// Display current instruction
 //	list(nullptr, state.pcAddr);

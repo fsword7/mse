@@ -153,7 +153,7 @@ void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 			break;
 
 		case IPR_SIRR:
-			RAV = (uint64_t(state.sirr) << 13);
+			RAV = (uint64_t(state.sir) << 13);
 			break;
 
 		case IPR_ISUM:
@@ -280,14 +280,14 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_SIRR:
-			state.sirr = (RBV >> 13) & 0xFFFE;
+			state.sir  = (RBV >> 13) & 0xFFFE;
 			state.irq  = true;
 			break;
 
 		case IPR_HW_INT_CLR:
-			state.pcr  &= ~((RBV >> 29) & 0x03ULL);
-			state.crr  &= ~((RBV >> 31) & 0x01ULL);
-			state.sisr &= ~((RBV >> 32) & 0x01ULL);
+			state.pcr &= ~((RBV >> 29) & 0x03ULL);
+			state.crr &= ~((RBV >> 31) & 0x01ULL);
+			state.sir &= ~((RBV >> 32) & 0x01ULL);
 			break;
 
 		case IPR_PAL_BASE: // PAL base address register

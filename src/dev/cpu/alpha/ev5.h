@@ -22,6 +22,7 @@ public:
 
 	void preset() override; // EV5-specific processor reset
 	int abort(int why); // Aborting with internal exception codes
+	void enterException(int excCode) override;
 
 	int translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags);
 

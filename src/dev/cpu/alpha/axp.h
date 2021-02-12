@@ -324,6 +324,7 @@ protected:
 
 	virtual void preset() = 0;
 	virtual int  translate(uint64_t vAddr, uint64_t &pAddr, bool &asmb, int accFlags) = 0;
+	virtual void enterException(int excCode) = 0;
 
 	// Virtual PAL hardware instruction function calls
 	virtual void call_pal(uint32_t opWord) = 0; // PAL00 instruction
@@ -402,8 +403,9 @@ protected:
 		bool     irq;
 		int      intid;			// Interrupt ID
 		int      iplr;			// Interrupt Priority Level
-		uint32_t sirr;			// Software interrupt request
-		uint32_t sisr;
+
+		uint32_t eir;           // External interrupt request
+		uint32_t sir;			// Software interrupt request
 		uint32_t astrr;			// AST interrupt request
 		uint32_t aster;			// AST interrupt enable
 		uint32_t pcr;			// Performance counter interrupt request

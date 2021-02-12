@@ -45,6 +45,10 @@ void dec21264_cpuDevice::preset()
 	ev6.ictl.sext_vptb = 0;
 }
 
+void dec21264_cpuDevice::enterException(int excCode)
+{
+}
+
 int dec21264_cpuDevice::abort(int why)
 {
 	switch (why)

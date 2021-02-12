@@ -24,6 +24,10 @@ void dec21164_cpuDevice::preset()
 	ev5.icsr = ICSR_MBO;
 }
 
+void dec21164_cpuDevice::enterException(int excCode)
+{
+}
+
 int dec21164_cpuDevice::abort(int why)
 {
 	switch (why)

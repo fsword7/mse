@@ -71,11 +71,11 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 //		break;
 
 	case IPR_ISR:
-		RAV = (state.sisr << 3);
+		RAV = (state.sir << 3);
 		break;
 
 	case IPR_SIRR:
-		RAV = state.sirr << 3;
+		RAV = state.sir << 3;
 		break;
 
 	case IPR_ASTRR:
@@ -252,7 +252,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 
 	case IPR_SIRR:
-		state.sirr = (RBV >> 3) & 0xFFFE;
+		state.sir = (RBV >> 3) & 0xFFFE;
 		break;
 
 	case IPR_ASTRR:
