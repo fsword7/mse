@@ -31,7 +31,7 @@
 #define PAL_FEN            0x0580 // Floating-point operation attempted
 
 
-#define ITB_TAG_MASK 0x0000007FFFFFFE000LL
+#define ITB_TAG_MASK	0x0000007FF'FFFFE000LL
 
 #define ITBR_PTE_URE  0x0000000000000800LL
 #define ITBR_PTE_SRE  0x0000000000000400LL

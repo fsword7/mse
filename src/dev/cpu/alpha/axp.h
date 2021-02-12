@@ -379,43 +379,48 @@ protected:
 		int      fpen;					// Floating-point enable
 		uint64_t fpcr;                  // Floating-point control register
 
-		int      cc_ena;                // Cycle counter enable
-		uint32_t ccOffset;              // Counter offset
-		uint32_t cc;                    // Counter
+		int      cc_ena;                // CC enable
+		uint32_t ccOffset;              // CC offset
+		uint32_t cc;                    // CC counter
 
-		int      icm;                   // Istream access mode
-		int      dcm;                   // Dstream access mode
-		int      altcm;
+		int      icm;                   // current access mode
+		int      dcm;					// DTB access mode
+		int      altcm;					// Alternative access mode
 
-		int      ispe, mspe;            // Super page enable
-		int      asn;					// Address Space Number
-		int      astrr;
-		int      aster;
+		int      ispe, mspe;	// Super page enable
+		int      asn;			// Address Space Number
+
+
 		int      ppcen;
-		int      asten;
-		int      sien;
-		int      pcen;
-		int      cren;
-		int      slen;
-		int      eien;
+		int      asten;			// AST interrupt enable
+		int      sien;			// Software interrupt enable
+		int      pcen;			// Performance counter interrupt enable
+		int      cren;			// Corrected data interrupt enable
+		int      slen;			// Serial line interrupt enable
+		int      eien;			// External interrupt enable
 
 		bool     irq;
-		int      ipl;
-		uint32_t sir;
-		uint32_t pcr;
-		uint32_t crr;
-		uint32_t sum;
+		int      intid;			// Interrupt ID
+		int      iplr;			// Interrupt Priority Level
+		uint32_t sirr;			// Software interrupt request
+		uint32_t sisr;
+		uint32_t astrr;			// AST interrupt request
+		uint32_t aster;			// AST interrupt enable
+		uint32_t pcr;			// Performance counter interrupt request
+		uint32_t crr;			// Corrected data interrupt request
+		uint32_t slr;			// Serial line interrupt request
+		uint32_t sum;			// Summary interrupt
 
-		int       asn0;
-		int       asn1;
-		int       iva_mode;
-		int       dva_mode;
+		int       asn0;			// Address space number
+		int       asn1;			// Address space number
+		int       iva_mode;		// ITB Virtual Address Mode
+		int       dva_mode;		// DTB Virtual Address Mode
 
-		uint64_t  tbvAddr;
-		uint64_t  ivptb;                // IBox Virtual Process Table Base
-		uint64_t  dvptb;                // MBox Virtual Process Table Base
-		uint64_t  fvAddr;               // Faulting virtual address
-		int       mmstat;               // Memory Management Status
+		uint64_t  tbvAddr;		// TB virtual address pending
+		uint64_t  ivptb;		// ITB Virtual Process Table Base
+		uint64_t  dvptb;		// DTB Virtual Process Table Base
+		uint64_t  fvAddr;		// Faulting virtual address
+		uint64_t  mmstat;		// Memory Management Status
 
 		uint64_t pctr;
 		int      istat;

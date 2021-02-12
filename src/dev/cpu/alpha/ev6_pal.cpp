@@ -153,7 +153,7 @@ void dec21264_cpuDevice::hw_mfpr(uint32_t opWord)
 			break;
 
 		case IPR_SIRR:
-			RAV = (uint64_t(state.sir) << 13);
+			RAV = (uint64_t(state.sirr) << 13);
 			break;
 
 		case IPR_ISUM:
@@ -280,14 +280,14 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 			break;
 
 		case IPR_SIRR:
-			state.sir = (RBV >> 13) & 0xFFFE;
-			state.irq = true;
+			state.sirr = (RBV >> 13) & 0xFFFE;
+			state.irq  = true;
 			break;
 
 		case IPR_HW_INT_CLR:
-			state.pcr &= ~((RBV >> 29) & 0x03ULL);
-			state.crr &= ~((RBV >> 31) & 0x01ULL);
-			state.sir &= ~((RBV >> 32) & 0x01ULL);
+			state.pcr  &= ~((RBV >> 29) & 0x03ULL);
+			state.crr  &= ~((RBV >> 31) & 0x01ULL);
+			state.sisr &= ~((RBV >> 32) & 0x01ULL);
 			break;
 
 		case IPR_PAL_BASE: // PAL base address register
@@ -407,3 +407,59 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 		}
 	}
 }
+
+
+
+// 0x00, "ITB_TAG",
+// 0x01, "ITB_PTE",
+// 0x02, "ITB_IAP",
+// 0x03, "ITB_IA",
+// 0x04, "ITB_IS",
+//
+// 0x06, "EXC_ADDR",
+// 0x07, "IVA_FORM",
+//
+// 0x09, "CM",
+// 0x0A, "IER",
+// 0x0B, "IER_CM",
+// 0x0C, "SIRR",
+// 0x0D, "ISUM",
+// 0x0E, "HW_INT_CLR",
+// 0x0F, "EXC_SUM",
+// 0x10, "PAL_BASE",
+// 0x11, "I_CTL",
+// 0x12, "IC_FLUSH_ASM",
+// 0x13, "IC_FLUSH",
+// 0x14, "PCTR_CTL",
+// 0x15, "CLR_MAP",
+// 0x16, "I_STAT",
+// 0x17, "SLEEP",
+//
+// 0xA3, "DTB_IA",
+// 0xA2, "DTB_IAP",
+// 0x24, "DTB_IS0",
+// 0xA4, "DTB_IS1",
+// 0x20, "DTB_TAG0",
+// 0xA0, "DTB_TAG1",
+// 0x21, "DTB_PTE0",
+// 0xA1, "DTB_PTE1",
+// 0x25, "DTB_ASN0",
+// 0xA5, "DTB_ASN1",
+// 0x26, "DTB_ALTMODE",
+//
+// 0x27, "MM_STAT",
+// 0x28, "M_CTL",
+// 0x29, "DC_CTL",
+// 0x2A, "DC_STAT"
+// 0x2B, "C_DATA",
+// 0x2C, "C_SHFT",
+//
+// 0x40, "PCXT0",
+// 0x60, "PCXT1",
+//
+//// Ebox IPR registers
+// 0xC0, "CC",
+// 0xC1, "CC_CTL",
+// 0xC2, "VA",
+// 0xC3, "VA_FORM",
+// 0xC4, "VA_CTL",

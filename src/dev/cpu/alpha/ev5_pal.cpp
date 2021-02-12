@@ -65,14 +65,26 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 
 	switch (fnc)
 	{
-//	case IPR_ISR:
 //	case IPR_ITB_PTE:
 //	case IPR_ITB_ASN:
 //	case IPR_ITB_PTE_TEMP:
-//	case IPR_SIRR:
-//	case IPR_ASTRR:
-//	case IPR_ASTER:
 //		break;
+
+	case IPR_ISR:
+		RAV = (state.sisr << 3);
+		break;
+
+	case IPR_SIRR:
+		RAV = state.sirr << 3;
+		break;
+
+	case IPR_ASTRR:
+		RAV = state.astrr;
+		break;
+
+	case IPR_ASTER:
+		RAV = state.aster;
+		break;
 
 	case IPR_EXC_ADDR: // Exception address register
 		RAV = state.excAddr;
@@ -90,14 +102,12 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		RAV = state.palBase;
 		break;
 
-//	case IPR_INTID:
-//	case IPR_SL_RCV:
-//	case IPR_ICPERR_STAT:
-//	case IPR_PMCTR:
-//		break;
-
 	case IPR_ICM:
 		RAV = state.icm;
+		break;
+
+	case IPR_SL_RCV:
+		// TODO serial line receiver
 		break;
 
 	case IPR_ICSR: // Ibox Control and Status Register
@@ -105,7 +115,11 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		break;
 
 	case IPR_IPLR:
-		RAV = state.ipl;
+		RAV = state.iplr;
+		break;
+
+	case IPR_INTID:
+		RAV = state.intid;
 		break;
 
 	case IPR_IFAULT_VA_FORM:
@@ -114,6 +128,12 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 
 	case IPR_IVPTBR:
 		RAV = state.ivptb;
+		break;
+
+	case IPR_ICPERR_STAT:
+		break;
+
+	case IPR_PMCTR:
 		break;
 
 	case IPR_MM_STAT:
@@ -231,6 +251,18 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		tbis(RBV, ACC_EXEC);
 		break;
 
+	case IPR_SIRR:
+		state.sirr = (RBV >> 3) & 0xFFFE;
+		break;
+
+	case IPR_ASTRR:
+		state.astrr = RBV & 0xF;
+		break;
+
+	case IPR_ASTER:
+		state.aster = RBV ^ 0xF;
+		break;
+
 	case IPR_EXC_ADDR: // Exception Address
 		state.excAddr = RBV;
 		break;
@@ -259,12 +291,19 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 
 	case IPR_IPLR:
-		state.ipl = RBV & 0x1F;
+		state.iplr = RBV & 0x1F;
 		break;
 
 	case IPR_IVPTBR:
 //		state.ivptb = RBV & 0xFFFFFFFE0000000LL; // NT mode
 		state.ivptb = RBV & 0xFFFFFFFFC000000LL;
+		break;
+
+	case IPR_HWINT_CLR:
+		state.pcr  &= ~((RBV >> 27) & 7);
+		state.crr  &= ~((RBV >> 32) & 1);
+		state.slr  &= ~((RBV >> 33) & 1);
+//		state.sisr &= ~((RBV >> 32) & 1);
 		break;
 
 	case IPR_IC_FLUSH_CTL: // Flush ICache
@@ -410,3 +449,163 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 	}
 }
+
+// 0x100, "ISR","R","interrupt Serivce Request"
+// 0x101, "ITB_TAG","W",   "Istream Translation Buffer Tag Register"
+// 0x102, "ITB_PTE","R/W", "Instruction Translation Buffer Page Table Entry Register"
+// 0x103, "ITB_ASN","R/W", "Instruction Translation Buffer Address Space Number Register"
+// 0x104, "ITB_PTE_TEMP","R",
+// 0x105, "ITB_IA","W",
+// 0x106, "ITB_IAP","W",
+// 0x107, "ITB_IS","W",
+// 0x108, "SIRR","R/W",
+// 0x109, "ASTRR","R/W",
+// 0x10A, "ASTER","R/W",
+// 0x10B, "EXC_ADDR","R/W",
+// 0x10C, "EXC_SUM","R/W0C",
+// 0x10D, "EXC_MASK","R",
+// 0x10E, "PAL_BASE","R/W",
+// 0x10F, "ICM","R/W",
+// 0x110, "IPLR","R/W",
+// 0x111, "INTID","R",
+// 0x112, "IFAULT_VA_FORM","R",
+// 0x113, "IVPTBR","R/W",
+// 0x115, "HWINT_CLR","W",
+// 0x116, "SL_XMIT","W",
+// 0x117, "SL_RCV","R",
+// 0x118, "ICSR","R/W",
+// 0x119, "IC_FLUSH_CTL","W",
+// 0x11A, "ICPERR_STAT","R/W1C",
+// 0x11C, "PMCTR","R/W",
+//
+// 0x140, "PALtemp0","R/W", "PAL temp #0"
+// 0x141, "PALtemp1","R/W", "PAL temp #1"
+// 0x142, "PALtemp2","R/W", "PAL temp #2"
+// 0x143, "PALtemp3","R/W", "PAL temp #3"
+// 0x144, "PALtemp4","R/W", "PAL temp #4"
+// 0x145, "PALtemp5","R/W", "PAL temp #5"
+// 0x146, "PALtemp6","R/W", "PAL temp #6"
+// 0x147, "PALtemp7","R/W", "PAL temp #7"
+// 0x148, "PALtemp8","R/W", "PAL temp #8"
+// 0x149, "PALtemp9","R/W", "PAL temp #9"
+// 0x14A, "PALtemp10","R/W","PAL temp #10"
+// 0x14B, "PALtemp11","R/W","PAL temp #11"
+// 0x14C, "PALtemp12","R/W","PAL temp #12"
+// 0x14D, "PALtemp13","R/W","PAL temp #13"
+// 0x14E, "PALtemp14","R/W","PAL temp #14"
+// 0x14F, "PALtemp15","R/W","PAL temp #15"
+// 0x150, "PALtemp16","R/W","PAL temp #16"
+// 0x151, "PALtemp17","R/W","PAL temp #17"
+// 0x152, "PALtemp18","R/W","PAL temp #18"
+// 0x153, "PALtemp19","R/W","PAL temp #19"
+// 0x154, "PALtemp20","R/W","PAL temp #20"
+// 0x155, "PALtemp21","R/W","PAL temp #21"
+// 0x156, "PALtemp22","R/W","PAL temp #22"
+// 0x157, "PALtemp23","R/W","PAL temp #23"
+//
+// 0x200, "DTB_ASN","W",
+// 0x201, "DTB_CM","W",
+// 0x202, "DTB_TAG","W",
+// 0x203, "DTB_PTE","R/W",
+// 0x204, "DTB_PTE_TEMP","R",
+// 0x205, "MM_STAT","R",
+// 0x206, "VA","R",
+// 0x207, "VA_FORM", "R",
+// 0x208, "MVPTBR","W",
+// 0x209, "DTB_IAP","W",
+// 0x20A, "DTB_IA","W",
+// 0x20B, "DTB_IS","W",
+// 0x20C, "ALT_MODE","W",
+// 0x20D, "CC","W",
+// 0x20E, "CC_CTL","W",
+// 0x20F, "MCSR","R/W",
+// 0x210, "DC_FLUSH","W",
+// 0x212, "DC_PERR_STAT","R/W1C",
+// 0x213, "DC_TEST_CTL","R/W",
+// 0x214, "DC_TEST_TAG","R/W",
+// 0x215, "DC_TEST_TAG_TEMP","R/W",
+// 0x216, "DC_MODE","R/W",
+// 0x217, "MAF_MODE","R/W",
+
+//ctag_t iprNames[] =
+//{
+//		"ISR",           "ITB_TAG",       "ITB_PTE",     "ITB_ASN",             // 100-103
+//		"ITB_PTE_TEMP",  "ITB_IA",        "ITB_IAP",     "ITB_IS",              // 104-107
+//		"SIRR",          "ASTRR",         "ASTER",       "EXC_ADDR",            // 108-10B
+//		"EXC_SUM",       "EXC_MASK",      "PAL_BASE",    "ICM",                 // 10C-10F
+//		"IPLR",          "INTID",         "IVA_FORM",    "IVPTB",               // 110-113
+//		nullptr,         "HWINT_CLR",     "SL_XMIT",     "SL_RCV",              // 114-117
+//		"ICSR",			 "IC_FLUSH_CTL",  "ICPERR_STAT", nullptr,               // 118-11B
+//		"PMCTR",        nullptr,          nullptr,       nullptr,               // 11C-11F
+//
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 120-127
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 127-12F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 130-137
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 137-13F
+//
+//		"PALtemp0",   "PALtemp1",   "PALtemp2",   "PALtemp3",                   // 140-143
+//		"PALtemp4",   "PALtemp5",   "PALtemp6",   "PALtemp7",                   // 144-147
+//		"PALtemp8",   "PALtemp9",   "PALtemp10",  "PALtemp11",                  // 148-14B
+//		"PALtemp12",  "PALtemp13",  "PALtemp14",  "PALtemp15",                  // 14C-14F
+//		"PALtemp16",  "PALtemp17",  "PALtemp18",  "PALtemp19",                  // 150-153
+//		"PALtemp20",  "PALtemp21",  "PALtemp22",  "PALtemp23",                  // 154-157
+//
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 158-15F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 160-167
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 168-16F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 170-177
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 178-17F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 180-187
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 188-18F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 190-197
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 198-19F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1A0-1A7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1A8=1AF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1B0=1B7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1B8-1Bf
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1C0-1C7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1C8-1CF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1D0-1D7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1D8=1DF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1E0=1E7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1E8-1EF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1F0-1F7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 1F8-1FF
+//
+//		"DTB_ASN",      "DTB_CM",            "DTB_TAG",        "DTB_PTE",       // 200-203
+//		"DTB_PTE_TEMP", "MM_STAT",           "VA",             "VA_FORM",       // 204-207
+//		"MVPTBR",       "DTB_IAP",           "DTB_IA",         "DTB_IS",        // 208-20B
+//		"ALT_MODE",     "CC",                "CC_CTL",         "MCSR",          // 20C-20F
+//		"DC_FLUSH",     nullptr,             "DC_PERR_STAT",   "DC_TEST_CTL",   // 210-213
+//		"DC_TEST_TAG",  "DC_TEST_TAG_TEMP",  "DC_MODE",        "MAF_MODE",      // 214-217
+//
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 218-21F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 220-227
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 228-22F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 230-237
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 238-23F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 240-247
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 248-24F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 250-257
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 258-25F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 260-267
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 268-26F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 270-277
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 278-27F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 280-287
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 288-28F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 290-297
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 298-29F
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2A0-2A7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2A8-2AF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2B0-2B7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2B8-2BF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2C0-2C7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2C8-2CF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2D0-2D7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2D8-2DF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2E0-2E7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2E8-2EF
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2F0-2F7
+//		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, // 2F8-2FF
+//};

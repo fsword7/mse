@@ -80,6 +80,13 @@ void AlphaProcessor::init()
 	state.dcm = ACC_KERNEL;
 	state.fpen = 1;
 
+	state.sirr = 0;
+	state.sisr = 0;
+	state.astrr = 0;
+	state.aster = 0;
+	state.iplr  = 0;
+	state.intid = 0;
+
 	// procesor-specific reset
 	preset();
 
