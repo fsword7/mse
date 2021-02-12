@@ -3,6 +3,8 @@ set(MSE_CPP_SRCS
 	dev/cpu/alpha/axp_tb.cpp
 	dev/cpu/alpha/axp_mem.cpp
 	dev/cpu/alpha/debug.cpp
+	dev/cpu/alpha/ev4.cpp
+	dev/cpu/alpha/ev4_pal.cpp
 	dev/cpu/alpha/ev5.cpp
 	dev/cpu/alpha/ev5_pal.cpp
 	dev/cpu/alpha/ev6.cpp
@@ -48,6 +50,7 @@ set(MSE_H_SRCS
 	dev/cpu/alpha/axp_misc.h
 	dev/cpu/alpha/axp_pal.h
 	dev/cpu/alpha/debug.h
+	dev/cpu/alpha/ev4.h
 	dev/cpu/alpha/ev5.h
 	dev/cpu/alpha/ev5_ipr.h
 	dev/cpu/alpha/ev6.h
