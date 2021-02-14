@@ -13,7 +13,7 @@ DEFINE_DEVICE_TYPE(dec21164, dec21164_cpuDevice, "21164", "DEC 21164 Alpha Proce
 
 dec21164_cpuDevice::dec21164_cpuDevice(const SystemConfig &config,
 		cstag_t &tagName, Device *owner, uint64_t clock)
-: AlphaProcessor(config, dec21164, tagName, owner, clock, 40)
+: alpha_cpuDevice(config, dec21164, tagName, owner, clock, 40)
 {
 	setArchType(ARCH_EV5);
 	setArchFlags(ARCH_BWX|ARCH_PRC);

@@ -263,12 +263,12 @@ struct opcAlpha
 	uint16_t  fnCode;	// Function code
 };
 
-class AlphaProcessor : public ProcessorDevice
+class alpha_cpuDevice : public cpuDevice
 {
 public:
-	AlphaProcessor(const SystemConfig &config, const DeviceType &type,
+	alpha_cpuDevice(const SystemConfig &config, const DeviceType &type,
 		const string &tagName, Device *owner, uint64_t clock, int aWidth);
-	virtual ~AlphaProcessor() = default;
+	virtual ~alpha_cpuDevice() = default;
 
 	void initOpcodeTable();
 
@@ -466,3 +466,5 @@ protected:
 
 	Console *log = nullptr;
 };
+
+//using AlphaProcessor = alpha_cpuDevice;

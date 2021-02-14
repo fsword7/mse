@@ -11,16 +11,16 @@
 #include "emu/map/map.h"
 #include "dev/cpu/alpha/axp.h"
 
-AlphaProcessor::AlphaProcessor(const SystemConfig &config, const DeviceType &type,
+alpha_cpuDevice::alpha_cpuDevice(const SystemConfig &config, const DeviceType &type,
 	const string &tagName, Device *owner, uint64_t clock, int aWidth)
-: ProcessorDevice(config, type, tagName, owner, clock),
+: cpuDevice(config, type, tagName, owner, clock),
   mapProgramConfig("program", LittleEndian, 64, 16, 8, aWidth, 16, 0)
 {
 	// Initialize opcode table for disassembler
 	initOpcodeTable();
 }
 
-mapConfigList AlphaProcessor::getAddressConfigList() const
+mapConfigList alpha_cpuDevice::getAddressConfigList() const
 {
 	return mapConfigList {
 		{ aspace::asProgram, &mapProgramConfig }

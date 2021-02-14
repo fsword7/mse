@@ -14,7 +14,7 @@
 
 #define CPUID_AXP21164
 
-class dec21164_cpuDevice : public AlphaProcessor
+class dec21164_cpuDevice : public alpha_cpuDevice
 {
 public:
 	dec21164_cpuDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);

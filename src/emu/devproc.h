@@ -12,17 +12,18 @@
 #include "emu/dibus.h"
 #include "emu/didebug.h"
 
-class ProcessorDevice
+class cpuDevice
 : public Device,
   public diExecute,
   public diExternalBus,
   public diDebug
 {
 protected:
-	ProcessorDevice(const SystemConfig &config, const DeviceType &type,
+	cpuDevice(const SystemConfig &config, const DeviceType &type,
 			const string &tagName, Device *owner, uint64_t clock);
 
 public:
-	virtual ~ProcessorDevice() = default;
+	virtual ~cpuDevice() = default;
 
 };
+

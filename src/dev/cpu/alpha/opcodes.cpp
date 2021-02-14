@@ -87,7 +87,7 @@
 
 #define INST(name, flags, op, fn) { name, flags, op, fn }
 
-opcAlpha AlphaProcessor::axp_opCodes[] =
+opcAlpha alpha_cpuDevice::axp_opCodes[] =
 {
 	// Branch instructions
 	INST("BR",            OP_BRA, 0x30, 0 ),

@@ -11,7 +11,7 @@
 #include "dev/cpu/alpha/debug.h"
 #include "dev/cpu/alpha/opcodes.h"
 
-string AlphaProcessor::getStringAddress(offs_t addr)
+string alpha_cpuDevice::getStringAddress(offs_t addr)
 {
 	string strAddr;
 
@@ -22,7 +22,7 @@ string AlphaProcessor::getStringAddress(offs_t addr)
 	return strAddr;
 }
 
-int AlphaProcessor::list(Console *cty, offs_t vAddr)
+int alpha_cpuDevice::list(Console *cty, offs_t vAddr)
 {
 	using namespace aspace;
 
@@ -111,7 +111,7 @@ int AlphaProcessor::list(Console *cty, offs_t vAddr)
 	return 4;
 }
 
-void AlphaProcessor::initOpcodeTable()
+void alpha_cpuDevice::initOpcodeTable()
 {
 
 	uint32_t opFlags;

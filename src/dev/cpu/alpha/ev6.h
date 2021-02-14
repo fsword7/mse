@@ -11,7 +11,7 @@
 
 #include "dev/cpu/alpha/axp.h"
 
-class dec21264_cpuDevice : public AlphaProcessor
+class dec21264_cpuDevice : public alpha_cpuDevice
 {
 public:
 	dec21264_cpuDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);

@@ -33,7 +33,7 @@ public:
 	void es45_sbus(aspace::AddressList &map);
 
 private:
-	AlphaProcessor *cpu[ES40_NCPU];
+	dec21264_cpuDevice *cpu[ES40_NCPU];
 
 	mapAddressConfig config;
 };

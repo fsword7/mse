@@ -13,6 +13,10 @@ set(MSE_CPP_SRCS
 	dev/cpu/alpha/execute.cpp
 	dev/cpu/alpha/load.cpp
 	dev/cpu/alpha/opcodes.cpp
+	dev/cpu/m6500/m6500.cpp
+	dev/cpu/mcs48/mcs48.cpp
+	dev/cpu/pdp11/pdp11.cpp
+	dev/cpu/vax/vax.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/heun.cpp
@@ -56,6 +60,10 @@ set(MSE_H_SRCS
 	dev/cpu/alpha/ev6.h
 	dev/cpu/alpha/ev6_ipr.h
 	dev/cpu/alpha/opcode.h
+	dev/cpu/m6500/m6500.h
+	dev/cpu/mcs48/mcs48.h
+	dev/cpu/pdp11/pdp11.h
+	dev/cpu/vax/vax.h
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/map.h

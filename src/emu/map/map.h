@@ -27,7 +27,7 @@ namespace aspace
 #include "emu/map/he.h"
 #include "emu/map/heun.h"
 
-class ProcessorDevice;
+class cpuDevice;
 class Machine;
 class Console;
 
@@ -144,22 +144,22 @@ namespace aspace
 		void allocate(Console *cty);
 
 		// Virtual function calls
-		virtual uint8_t  read8(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint16_t read16(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint16_t read16u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint32_t read32(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint32_t read32u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint64_t read64(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
-		virtual uint64_t read64u(offs_t addr, ProcessorDevice *cpu = nullptr) = 0;
+		virtual uint8_t  read8(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint16_t read16(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint16_t read16u(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint32_t read32(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint32_t read32u(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint64_t read64(offs_t addr, cpuDevice *cpu = nullptr) = 0;
+		virtual uint64_t read64u(offs_t addr, cpuDevice *cpu = nullptr) = 0;
 		virtual void     readBlock(offs_t addr, uint8_t *data, uint64_t size) = 0;
 
-		virtual void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
-		virtual void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu = nullptr) = 0;
+		virtual void write8(offs_t addr, uint8_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write16(offs_t addr, uint16_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write16u(offs_t addr, uint16_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write32(offs_t addr, uint32_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write32u(offs_t addr, uint32_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write64(offs_t addr, uint64_t data, cpuDevice *cpu = nullptr) = 0;
+		virtual void write64u(offs_t addr, uint64_t data, cpuDevice *cpu = nullptr) = 0;
 		virtual void writeBlock(offs_t addr, uint8_t *data, uint64_t size) = 0;
 
 	protected:

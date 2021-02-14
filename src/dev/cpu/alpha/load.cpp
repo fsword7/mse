@@ -9,7 +9,7 @@
 #include "dev/cpu/alpha/axp.h"
 #include "dev/cpu/alpha/fw.h"
 
-bool AlphaProcessor::load(ifstream &fin, offs_t off)
+bool alpha_cpuDevice::load(ifstream &fin, offs_t off)
 {
 	uint8_t blkData[512];
 	offs_t  soff = off;

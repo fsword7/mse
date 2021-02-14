@@ -33,7 +33,7 @@ namespace aspace {
 
 		// **** Read access function calls
 
-		uint8_t read8(offs_t addr, ProcessorDevice *cpu)
+		uint8_t read8(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize)
 				return memData[addr];
@@ -50,7 +50,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint16_t read16(offs_t addr, ProcessorDevice *cpu)
+		uint16_t read16(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x1);
@@ -59,7 +59,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint16_t read16u(offs_t addr, ProcessorDevice *cpu)
+		uint16_t read16u(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;
@@ -68,7 +68,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint32_t read32(offs_t addr, ProcessorDevice *cpu)
+		uint32_t read32(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x3);
@@ -77,7 +77,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint32_t read32u(offs_t addr, ProcessorDevice *cpu)
+		uint32_t read32u(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;
@@ -86,7 +86,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint64_t read64(offs_t addr, ProcessorDevice *cpu)
+		uint64_t read64(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x7);
@@ -95,7 +95,7 @@ namespace aspace {
 			return unmapValue;
 		}
 
-		uint64_t read64u(offs_t addr, ProcessorDevice *cpu)
+		uint64_t read64u(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;
@@ -115,13 +115,13 @@ namespace aspace {
 
 		// **** Write access function calls ****
 
-		void write8(offs_t addr, uint8_t data, ProcessorDevice *cpu)
+		void write8(offs_t addr, uint8_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize)
 				memData[addr] = data;
 		}
 
-		void write16(offs_t addr, uint16_t data, ProcessorDevice *cpu)
+		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x1);
@@ -129,7 +129,7 @@ namespace aspace {
 			}
 		}
 
-		void write16u(offs_t addr, uint16_t data, ProcessorDevice *cpu)
+		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;
@@ -137,7 +137,7 @@ namespace aspace {
 			}
 		}
 
-		void write32(offs_t addr, uint32_t data, ProcessorDevice *cpu)
+		void write32(offs_t addr, uint32_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x2);
@@ -145,7 +145,7 @@ namespace aspace {
 			}
 		}
 
-		void write32u(offs_t addr, uint32_t data, ProcessorDevice *cpu)
+		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;
@@ -153,7 +153,7 @@ namespace aspace {
 			}
 		}
 
-		void write64(offs_t addr, uint64_t data, ProcessorDevice *cpu)
+		void write64(offs_t addr, uint64_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + (addr & ~0x3);
@@ -161,7 +161,7 @@ namespace aspace {
 			}
 		}
 
-		void write64u(offs_t addr, uint64_t data, ProcessorDevice *cpu)
+		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)
 		{
 			if (addr < memSize) {
 				uint8_t *ptr = memData + addr;

@@ -10,7 +10,7 @@
 #include "dev/cpu/alpha/axp_mmu.h"
 
 // Virtual address to physical conversion
-uint64_t AlphaProcessor::checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status)
+uint64_t alpha_cpuDevice::checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int &status)
 {
 //	int spe = (flags & ACC_EXEC) ? state.ispe : state.mspe;
 //	int cm  = (flags & ALTCM) ? state.altcm : state.cm;
@@ -21,7 +21,7 @@ uint64_t AlphaProcessor::checkv(uint64_t vAddr, uint32_t flags, bool &asmb, int 
 }
 
 // Aligned read access with physical address
-uint64_t AlphaProcessor::readp(uint64_t pAddr, int size)
+uint64_t alpha_cpuDevice::readp(uint64_t pAddr, int size)
 {
 	switch (size)
 	{
@@ -34,7 +34,7 @@ uint64_t AlphaProcessor::readp(uint64_t pAddr, int size)
 }
 
 // Aligned write access with physical address
-void AlphaProcessor::writep(uint64_t pAddr, uint64_t data, int size)
+void alpha_cpuDevice::writep(uint64_t pAddr, uint64_t data, int size)
 {
 	switch (size)
 	{
@@ -45,7 +45,7 @@ void AlphaProcessor::writep(uint64_t pAddr, uint64_t data, int size)
 	}
 }
 
-uint64_t AlphaProcessor::readv(uint64_t vAddr, int size)
+uint64_t alpha_cpuDevice::readv(uint64_t vAddr, int size)
 {
 	uint64_t pAddr = vAddr;
 
@@ -56,7 +56,7 @@ uint64_t AlphaProcessor::readv(uint64_t vAddr, int size)
 	return readp(pAddr, size);
 }
 
-void AlphaProcessor::writev(uint64_t vAddr, uint64_t data, int size)
+void alpha_cpuDevice::writev(uint64_t vAddr, uint64_t data, int size)
 {
 	uint64_t pAddr = vAddr;
 
@@ -67,12 +67,12 @@ void AlphaProcessor::writev(uint64_t vAddr, uint64_t data, int size)
 	writep(pAddr, data, size);
 }
 
-uint64_t AlphaProcessor::getVAForm(uint64_t vAddr, bool type)
+uint64_t alpha_cpuDevice::getVAForm(uint64_t vAddr, bool type)
 {
 	return 0;
 }
 
-int AlphaProcessor::findTBEntry(uint64_t vAddr, uint32_t accFlags)
+int alpha_cpuDevice::findTBEntry(uint64_t vAddr, uint32_t accFlags)
 {
 	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
 	int asn   = (accFlags & ACC_EXEC) ? state.asn : state.asn0;
@@ -99,22 +99,22 @@ int AlphaProcessor::findTBEntry(uint64_t vAddr, uint32_t accFlags)
 	return -1;
 }
 
-void AlphaProcessor::addTBEntry(uint64_t vAddr, uint64_t pteAddr, uint64_t pteFlags, int accFlags)
+void alpha_cpuDevice::addTBEntry(uint64_t vAddr, uint64_t pteAddr, uint64_t pteFlags, int accFlags)
 {
 
 }
 
-void AlphaProcessor::addITBEntry(uint64_t vAddr, uint64_t pteAddr)
+void alpha_cpuDevice::addITBEntry(uint64_t vAddr, uint64_t pteAddr)
 {
 	addTBEntry(vAddr, pteAddr, pteAddr & 0xF70, ACC_EXEC);
 }
 
-void AlphaProcessor::addDTBEntry(uint64_t vAddr, uint64_t pteAddr)
+void alpha_cpuDevice::addDTBEntry(uint64_t vAddr, uint64_t pteAddr)
 {
 	addTBEntry(vAddr, pteAddr >> (32 - 13), pteAddr, ACC_READ);
 }
 
-void AlphaProcessor::tbia(int accFlags)
+void alpha_cpuDevice::tbia(int accFlags)
 {
 	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
 
@@ -125,7 +125,7 @@ void AlphaProcessor::tbia(int accFlags)
 	state.tbNext[tbidx] = 0;
 }
 
-void AlphaProcessor::tbiap(int accFlags)
+void alpha_cpuDevice::tbiap(int accFlags)
 {
 	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
 
@@ -134,7 +134,7 @@ void AlphaProcessor::tbiap(int accFlags)
 			state.tb[tbidx][eidx].valid = false;
 }
 
-void AlphaProcessor::tbis(uint64_t vAddr, int accFlags)
+void alpha_cpuDevice::tbis(uint64_t vAddr, int accFlags)
 {
 	int tbidx = (accFlags & ACC_EXEC) ? 1 : 0;
 	int eidx = findTBEntry(vAddr, accFlags);

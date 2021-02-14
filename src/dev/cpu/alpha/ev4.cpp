@@ -13,7 +13,7 @@ DEFINE_DEVICE_TYPE(dec21064, dec21064_cpuDevice, "21064", "DEC 21064 Alpha Proce
 
 dec21064_cpuDevice::dec21064_cpuDevice(const SystemConfig &config,
 		cstag_t &tagName, Device *owner, uint64_t clock)
-: AlphaProcessor(config, dec21064, tagName, owner, clock, 36)
+: alpha_cpuDevice(config, dec21064, tagName, owner, clock, 36)
 {
 	setArchType(ARCH_EV4);
 	setArchFlags(0);

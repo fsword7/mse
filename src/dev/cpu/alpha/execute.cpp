@@ -24,7 +24,7 @@
 #include "dev/cpu/alpha/axp_fpoper.h"
 
 
-void AlphaProcessor::init()
+void alpha_cpuDevice::init()
 {
 
 	// Clear all regular/shadow registers
@@ -111,12 +111,12 @@ void AlphaProcessor::init()
 	mapProgram = getAddressSpace(AS_PROGRAM);
 }
 
-void AlphaProcessor::setPCAddress(offs_t addr)
+void alpha_cpuDevice::setPCAddress(offs_t addr)
 {
 	state.pcAddr = addr;
 }
 
-void AlphaProcessor::step(Console *user)
+void alpha_cpuDevice::step(Console *user)
 {
 	// Save current log flags and
 	// enable console output
@@ -131,7 +131,7 @@ void AlphaProcessor::step(Console *user)
 	dbg.loadLogFlags(flags);
 }
 
-void AlphaProcessor::run()
+void alpha_cpuDevice::run()
 {
 	// Start execution state
 	pState = execRunning;
@@ -154,7 +154,7 @@ void AlphaProcessor::run()
 	pState = execStopped;
 }
 
-int AlphaProcessor::fetchi(uint64_t addr, uint32_t &data)
+int alpha_cpuDevice::fetchi(uint64_t addr, uint32_t &data)
 {
 	int      idx = state.iCacheLast;
 	bool     asmBit = false;
@@ -224,7 +224,7 @@ int AlphaProcessor::fetchi(uint64_t addr, uint32_t &data)
 	return 0;
 }
 
-void AlphaProcessor::execute()
+void alpha_cpuDevice::execute()
 {
 	int opCode;
 	uint32_t func;
