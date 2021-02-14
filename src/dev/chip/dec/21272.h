@@ -46,9 +46,21 @@
 //
 // Flash ROM space		2MB			801.0000.0000 - 801.07FF.FFFF		addr<5:0> = 0, 21-bit addressing
 
-#define FLASH_ADDR		0x80100000000LL		// 2MB flash ROM space
-#define FLASH_SIZE		(1u << 21)			//   Flash ROM size (2MB space)
-#define FLASH_MASK		(FLASH_SIZE - 1)	//   Address mask
+#define PCI0_BASE			0x800'0000'0000LL		// PCI 0 base address
+#define PCI1_BASE			0x802'0000'0000LL		// PCI 1 base address
+
+#define TIG_BASE			0x001'0000'0000LL		// TIGbus base address
+
+#define PCHIP_CSR_BASE		0x001'8000'0000LL		// Pchip CSR base address
+#define PCHIP_IACK_BASE		0x001'F800'0000LL		// Pchip PCI IACK base address
+#define PCHIP_IO_BASE		0x001'FC00'0000LL		// Pchip PCI I/O base address
+#define PCHIP_CFG_BASE		0x001'FE00'0000LL		// Pchip PCI configuration base address
+
+#define DCHIP_CSR_BASE		0x001'8000'0000LL		// Dchip CSR base address
+
+#define FLASH_ADDR			(PCI0_BASE|TIG_BASE)	// 2MB flash ROM space (801.0000.0000)
+#define FLASH_SIZE			(1u << 21)				//   Flash ROM size (2MB space)
+#define FLASH_MASK			(FLASH_SIZE - 1)		//   Address mask
 
 class dec21272_device : public DeviceInterface
 {
