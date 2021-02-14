@@ -143,7 +143,7 @@ void dec21164_cpuDevice::hw_mfpr(uint32_t opWord)
 		break;
 
 	case IPR_PMCTR: // Not implemented yet
-		RAV = state.pmctr;
+		RAV = state.pctr;
 		break;
 
 	case IPR_DTB_PTE: // Not implemented yet
@@ -306,7 +306,7 @@ void dec21164_cpuDevice::hw_mtpr(uint32_t opWord)
 		break;
 
 	case IPR_PMCTR: // Not implemented yet
-		state.pmctr = RBV;
+		state.pctr = RBV;
 		break;
 
 	case IPR_DTB_TAG:

@@ -424,11 +424,9 @@ protected:
 		uint64_t  fvAddr;		// Faulting virtual address
 		uint64_t  mmstat;		// Memory Management Status
 
-		uint64_t pctr;
-		int      istat;
-		int      dcstat;
-
-		uint64_t pmctr;			// Performance Counter (not implemented yet)
+		uint64_t  pctr;			// Performance counter (not implemented yet)
+		int       istat;
+		int       dcstat;
 
 		// Onchip instruction cache
 		bool iCacheEnable; // Instruction Cache Enable

@@ -313,7 +313,7 @@ void dec21264_cpuDevice::hw_mtpr(uint32_t opWord)
 	//		flushICache();
 			break;
 
-		case IPR_PCTR_CTL:
+		case IPR_PCTR_CTL: // Performance Counter Control Register
 			state.pctr = RBV & 0xFFFFFFFFFFFFFFDFULL;
 			break;
 
