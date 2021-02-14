@@ -60,7 +60,7 @@
 //   3000 0000 - 303F FFFF  Qbus Memory Space
 
 // Create system routines
-void ka655_device::mv3900(SystemConfig &config)
+void ka655_sysDevice::mv3900(SystemConfig &config)
 {
 
 //	cpu = CVAX(config, "cvax", 0);
@@ -80,7 +80,7 @@ void ka655_device::mv3900(SystemConfig &config)
 
 }
 
-void ka655_device::mv3900x(SystemConfig &config)
+void ka655_sysDevice::mv3900x(SystemConfig &config)
 {
 
 //	cpu = CVAX(config, "cvax", 0);
@@ -131,12 +131,12 @@ void ka655_device::mv3900x(SystemConfig &config)
 //}
 
 // Initialize system routines
-void ka655_device::mv3900_init()
+void ka655_sysDevice::mv3900_init()
 {
 
 }
 
-void ka655_device::mv3900x_init()
+void ka655_sysDevice::mv3900x_init()
 {
 
 }
@@ -153,13 +153,13 @@ void ka655_device::mv3900x_init()
 //COMP(mv3600,  nullptr, vax, KA650, ka650_device, mv3600,  mv3600_init,  "DEC", "MicroVAX 3600")
 //COMP(mv3800,  nullptr, vax, KA655, ka655_device, mv3800,  mv3800_init,  "DEC", "MicroVAX 3800")
 //COMP(mv3800x, nullptr, vax, KA655, ka655_device, mv3800x, mv3800x_init, "DEC", "MicroVAX 3800x")
-COMP(mv3900,  nullptr, vax, KA655, ka655_device, mv3900,  mv3900_init,  "DEC", "MicroVAX 3900")
-COMP(mv3900x, nullptr, vax, KA655, ka655_device, mv3900x, mv3900x_init, "DEC", "MicroVAX 3900x")
+COMP(mv3900,  nullptr, vax, KA655, ka655_sysDevice, mv3900,  mv3900_init,  "DEC", "MicroVAX 3900")
+COMP(mv3900x, nullptr, vax, KA655, ka655_sysDevice, mv3900x, mv3900x_init, "DEC", "MicroVAX 3900x")
 
 // VAXserver 3x00 series
 //COMP(vs3500,  nullptr, vax, KA650, ka650_device, mv3500,  mv3500_init,  "DEC", "VAXserver 3500")
 //COMP(vs3600,  nullptr, vax, KA650, ka650_device, mv3600,  mv3600_init,  "DEC", "VAXserver 3600")
 //COMP(vs3800,  nullptr, vax, KA655, ka655_device, mv3800,  mv3800_init,  "DEC", "VAXserver 3800")
 //COMP(vs3800x, nullptr, vax, KA655, ka655_device, mv3800x, mv3800x_init, "DEC", "VAXserver 3800x")
-COMP(vs3900,  nullptr, vax, KA655, ka655_device, mv3900,  mv3900_init,  "DEC", "VAXserver 3900")
-COMP(vs3900x, nullptr, vax, KA655, ka655_device, mv3900x, mv3900x_init, "DEC", "VAXserver 3900x")
+COMP(vs3900,  nullptr, vax, KA655, ka655_sysDevice, mv3900,  mv3900_init,  "DEC", "VAXserver 3900")
+COMP(vs3900x, nullptr, vax, KA655, ka655_sysDevice, mv3900x, mv3900x_init, "DEC", "VAXserver 3900x")

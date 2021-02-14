@@ -18,7 +18,7 @@ public:
 	~Machine();
 
 	inline cstag_t  &getDeviceName() const   { return devName; }
-	inline device_t *getSystemDevice() const { return sysDevice; }
+	inline device_t *getSystemDevice() const { return system; }
 	inline LogFile  *getLogFile() const      { return &logFile; }
 
 	inline void setConsole(Console *user)	 { logFile.setConsole(user); }
@@ -36,7 +36,7 @@ public:
 
 private:
 	const SystemConfig &config;
-	SystemDevice *sysDevice = nullptr;
+	sysDevice *system = nullptr;
 	mutable Device *dialedDevice = nullptr;
 
 	cstag_t devName;

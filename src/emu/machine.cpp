@@ -13,14 +13,14 @@
 Machine::Machine(const SystemConfig &config, cstag_t &tagName)
 : config(config), devName(tagName), busManager(this)
 {
-	sysDevice = dynamic_cast<SystemDevice *>(config.getSystemDevice());
+	system = dynamic_cast<sysDevice *>(config.getSystemDevice());
 
 	// Assign machine handler to all devices
-	for (Device &dev : DeviceIterator(*sysDevice))
+	for (Device &dev : DeviceIterator(*system))
 		dev.setMachine(this);
 
 	// Assign system bus management to system device
-	sysDevice->setExternalBusManager(&busManager);
+	system->setExternalBusManager(&busManager);
 }
 
 Machine::~Machine()
@@ -47,7 +47,7 @@ void Machine::reset(Console *cty)
 // Final system configuration initialization
 void Machine::start(Console *cty)
 {
-	assert(sysDevice != nullptr);
+	assert(system != nullptr);
 
 	// Assign machine handler to all devices
 //	for (Device &dev : DeviceIterator(*sysDevice))

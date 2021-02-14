@@ -9,10 +9,10 @@
 
 #include "emu/map/map.h"
 
-class SystemDevice : public Device
+class sysDevice : public Device
 {
 public:
-	SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
+	sysDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
 
 	inline void setExternalBusManager(aspace::BusManager *bus) { busManager = bus; }
 

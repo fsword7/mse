@@ -9,14 +9,14 @@
 #include "emu/dibus.h"
 #include "emu/devsys.h"
 
-SystemDevice::SystemDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+sysDevice::sysDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 : Device(config, type, tagName, nullptr, clock),
   driver(config.getSystemDriver())
 {
 
 }
 
-void SystemDevice::devConfigure(SystemConfig &config)
+void sysDevice::devConfigure(SystemConfig &config)
 {
 	assert(&config == &getSystemConfig());
 

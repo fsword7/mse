@@ -121,11 +121,11 @@
 #define CACR_W1C    (CACR_CPE)
 #define CACR_RW     (CACR_CEN|CACR_DPE|CACR_WWP|CACR_DIAG)
 
-class ka655_device : public SystemDevice
+class ka655_sysDevice : public sysDevice
 {
 public:
-	ka655_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
-	: SystemDevice(config, type, tagName, clock)
+	ka655_sysDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+	: sysDevice(config, type, tagName, clock)
 	{
 
 	}

@@ -10,11 +10,11 @@
 #include "emu/devsys.h"
 #include "dev/cpu/alpha/ev5.h"
 
-class alphapc_sysDevice : public SystemDevice
+class alphapc_sysDevice : public sysDevice
 {
 public:
 	alphapc_sysDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
-	: SystemDevice(config, type, tagName, clock),
+	: sysDevice(config, type, tagName, clock),
 	  config("system", LittleEndian, 64, 16, 8, 40, 16, 0)
 	{
 
