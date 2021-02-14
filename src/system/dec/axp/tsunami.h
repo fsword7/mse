@@ -10,16 +10,16 @@
 #define ES40_NCPU	1 /* up to 4 processors */
 #define ES45_NCPU	1 /* up to 32 processors */
 
-class tsunami_device : public sysDevice
+class tsunami_sysDevice : public sysDevice
 {
 public:
-	tsunami_device(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+	tsunami_sysDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 	: sysDevice(config, type, tagName, clock),
 	  config("system", LittleEndian, 64, 16, 8, 44, 16, 0)
 	{
 
 	}
-	~tsunami_device() = default;
+	~tsunami_sysDevice() = default;
 
 	// System creator routines
 	void es40(SystemConfig &config);

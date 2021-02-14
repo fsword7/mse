@@ -47,7 +47,7 @@ devCommand_t es40_Commands[] =
 };
 
 // Create system routines
-void tsunami_device::es40(SystemConfig &config)
+void tsunami_sysDevice::es40(SystemConfig &config)
 {
 
 	setCommands(es40_Commands);
@@ -56,7 +56,7 @@ void tsunami_device::es40(SystemConfig &config)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = dec21264(config, tagName, 0);
-		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
+		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_sysDevice::es40_sbus);
 	}
 
 //	cssc   = CSSC(config, "cssc", 0);
@@ -72,14 +72,14 @@ void tsunami_device::es40(SystemConfig &config)
 
 }
 
-void tsunami_device::es45(SystemConfig &config)
+void tsunami_sysDevice::es45(SystemConfig &config)
 {
 
 	for (int idx = 0; idx < ES40_NCPU; idx++)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = dec21264(config, tagName, 0);
-		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_device::es40_sbus);
+		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_sysDevice::es40_sbus);
 	}
 
 //	cssc   = CSSC(config, "cssc", 0);
@@ -96,26 +96,26 @@ void tsunami_device::es45(SystemConfig &config)
 }
 
 // Initialize system routines
-void tsunami_device::es40_init()
+void tsunami_sysDevice::es40_init()
 {
 
 }
 
-void tsunami_device::es45_init()
+void tsunami_sysDevice::es45_init()
 {
 
 }
 
-void tsunami_device::es40_sbus(AddressList &map)
+void tsunami_sysDevice::es40_sbus(AddressList &map)
 {
 	map(0x00000000000LL, 0x000FFFFFFFFLL).ram().region("main"); // up to 4 GB main memory (default 512 MB space)
 }
 
-void tsunami_device::es45_sbus(AddressList &map)
+void tsunami_sysDevice::es45_sbus(AddressList &map)
 {
 	map(0x00000000000LL, 0x007FFFFFFFFLL).ram().region("main"); // up to 32 GB main memory (default 512 MB space)
 }
 
 
-COMP(es40,  nullptr, axp, ES40, tsunami_device, es40,  es40_init,  "DEC", "AlphaServer ES40")
-COMP(es45,  nullptr, axp, ES45, tsunami_device, es45,  es45_init,  "DEC", "AlphaServer ES45")
+COMP(es40,  nullptr, axp, ES40, tsunami_sysDevice, es40,  es40_init,  "DEC", "AlphaServer ES40")
+COMP(es45,  nullptr, axp, ES45, tsunami_sysDevice, es45,  es45_init,  "DEC", "AlphaServer ES45")
