@@ -35,6 +35,16 @@ namespace aspace
 {
 	using Constructor = NamedDelegate<void (AddressList &)>;
 
+	using read8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
+	using read16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
+	using read32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
+	using read64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
+
+	using write8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
+	using write16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
+	using write32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
+	using write64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
+
 	enum SpaceType
 	{
 		asProgram = 0,	// Program address space

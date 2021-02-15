@@ -39,6 +39,106 @@ AddressEntry &AddressEntry::mask(offs_t mask)
 	return *this;
 }
 
+AddressEntry &AddressEntry::r(read8d_t func)
+{
+	assert(!func.isNull());
+
+	read.type = mapDelegate;
+	read.bits = 8;
+	read.name = func.getName();
+	read8 = func;
+
+	return *this;
+}
+
+
+AddressEntry &AddressEntry::r(read16d_t func)
+{
+	assert(!func.isNull());
+
+	read.type = mapDelegate;
+	read.bits = 16;
+	read.name = func.getName();
+	read16 = func;
+
+	return *this;
+}
+
+AddressEntry &AddressEntry::r(read32d_t func)
+{
+	assert(!func.isNull());
+
+	read.type = mapDelegate;
+	read.bits = 32;
+	read.name = func.getName();
+	read32 = func;
+
+	return *this;
+}
+
+AddressEntry &AddressEntry::r(read64d_t func)
+{
+	assert(!func.isNull());
+
+	read.type = mapDelegate;
+	read.bits = 64;
+	read.name = func.getName();
+	read64 = func;
+
+	return *this;
+}
+
+
+
+AddressEntry &AddressEntry::w(write8d_t func)
+{
+	assert(!func.isNull());
+
+	write.type = mapDelegate;
+	write.bits = 8;
+	write.name = func.getName();
+	write8 = func;
+
+	return *this;
+}
+
+
+AddressEntry &AddressEntry::w(write16d_t func)
+{
+	assert(!func.isNull());
+
+	write.type = mapDelegate;
+	write.bits = 16;
+	write.name = func.getName();
+	write16 = func;
+
+	return *this;
+}
+
+AddressEntry &AddressEntry::w(write32d_t func)
+{
+	assert(!func.isNull());
+
+	write.type = mapDelegate;
+	write.bits = 32;
+	write.name = func.getName();
+	write32 = func;
+
+	return *this;
+}
+
+AddressEntry &AddressEntry::w(write64d_t func)
+{
+	assert(!func.isNull());
+
+	write.type = mapDelegate;
+	write.bits = 64;
+	write.name = func.getName();
+	write64 = func;
+
+	return *this;
+}
+
 // ******** AddressList ********
 
 AddressList::AddressList(device_t &dev, int space)

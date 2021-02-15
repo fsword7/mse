@@ -15,10 +15,11 @@ namespace aspace
 	enum mapType
 	{
 		mapNone = 0,
-		mapAccess,	// Accessible
-		mapPort,	// I/O type access
-		mapNop,		// Non-operation - do nothing
-		mapVoid		// Non-existent - exception trap
+		mapAccess,		// Accessible
+		mapPort,		// I/O type access
+		mapDelegate,	// Device delegate (callbacks)
+		mapNop,			// Non-operation - do nothing
+		mapVoid			// Non-existent - exception trap
 	};
 
 	struct mapHandler
@@ -37,6 +38,20 @@ namespace aspace
 
 		AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t end);
 
+		template <typename T, typename U>
+		static std::enable_if_t<std::is_convertible<std::add_pointer_t<U>, std::add_pointer_t<T>>::value, T *>
+			make_pointer(U &obj)
+		{
+			return &dynamic_cast<T &>(obj);
+		}
+
+		template <typename T, typename U>
+		static std::enable_if_t<!std::is_convertible<std::add_pointer_t<U>, std::add_pointer_t<T>>::value, T *>
+			make_pointer(U &obj)
+		{
+			return &dynamic_cast<T &>(obj);
+		}
+
 		// RAM/ROM access list
 		AddressEntry &ram()   { read.type = mapAccess; write.type = mapAccess; return *this; }
 		AddressEntry &rom()   { read.type = mapAccess; write.type = mapNop;    return *this; }
@@ -48,6 +63,38 @@ namespace aspace
 		AddressEntry &region(ctag_t *name, offs_t off = 0);
 
 		AddressEntry &mask(offs_t mask);
+
+		AddressEntry &r(read8d_t func);
+		AddressEntry &r(read16d_t func);
+		AddressEntry &r(read32d_t func);
+		AddressEntry &r(read64d_t func);
+
+		AddressEntry &w(write8d_t func);
+		AddressEntry &w(write16d_t func);
+		AddressEntry &w(write32d_t func);
+		AddressEntry &w(write64d_t func);
+
+		// Implicit delegate calls
+		template <typename T, typename rRet, typename ... rArgs>
+		AddressEntry &r(rRet (T::*read)(rArgs...), ctag_t *readName)
+		{
+			return r(makeDelegate(read, make_pointer<T>(device), readName, device.getDeviceName()));
+		}
+
+		template <typename U, typename wRet, typename ... wArgs>
+		AddressEntry &w(wRet (U::*write)(wArgs...), ctag_t *writeName)
+		{
+			return w(makeDelegate(write, make_pointer<U>(device), writeName, device.getDeviceName()));
+		}
+
+		template <typename T, typename rRet, typename ... rArgs, typename U, typename wRet, typename ... wArgs>
+		AddressEntry &rw(rRet (T::*read)(rArgs...), ctag_t *readName,
+			             wRet (U::*write)(wArgs...), ctag_t *writeName)
+		{
+			r(makeDelegate(read, make_pointer<T>(device), readName, device.getDeviceName()));
+			w(makeDelegate(write, make_pointer<T>(device), writeName, device.getDeviceName()));
+			return *this;
+		}
 
 	public:
 		// Address entry information
@@ -69,6 +116,17 @@ namespace aspace
 
 		// read/write access handler
 		mapHandler read, write;
+
+		// Device access handlers
+		read8d_t    read8;
+		read16d_t   read16;
+		read32d_t   read32;
+		read64d_t   read64;
+
+		write8d_t   write8;
+		write16d_t  write16;
+		write32d_t  write32;
+		write64d_t  write64;
 	};
 
 	class AddressList

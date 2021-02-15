@@ -219,3 +219,56 @@ private:
 //	cstag_t name;
 	ctag_t *name = nullptr;
 };
+
+template <typename Signature>
+class DeviceDelegate : public NamedDelegate<Signature>
+{
+private:
+	using dbase = DeviceDelegate<Signature>;
+	using nbase = NamedDelegate<Signature>;
+
+protected:
+	template<class FunctionClass> using member_ptr_func =
+			typename nbase::template member_ptr_func<FunctionClass>;
+	template<class FunctionClass> using member_ptr_cfunc =
+			typename nbase::template member_ptr_cfunc<FunctionClass>;
+	template<class FunctionClass> using static_ref_func =
+			typename nbase::template static_ref_func<FunctionClass>;
+
+public:
+	DeviceDelegate() : nbase() {}
+	DeviceDelegate(const nbase &src)
+	: nbase(src), devName(src.devName) {}
+
+	template <class FunctionClass>
+	DeviceDelegate(ctag_t *name, ctag_t *devName, member_ptr_func<FunctionClass> func)
+	: nbase(name, func), devName(devName) {}
+
+	template <class FunctionClass>
+	DeviceDelegate(ctag_t *name, ctag_t *devName, member_ptr_cfunc<FunctionClass> func)
+	: nbase(name, func), devName(devName) {}
+
+	template <class FunctionClass>
+	DeviceDelegate(ctag_t *name, ctag_t *devName, static_ref_func<FunctionClass> func)
+	: nbase(name, func), devName(devName) {}
+
+	ctag_t *getName() const { return devName; }
+
+private:
+	ctag_t *devName = nullptr;
+};
+
+typedef DeviceDelegate<int ()> readDelegate;
+typedef DeviceDelegate<void (int)> writeDelegate;
+
+template <typename T>
+inline readDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
+{
+	return readDelegate(fncName, devName, func);
+}
+
+template <typename T>
+inline writeDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
+{
+	return writeDelegate(fncName, devName, func);
+}
