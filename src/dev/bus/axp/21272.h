@@ -62,7 +62,59 @@
 #define FLASH_SIZE			(1u << 21)				//   Flash ROM size (2MB space)
 #define FLASH_MASK			(FLASH_SIZE - 1)		//   Address mask
 
-class dec21272_device : public DeviceInterface
+class axp21272_pciDevice : public DeviceInterface
 {
+public:
 
+	axp21272_pciDevice() = default;
+	~axp21272_pciDevice() = default;
+
+	struct cchip_t
+	{
+		uint64_t dim[4]; // DIMx - Device interrupt mask register
+		uint64_t drir;   // DRIR - Device interrupt request register
+		uint64_t misc;   // MISC - Miscellaneous register (R/W)
+		uint64_t csc;    //
+	};
+
+	struct dchip_t
+	{
+		uint8_t  drev;
+		uint8_t  dsc;
+		uint8_t  dsc2;
+		uint8_t  str;
+	};
+
+	struct pchip_t
+	{
+		uint64_t plat;
+		uint64_t perr;
+		uint64_t perrmask;
+		uint64_t pctl;
+		uint64_t wsba[4];
+		uint64_t tba[4];
+	};
+
+	// Read access function calls
+	uint64_t ccRead(uint32_t pAddr);  // Cchip address space
+	uint64_t pcRead0(uint32_t pAddr); // Pchip PCI 0 address space
+	uint64_t pcRead1(uint32_t pAddr); // Pchip PCI 1 address space
+	uint8_t  dcRead(uint32_t pAddr);  // Dchip address space
+	uint8_t  tigRead(uint32_t pAddr); // Flash ROM, interrupts, etc.
+
+	// Write access function calls
+	void     ccWrite(uint32_t pAddr, uint64_t data);  // Cchip address space
+	void     pcWrite0(uint32_t pAddr, uint64_t data); // PCI 0 address space
+	void     pcWrite1(uint32_t pAddr, uint64_t data); // PCI 1 address space
+	void     dcWrite(uint32_t pAddr, uint8_t data);   // Dchip address space
+	void     tigWrite(uint32_t pAddr, uint8_t data);  // Flash ROM, interrupts, etc.
+
+private:
+
+	struct {
+		cchip_t  cchip;
+		dchip_t  dchip;
+		pchip_t  pchip[2];
+		uint32_t cf8addr[2];
+	} state;
 };
