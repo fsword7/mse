@@ -1,11 +1,12 @@
 /*
- * 21272.h - DEC 21272 Tsunami/Typhoon chipset package
+ * 21272.cpp - DEC Alpha - 21272 Tsunami/Typhoon chipset package
  *
  *  Created on: Dec 20, 2020
  *      Author: Tim Stark
  */
 
-#pragma once
+#include "emu/core.h"
+#include "dev/bus/axp/21272.h"
 
 // System memory map
 //
@@ -41,28 +42,3 @@
 
 // Reserved  			8172GB		804.0000.0000 - FFF.FFFF.FFFF		Bits <42:35> are don't cares if bit
 //																		<43> is asserted.
-
-// TIGBus memory map
-//
-// Flash ROM space		2MB			801.0000.0000 - 801.07FF.FFFF		addr<5:0> = 0, 21-bit addressing
-
-#define PCI0_BASE			0x800'0000'0000LL		// PCI 0 base address
-#define PCI1_BASE			0x802'0000'0000LL		// PCI 1 base address
-
-#define TIG_BASE			0x001'0000'0000LL		// TIGbus base address
-
-#define PCHIP_CSR_BASE		0x001'8000'0000LL		// Pchip CSR base address
-#define PCHIP_IACK_BASE		0x001'F800'0000LL		// Pchip PCI IACK base address
-#define PCHIP_IO_BASE		0x001'FC00'0000LL		// Pchip PCI I/O base address
-#define PCHIP_CFG_BASE		0x001'FE00'0000LL		// Pchip PCI configuration base address
-
-#define DCHIP_CSR_BASE		0x001'8000'0000LL		// Dchip CSR base address
-
-#define FLASH_ADDR			(PCI0_BASE|TIG_BASE)	// 2MB flash ROM space (801.0000.0000)
-#define FLASH_SIZE			(1u << 21)				//   Flash ROM size (2MB space)
-#define FLASH_MASK			(FLASH_SIZE - 1)		//   Address mask
-
-class dec21272_device : public DeviceInterface
-{
-
-};

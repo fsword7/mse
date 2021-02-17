@@ -1,4 +1,6 @@
 set(MSE_CPP_SRCS
+	dev/bus/axp/21272.cpp
+	dev/bus/pci/pci.cpp
 	dev/cpu/alpha/axp.cpp
 	dev/cpu/alpha/axp_tb.cpp
 	dev/cpu/alpha/axp_mem.cpp
@@ -46,6 +48,8 @@ set(MSE_CPP_SRCS
 )
 
 set(MSE_H_SRCS
+	dev/bus/axp/21272.h
+	dev/bus/pci/pci.h
 	dev/cpu/alpha/axp.h
 	dev/cpu/alpha/axp_arith.h
 	dev/cpu/alpha/axp_branch.h

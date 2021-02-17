@@ -7,9 +7,3 @@
 
 #include "emu/core.h"
 #include "dev/bus/pci/pci.h"
-
-class pci_busDevice : public Device
-{
-public:
-
-};

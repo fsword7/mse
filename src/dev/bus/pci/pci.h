@@ -8,11 +8,11 @@
 #pragma once
 
 
-class pci_BusDevice : public Device
+class pci_busDevice : public Device
 {
 public:
-	pci_BusDevice() = default;
-	~pci_BusDevice() = default;
+	pci_busDevice() = default;
+	~pci_busDevice() = default;
 
 private:
 };
