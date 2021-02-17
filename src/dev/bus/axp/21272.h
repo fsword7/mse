@@ -92,6 +92,7 @@ public:
 		uint64_t perrmask;
 		uint64_t pctl;
 		uint64_t wsba[4];
+		uint64_t wsm[4];
 		uint64_t tba[4];
 	};
 
@@ -102,12 +103,19 @@ public:
 	uint8_t  dcRead(uint32_t pAddr);  // Dchip address space
 	uint8_t  tigRead(uint32_t pAddr); // Flash ROM, interrupts, etc.
 
+	template <int pcIndex>
+	uint64_t pcRead(uint32_t pAddr); // Pchip PCI address space
+
 	// Write access function calls
 	void     ccWrite(uint32_t pAddr, uint64_t data);  // Cchip address space
 	void     pcWrite0(uint32_t pAddr, uint64_t data); // PCI 0 address space
 	void     pcWrite1(uint32_t pAddr, uint64_t data); // PCI 1 address space
 	void     dcWrite(uint32_t pAddr, uint8_t data);   // Dchip address space
-	void     tigWrite(uint32_t pAddr, uint8_t data);  // Flash ROM, interrupts, etc.
+	void     tigWrite(uint32_t pAddr, uint8_t data);  // Flash ROM, interrupts, etc
+
+	template <int pcIndex>
+	void     pcWrite(uint32_t pAddr, uint64_t data); // PCI address space
+
 
 private:
 
