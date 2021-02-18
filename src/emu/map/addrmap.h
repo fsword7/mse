@@ -58,6 +58,11 @@ namespace aspace
 		AddressEntry &ronly() { read.type = mapAccess;  return *this; }
 		AddressEntry &wonly() { write.type = mapAccess; return *this; }
 
+		// User-defined memory configuration management
+		AddressEntry &expandable()       { expFlag = true; return *this; }
+		AddressEntry &unexpandable()     { expFlag = false; return *this; }
+		AddressEntry &size(offs_t size)  { memSize = size; return *this; }
+
 		AddressEntry &mirror(offs_t bits) { addrMirror = bits; return *this; }
 
 		AddressEntry &region(ctag_t *name, offs_t off = 0);
@@ -108,7 +113,11 @@ namespace aspace
 		offs_t addrMask   = 0;   // Mask address bits
 		offs_t addrMirror = 0;   // Mirror address bits
 
-		uint8_t *memData = nullptr;
+		// Memory configuration
+		uint8_t  *memData = nullptr;
+		uint64_t  memSize = 0;
+		uint64_t  maxSize = 0;
+		bool      expFlag = false;
 
 		// Memory region parameters
 		ctag_t *regionName = nullptr;
