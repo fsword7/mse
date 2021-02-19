@@ -56,6 +56,7 @@ void tsunami_sysDevice::es40(SystemConfig &config)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = dec21264(config, tagName, 0);
+		cpu[idx]->setProcessorID(idx);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_sysDevice::es40_sbus);
 	}
 
@@ -79,6 +80,7 @@ void tsunami_sysDevice::es45(SystemConfig &config)
 	{
 		string tagName = fmt::sprintf("cpu%d", idx);
 		cpu[idx] = dec21264(config, tagName, 0);
+		cpu[idx]->setProcessorID(idx);
 		cpu[idx]->setAddressMap(AS_PROGRAM, &tsunami_sysDevice::es40_sbus);
 	}
 

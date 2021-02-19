@@ -25,5 +25,10 @@ protected:
 public:
 	virtual ~cpuDevice() = default;
 
+	void setProcessorID(int id)    { cpuid = id; }
+	int  getProcessorID() const    { return cpuid; }
+
+private:
+	int cpuid = 0;
 };
 
