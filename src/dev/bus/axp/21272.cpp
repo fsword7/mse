@@ -6,10 +6,11 @@
  */
 
 #include "emu/core.h"
+#include "emu/devproc.h"
 #include "dev/bus/axp/21272.h"
 
 // Read access function calls
-uint64_t axp21272_pciDevice::ccRead(uint32_t pAddr)
+uint64_t axp21272_pciDevice::ccRead(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -17,7 +18,7 @@ uint64_t axp21272_pciDevice::ccRead(uint32_t pAddr)
 		return state.cchip.csc;
 
 	case 0x0080: // MISC
-		return state.cchip.misc; /* | cpu->getProcessorID(); */
+		return state.cchip.misc | cpu->getProcessorID();
 
 	case 0x0100: // memory size
 		return 0;
@@ -46,7 +47,7 @@ uint64_t axp21272_pciDevice::ccRead(uint32_t pAddr)
 }
 
 template <int pcIndex>
-uint64_t axp21272_pciDevice::pcRead(uint32_t pAddr)
+uint64_t axp21272_pciDevice::pcRead(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -88,7 +89,7 @@ uint64_t axp21272_pciDevice::pcRead(uint32_t pAddr)
 	return 0;
 }
 
-uint64_t axp21272_pciDevice::pcRead0(uint32_t pAddr)
+uint64_t axp21272_pciDevice::pcRead0(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -130,7 +131,7 @@ uint64_t axp21272_pciDevice::pcRead0(uint32_t pAddr)
 	return 0;
 }
 
-uint64_t axp21272_pciDevice::pcRead1(uint32_t pAddr)
+uint64_t axp21272_pciDevice::pcRead1(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -172,7 +173,7 @@ uint64_t axp21272_pciDevice::pcRead1(uint32_t pAddr)
 	return 0;
 }
 
-uint8_t axp21272_pciDevice::dcRead(uint32_t pAddr)
+uint8_t axp21272_pciDevice::dcRead(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -191,7 +192,7 @@ uint8_t axp21272_pciDevice::dcRead(uint32_t pAddr)
 	return 0;
 }
 
-uint8_t axp21272_pciDevice::tigRead(uint32_t pAddr)
+uint8_t axp21272_pciDevice::tigRead(uint32_t pAddr, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -217,7 +218,7 @@ uint8_t axp21272_pciDevice::tigRead(uint32_t pAddr)
 }
 
 // Write access function calls
-void axp21272_pciDevice::ccWrite(uint32_t pAddr, uint64_t data)
+void axp21272_pciDevice::ccWrite(uint32_t pAddr, uint64_t data, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -239,7 +240,7 @@ void axp21272_pciDevice::ccWrite(uint32_t pAddr, uint64_t data)
 }
 
 template <int pcIndex>
-void axp21272_pciDevice::pcWrite(uint32_t pAddr, uint64_t data)
+void axp21272_pciDevice::pcWrite(uint32_t pAddr, uint64_t data, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -285,7 +286,7 @@ void axp21272_pciDevice::pcWrite(uint32_t pAddr, uint64_t data)
 	}
 }
 
-void axp21272_pciDevice::pcWrite0(uint32_t pAddr, uint64_t data)
+void axp21272_pciDevice::pcWrite0(uint32_t pAddr, uint64_t data, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -331,7 +332,7 @@ void axp21272_pciDevice::pcWrite0(uint32_t pAddr, uint64_t data)
 	}
 }
 
-void axp21272_pciDevice::pcWrite1(uint32_t pAddr, uint64_t data)
+void axp21272_pciDevice::pcWrite1(uint32_t pAddr, uint64_t data, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{
@@ -377,12 +378,12 @@ void axp21272_pciDevice::pcWrite1(uint32_t pAddr, uint64_t data)
 	}
 }
 
-void axp21272_pciDevice::dcWrite(uint32_t pAddr, uint8_t data)
+void axp21272_pciDevice::dcWrite(uint32_t pAddr, uint8_t data, cpuDevice *cpu)
 {
 	// Do nothing due to all read-only registers
 }
 
-void axp21272_pciDevice::tigWrite(uint32_t pAddr, uint8_t data)
+void axp21272_pciDevice::tigWrite(uint32_t pAddr, uint8_t data, cpuDevice *cpu)
 {
 	switch (pAddr)
 	{

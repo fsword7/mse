@@ -1,5 +1,5 @@
 /*
- * 21272.h - DEC Alpha - 21272 Tsunami/Typhoon chipset package
+ * 21272.h - DEC Alpha - 21272/21274 (Tsunami/Typhoon) chipset package
  *
  *  Created on: Dec 20, 2020
  *      Author: Tim Stark
@@ -46,6 +46,74 @@
 //
 // Flash ROM space		2MB			801.0000.0000 - 801.07FF.FFFF		addr<5:0> = 0, 21-bit addressing
 
+
+#define CCHIP_CSC		0x0000	// (RW) CSC Chip System Configuration (HRM Section 10.2.2)
+#define CCHIP_MTR		0x0040	// (RW) MTR
+#define CCHIP_MISC		0x0080	// (RW) MISC
+#define CCHIP_MPD		0x00C0	// (RW) MPD
+#define CCHIP_AAR0		0x0100	// (RW) AAR0
+#define CCHIP_AAR1		0x0140	// (RW) AAR1
+#define CCHIP_AAA2		0x0180	// (RW) AAR2
+#define CCHIP_AAR3		0x01C0	// (RW) AAR3
+#define CCHIP_DIM0		0x0200	// (RW) DIM0
+#define CCHIP_DIM1		0x0240	// (RW) DIM1
+#define CCHIP_DIR0		0x0280	// (RO) DIR0
+#define CCHIP_DIR1		0x02C0	// (RO) DIR1
+#define CCHIP_DRIR		0x0300	// (RO) DRIR
+#define CCHIP_PRBEN		0x0340	//      PRBEN
+#define CCHIP_IIC0		0x0380	// (RW) IIC0
+#define CCHIP_IIC1		0x03C0	// (RW) IIC1
+#define CCHIP_MPR0		0x0400	// (WO) MPR0
+#define CCHIP_MPR1		0x0440	// (WO) MPR1
+#define CCHIP_MPR2		0x0480	// (WO) MPR2
+#define CCHIP_MPR3		0x04C0	// (WO) MPR3
+// Reserved				0x0500	// (RW)
+#define CCHIP_TTR		0x0580	// (RW) TTR
+#define CCHIP_TDR		0x05C0	// (RW) TDR
+
+// Typhoon only
+#define CCHIP_DIM2		0x0600	// (RW) DIM2
+#define CCHIP_DIM3		0x0640	// (RW) DIM3
+#define CCHIP_DIR2		0x0680	// (RO)	DIR2
+#define CCHIP_DIR3		0x06C0	// (RO) DIR3
+#define CCHIP_IIC2		0x0700	// (RW) IIC2
+#define CCHIP_IIC3		0x0740	// (RW) IIC3
+#define CCHIP_PWR		0x0780	// (RW) PWR
+#define CCHIP_CMONCTLA	0x0C00	// (RW) CMONCTLA
+#define CCHIP_CMONCTLB	0x0C40	// (RW) CMONCTLB
+#define CCHIP_CMONCNT01	0x0C80	// (RO) CMONCNT01
+#define CCHIP_CMONCNT02	0x0CC0	// (RO) CMONCNT02
+
+#define DCHIP_DSC		0x0800	// (RO) DSC
+#define DCHIP_STR		0x0840	// (RW) STR
+#define DCHIP_DREV		0x0880	// (RW) DREV
+#define DCHIP_DSC2		0x08C0	// (RO) DSC2
+
+#define PCHIP_WSBA0		0x0000	// (RW) WSBA0
+#define PCHIP_WSBA1		0x0040	// (RW) WSBA1
+#define PCHIP_WSBA2		0x0080	// (RW) WSBA2
+#define PCHIP_WSBA3		0x00C0	// (RW) WSBA3
+#define PCHIP_WSM0		0x0100	// (RW) WSM0
+#define PCHIP_WSM1		0x0140	// (RW) WSM1
+#define PCHIP_WSM2		0x0180	// (RW) WSM2
+#define PCHIP_WSM3		0x01C0	// (RW) WSM3
+#define PCHIP_TBA0		0x0200	// (RW) TBA0
+#define PCHIP_TBA1		0x0240	// (RW) TBA1
+#define PCHIP_TBA2		0x0280	// (RW) TBA2
+#define PCHIP_TBA3		0x02C0	// (RW) TBA3
+#define PCHIP_PCTL		0x0300	// (RW) PCTL
+#define PCHIP_PLAT		0x0340	// (RW) PLAT
+#define PCHIP_RES		0x0380	// (RW) RES
+#define PCHIP_PERROR	0x03C0	// (RW) PERROR
+#define PCHIP_PERRMASK	0x0400	// (RW) PERRMASK
+#define PCHIP_PERRSET	0x0440	// (WO) PERRSET
+#define PCHIP_TLBIV		0x0480	// (WO) TLBIV
+#define PCHIP_TLBIA		0x04C0	// (WO) TLBIA
+#define PCHIP_PMONCTL	0x0500	// (RW) PMONCTL
+#define PCHIP_PMONCNT	0x0540	// (RO) PMONCNT
+#define PCHIP_SPRST		0x0800	// (WO)	SPRST
+
+
 #define PCI0_BASE			0x800'0000'0000LL		// PCI 0 base address
 #define PCI1_BASE			0x802'0000'0000LL		// PCI 1 base address
 
@@ -87,34 +155,34 @@ public:
 
 	struct pchip_t
 	{
-		uint64_t plat;
-		uint64_t perr;
-		uint64_t perrmask;
-		uint64_t pctl;
-		uint64_t wsba[4];
-		uint64_t wsm[4];
-		uint64_t tba[4];
+		uint64_t wsba[4];	// (R/W) WSBAn    - Window Space Base Address Register
+		uint64_t wsm[4];	// (R/W) WSMn     - Window Space Mask Register
+		uint64_t tba[4];	// (R/W) TBAn     - Translated Base Address Register
+		uint64_t pctl;		// (R/W) PCTL     - Pchip Control Register
+		uint64_t plat;		// (R/W) PLAT     - Pchip Master Latency Register
+		uint64_t perr;		// (R/W) PERROR   - Pchip Error Register
+		uint64_t perrmask;	// (R/W) PERRMASK - Pchip Error Mask Register
 	};
 
 	// Read access function calls
-	uint64_t ccRead(uint32_t pAddr);  // Cchip address space
-	uint64_t pcRead0(uint32_t pAddr); // Pchip PCI 0 address space
-	uint64_t pcRead1(uint32_t pAddr); // Pchip PCI 1 address space
-	uint8_t  dcRead(uint32_t pAddr);  // Dchip address space
-	uint8_t  tigRead(uint32_t pAddr); // Flash ROM, interrupts, etc.
+	uint64_t ccRead(uint32_t pAddr, cpuDevice *cpu = nullptr);  // Cchip address space
+	uint64_t pcRead0(uint32_t pAddr, cpuDevice *cpu = nullptr); // Pchip PCI 0 address space
+	uint64_t pcRead1(uint32_t pAddr, cpuDevice *cpu = nullptr); // Pchip PCI 1 address space
+	uint8_t  dcRead(uint32_t pAddr, cpuDevice *cpu = nullptr);  // Dchip address space
+	uint8_t  tigRead(uint32_t pAddr, cpuDevice *cpu = nullptr); // Flash ROM, interrupts, etc.
 
 	template <int pcIndex>
-	uint64_t pcRead(uint32_t pAddr); // Pchip PCI address space
+	uint64_t pcRead(uint32_t pAddr, cpuDevice *cpu = nullptr); // Pchip PCI address space
 
 	// Write access function calls
-	void     ccWrite(uint32_t pAddr, uint64_t data);  // Cchip address space
-	void     pcWrite0(uint32_t pAddr, uint64_t data); // PCI 0 address space
-	void     pcWrite1(uint32_t pAddr, uint64_t data); // PCI 1 address space
-	void     dcWrite(uint32_t pAddr, uint8_t data);   // Dchip address space
-	void     tigWrite(uint32_t pAddr, uint8_t data);  // Flash ROM, interrupts, etc
+	void     ccWrite(uint32_t pAddr, uint64_t data, cpuDevice *cpu = nullptr);  // Cchip address space
+	void     pcWrite0(uint32_t pAddr, uint64_t data, cpuDevice *cpu = nullptr); // PCI 0 address space
+	void     pcWrite1(uint32_t pAddr, uint64_t data, cpuDevice *cpu = nullptr); // PCI 1 address space
+	void     dcWrite(uint32_t pAddr, uint8_t data, cpuDevice *cpu = nullptr);   // Dchip address space
+	void     tigWrite(uint32_t pAddr, uint8_t data, cpuDevice *cpu = nullptr);  // Flash ROM, interrupts, etc
 
 	template <int pcIndex>
-	void     pcWrite(uint32_t pAddr, uint64_t data); // PCI address space
+	void     pcWrite(uint32_t pAddr, uint64_t data, cpuDevice *cpu = nullptr); // PCI address space
 
 
 private:
