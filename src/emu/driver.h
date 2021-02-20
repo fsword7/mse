@@ -9,6 +9,33 @@
 
 #include "emu/device.h"
 
+#define SYSTEM_NOT_WORKING   0x00000010
+
+struct SystemFlag
+{
+	enum type : uint32_t
+	{
+		// System flags
+		CLASS_MASK  = 0x0000000F,
+		ORIENT_MASK = 0x000000F0,
+		NOT_WORKING = 0x00000100,
+
+		// Orientation flags
+		FLIP_X      = 0x00000010,
+		FLIP_Y		= 0x00000020,
+		SWAP_XY		= 0x00000040,
+
+		// Machine class types
+		CLASS_OTHER    = 0,
+		CLASS_CONSOLE  = 1,
+		CLASS_COMPUTER = 2,
+		CLASS_TERMINAL = 3,
+		CLASS_PRINTER  = 4,
+	};
+};
+
+//constexpr uint32_t SYSTEM_NOT_WORKING = SystemFlag::NOT_WORKING;
+
 struct SystemDriver
 {
 	typedef void (*sysConfigure)(SystemConfig &config, Device &owner);
@@ -43,7 +70,47 @@ struct SystemDriver
 		(SYSTEM_TRAITS_NAME(Name)::fullName),		\
 		(SYSTEM_TRAITS_NAME(Name)::fileName)>
 
-#define COMP(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description) \
+
+#define CONSOLE(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description, Flags) \
+	SYSTEM_TRAITS(Name, Description) \
+	extern const SystemDriver SYSTEM_NAME(Name) = \
+	{ \
+		#Name, \
+		#Parent, \
+		#Section, \
+		SYSTEM_TYPE(Name, Class), \
+		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		Description, \
+		__FILE__ \
+	};
+
+#define COMPUTER(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description, Flags) \
+	SYSTEM_TRAITS(Name, Description) \
+	extern const SystemDriver SYSTEM_NAME(Name) = \
+	{ \
+		#Name, \
+		#Parent, \
+		#Section, \
+		SYSTEM_TYPE(Name, Class), \
+		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		Description, \
+		__FILE__ \
+	};
+
+#define TERMINAL(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description, Flags) \
+	SYSTEM_TRAITS(Name, Description) \
+	extern const SystemDriver SYSTEM_NAME(Name) = \
+	{ \
+		#Name, \
+		#Parent, \
+		#Section, \
+		SYSTEM_TYPE(Name, Class), \
+		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		Description, \
+		__FILE__ \
+	};
+
+#define PRINTER(Name, Parent, Section, Type, Class, Configure, Reset, Company, Description, Flags) \
 	SYSTEM_TRAITS(Name, Description) \
 	extern const SystemDriver SYSTEM_NAME(Name) = \
 	{ \

@@ -119,5 +119,5 @@ void tsunami_sysDevice::es45_sbus(AddressList &map)
 }
 
 
-COMP(es40,  nullptr, axp, ES40, tsunami_sysDevice, es40,  es40_init,  "DEC", "AlphaServer ES40")
-COMP(es45,  nullptr, axp, ES45, tsunami_sysDevice, es45,  es45_init,  "DEC", "AlphaServer ES45")
+COMPUTER(es40,  nullptr, axp, ES40, tsunami_sysDevice, es40,  es40_init,  "DEC", "AlphaServer ES40", SYSTEM_NOT_WORKING)
+COMPUTER(es45,  nullptr, axp, ES45, tsunami_sysDevice, es45,  es45_init,  "DEC", "AlphaServer ES45", SYSTEM_NOT_WORKING)
