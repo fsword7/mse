@@ -7,6 +7,8 @@
 
 #pragma once
 
+#define FUNC(fnc) &fnc, #fnc
+
 namespace aspace
 {
 	class AddressList;
