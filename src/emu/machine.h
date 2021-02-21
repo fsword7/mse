@@ -41,7 +41,8 @@ private:
 
 	cstag_t devName;
 
-	mutable LogFile logFile;
+	mutable fs::path ownFolder;
+	mutable LogFile  logFile;
 
 	// External bus manager
 	aspace::BusManager busManager;

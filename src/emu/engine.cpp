@@ -668,6 +668,12 @@ CommandStatus SystemEngine::cmdShowSystem(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// Usage: set <system device> folder <path name>
+CommandStatus SystemEngine::cmdSetFolder(Console *user, Machine *sys, Device *dev, args_t &args)
+{
+	return cmdOk;
+}
+
 // General command list
 SystemEngine::command_t SystemEngine::mseCommands[] =
 {
@@ -693,3 +699,10 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		nullptr
 };
 
+// General device command list
+SystemEngine::gdevCommand_t SystemEngine::mseSetDeviceCommands[] =
+{
+		{ "folder",		SystemEngine::cmdSetFolder },
+		// Terminator
+		nullptr
+};

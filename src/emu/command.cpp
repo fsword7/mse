@@ -148,7 +148,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "load",		cmdLoad,	nullptr },
 		{ "log",		cmdLog,		nullptr },
 		{ "reset",		cmdReset,	nullptr },
-		{ "set",		cmdSet,		CommandHandler::mseSetCommands },
+		{ "set",		cmdSet,		nullptr },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },
 		{ "start",		cmdStart,	nullptr },
 		{ "step",		cmdStep,	nullptr },
@@ -158,19 +158,7 @@ command_t CommandHandler::mseCommands[] =
 		nullptr
 };
 
-// General list command list
-command_t CommandHandler::mseListCommands[] =
-{
-		// Terminator
-		nullptr
-};
-
-command_t CommandHandler::mseSetCommands[] =
-{
-		// Terminator
-		nullptr
-};
-
+// General show command list
 command_t CommandHandler::mseShowCommands[] =
 {
 		{ "device",		cmdShowDevice,		nullptr },

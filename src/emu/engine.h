@@ -14,11 +14,19 @@ class SystemEngine
 {
 public:
 	using cmdFunc_t = CommandStatus (SystemEngine::*)(Console *, args_t &);
+	using cmdDevice_t = CommandStatus (SystemEngine::*)(Console *, Machine *, Device *, args_t &);
+
 	struct command_t
 	{
 		ctag_t	  *name;
 		cmdFunc_t  func;
 		command_t *options;
+	};
+
+	struct gdevCommand_t
+	{
+		ctag_t	    *name;
+		cmdDevice_t  func;
 	};
 
 	SystemEngine() = default;
@@ -58,6 +66,8 @@ public:
 	CommandStatus cmdStep(Console *user, args_t &args);
 	CommandStatus cmdStop(Console *user, args_t &args);
 
+	CommandStatus cmdSetFolder(Console *user, Machine *sys, Device *dev, args_t &args);
+
 private:
 	Console *user = nullptr;
 
@@ -72,7 +82,8 @@ private:
 	// Machines
 	static vector<Machine *> machines;
 
-	static command_t mseCommands[];
+	static command_t    mseCommands[];
+	static gdevCommand_t mseSetDeviceCommands[];
 //	static command_t mseShowCommands[];
 //	static command_t mseSetCommands[];
 };
