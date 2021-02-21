@@ -8,6 +8,7 @@
 #pragma once
 
 #include "emu/devproc.h"
+#include "dev/cpu/pdp11/pdp11_defs.h"
 
 class pdp11_cpuDevice : public cpuDevice
 {
