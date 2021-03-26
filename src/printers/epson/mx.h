@@ -32,7 +32,7 @@ public:
 	void mx_sbus(aspace::AddressList &map);
 
 private:
-	mcs48_cpuDevice *cpu = nullptr;
+	mcs8049_cpuDevice *cpu = nullptr;
 
 	mapAddressConfig config;
 };
