@@ -8,6 +8,8 @@
 #include "emu/core.h"
 #include "emu/syslist.h"
 
+#include "printers/epson/externs.h"
+
 #include "system/dec/axp/externs.h"
 #include "system/dec/vax/externs.h"
 
@@ -28,6 +30,11 @@ const SystemDriver *SystemList::sysList[] =
 
 		&SYSTEM_NAME(vs3900),
 		&SYSTEM_NAME(vs3900x),
+
+		// Epson
+		// Printer series
+		&SYSTEM_NAME(mx80),
+		&SYSTEM_NAME(mx100),
 
 		// terminator
 		nullptr

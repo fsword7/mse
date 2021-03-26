@@ -42,6 +42,7 @@ set(MSE_CPP_SRCS
 	emu/syslist.cpp
 	emu/systems.cpp
 	main/main.cpp
+	printers/epson/mx.cpp
 	system/dec/axp/alphapc.cpp
 	system/dec/axp/tsunami.cpp
 	system/dec/vax/ka650.cpp
@@ -93,6 +94,8 @@ set(MSE_H_SRCS
 	emu/templates.h
 	emu/sysconfig.h
 	emu/syslist.h
+	printers/epson/externs.h
+	printers/epson/mx.h
 	system/dec/axp/externs.h
 	system/dec/axp/alphapc.h
 	system/dec/axp/tsunami.h
