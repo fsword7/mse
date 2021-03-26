@@ -21,6 +21,7 @@ set(MSE_CPP_SRCS
 	dev/cpu/mcs48/execute.cpp
 	dev/cpu/mcs48/load.cpp
 	dev/cpu/mcs48/mcs48.cpp
+	dev/cpu/mcs48/opcodes.cpp
 	dev/cpu/pdp10/pdp10.cpp
 	dev/cpu/pdp11/pdp11.cpp
 	dev/cpu/vax/vax.cpp

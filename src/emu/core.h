@@ -44,6 +44,7 @@ using offs_t = uint64_t;
 
 typedef const char tag_t;
 typedef const char ctag_t;
+typedef const char cchar_t;
 typedef string stag_t;
 typedef const string cstag_t;
 

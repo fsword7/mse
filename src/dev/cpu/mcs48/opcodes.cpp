@@ -5,22 +5,13 @@
  *      Author: Tim Stark
  */
 
+#include "emu/core.h"
+#include "dev/cpu/mcs48/mcs48.h"
+
 #define INST(opName, opReg, opCode, opMask, cycle) \
-	{ opName, opReg, opCode, opMask, cytcle }
+	{ opName, opReg, opCode, opMask, cycle }
 
-typedef unsigned char uint8_t;
-typedef const char cchar_t;
-
-struct mcs48op_t
-{
-	cchar_t   *opName;
-	cchar_t   *opReg;
-	uint8_t    opCode;
-	uint8_t    opMask;
-	const int  cycle;
-};
-
-mcs48op_t mcs48_opTable[] =
+mcs48op_t mcs48_cpuDevice::opTable[] =
 {
 	INST("ADD",	  "A,R%d",     0x68, 0x07, 1),
 	INST("ADD",   "A,@R%d",    0x60, 0x01, 1),
@@ -122,5 +113,8 @@ mcs48op_t mcs48_opTable[] =
 	INST("XCHD",  "A,@R%d",    0x30, 0x01, 1),
 	INST("XRL",   "A,R%d",     0xD8, 0x07, 1),
 	INST("XRL",   "A,@R%d",    0xD0, 0x01, 1),
-	INST("XRL",   "A,#%02X",   0xD3, 0x00, 2)
+	INST("XRL",   "A,#%02X",   0xD3, 0x00, 2),
+
+	// Null terminator
+	nullptr
 };

@@ -111,56 +111,12 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 
 void mcs48_cpuDevice::initOpcodeTable()
 {
+	// Clear all opcode table
+	for (int idx = 0; idx < 256; idx++)
+		opCodes[idx] = nullptr;
 
-//	uint32_t opFlags;
-//	int opCode, fnCode;
-//
-//	// Clear all opcode tables
-//	for (int idx = 0; idx < 64; idx++)
-//		axpCodes[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes10[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes11[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes12[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes13[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes14[idx] = nullptr;
-//	for (int idx = 0; idx < 2048; idx++)
-//		axpCodes15[idx] = nullptr;
-//	for (int idx = 0; idx < 2048; idx++)
-//		axpCodes16[idx] = nullptr;
-//	for (int idx = 0; idx < 2048; idx++)
-//		axpCodes17[idx] = nullptr;
-//	for (int idx = 0; idx < 256; idx++)
-//		axpCodes18[idx] = nullptr;
-//	for (int idx = 0; idx < 4; idx++)
-//		axpCodes1A[idx] = nullptr;
-//	for (int idx = 0; idx < 128; idx++)
-//		axpCodes1C[idx] = nullptr;
-//
-//	for (int idx = 0; axp_opCodes[idx].opName; idx++)
-//	{
-//		opFlags = axp_opCodes[idx].opFlags;
-//		opCode  = axp_opCodes[idx].opCode;
-//		fnCode  = axp_opCodes[idx].fnCode;
-//
-//		switch (opCode)
-//		{
-//		case 0x10: axpCodes10[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x11: axpCodes11[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x12: axpCodes12[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x13: axpCodes13[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x14: axpCodes14[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x15: axpCodes15[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x16: axpCodes16[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x17: axpCodes17[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x18: axpCodes18[fnCode >> 8] = &axp_opCodes[idx]; break;
-//		case 0x1A: axpCodes1A[fnCode] = &axp_opCodes[idx]; break;
-//		case 0x1C: axpCodes1C[fnCode] = &axp_opCodes[idx]; break;
-//		default:   axpCodes[opCode]   = &axp_opCodes[idx]; break;
-//		}
-//	}
+	for (int idx = 0; opTable[idx].opName != nullptr; idx++)
+	{
+		fmt::printf("Opcode: %s\n", opTable[idx].opName);
+	}
 }

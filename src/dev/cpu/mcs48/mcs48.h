@@ -9,6 +9,15 @@
 
 #include "emu/devproc.h"
 
+struct mcs48op_t
+{
+	cchar_t   *opName;
+	cchar_t   *opReg;
+	uint8_t    opCode;
+	uint8_t    opMask;
+	const int  cycle;
+};
+
 class mcs48_cpuDevice : public cpuDevice
 {
 public:
@@ -43,6 +52,10 @@ protected:
 
 	mapAddressSpace *mapProgram = nullptr;
 	mapAddressSpace *mapData = nullptr;
+
+	mcs48op_t *opCodes[256];
+
+	static mcs48op_t opTable[];
 };
 
 
