@@ -17,6 +17,9 @@ set(MSE_CPP_SRCS
 	dev/cpu/alpha/load.cpp
 	dev/cpu/alpha/opcodes.cpp
 	dev/cpu/m6500/m6500.cpp
+	dev/cpu/mcs48/debug.cpp
+	dev/cpu/mcs48/execute.cpp
+	dev/cpu/mcs48/load.cpp
 	dev/cpu/mcs48/mcs48.cpp
 	dev/cpu/pdp10/pdp10.cpp
 	dev/cpu/pdp11/pdp11.cpp
