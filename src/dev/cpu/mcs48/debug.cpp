@@ -24,89 +24,75 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 	using namespace aspace;
 
 	AddressSpace *space = getAddressSpace(AS_PROGRAM);
-	uint32_t opWord, opc, fnc;
-	uint32_t mdpAddr;
-	int rb;
-	string line, oprLine;
+	uint8_t  opCode, opMask;
+	uint16_t reg;
+	uint16_t addr;
+	uint16_t sAddr = vAddr;
+	string line, opcName, oprLine = "";
 
-//	opcAlpha *opCode;
-//
-//	opWord = space->read32(vAddr);
-//	opc = OP_GETOP(opWord);
-//
-//	switch (opc)
-//	{
-//	case 0x10: opCode = axpCodes10[OP_GETFNC(opWord) & 0x7F];  break;
-//	case 0x11: opCode = axpCodes11[OP_GETFNC(opWord) & 0x7F];  break;
-//	case 0x12: opCode = axpCodes12[OP_GETFNC(opWord) & 0x7F];  break;
-//	case 0x13: opCode = axpCodes13[OP_GETFNC(opWord) & 0x7F];  break;
-//	case 0x14: opCode = axpCodes14[OP_GETFNC(opWord) & 0x7F];  break;
-//	case 0x15: opCode = axpCodes15[OP_GETFNC(opWord) & 0x7FF]; break;
-//	case 0x16: opCode = axpCodes16[OP_GETFNC(opWord) & 0x7FF]; break;
-//	case 0x17: opCode = axpCodes17[OP_GETFNC(opWord) & 0x7FF]; break;
-//	case 0x18: opCode = axpCodes18[(opWord >> 8) & 0xFF];      break;
-//	case 0x1A: opCode = axpCodes1A[OP_GETJMP(opWord)];         break;
-//	case 0x1C: opCode = axpCodes1C[OP_GETFNC(opWord) & 0x7F];  break;
-//	default:   opCode = axpCodes[opc]; break;
-//	}
-//
-//	line = fmt::sprintf("%s %08X  ", getStringAddress(vAddr), opWord);
-//
-//	if (opCode == nullptr) {
-//		line += fmt::sprintf("<Unknown opcode %02X>", opc);
-//		cout << line << endl;
-//		return 4;
-//	}
-//	line += fmt::sprintf("%-10s", opCode->opName);
-//	uint32_t opFlags = opCode->opFlags;
-//
-//	if (opFlags & OPR_RA)
-//		oprLine += fmt::sprintf("r%d", OP_GETRA(opWord));
-//
-//	if (opFlags & OPR_BDP)
-//	{
-//		if (oprLine.size() > 0)
-//			oprLine += ",";
-//		oprLine += fmt::sprintf("%llX", vAddr + (OP_GETBDP(opWord) << 2) + 4);
-//	}
-//	else if (opFlags & OPR_MDP)
-//	{
-//		if (oprLine.size() > 0)
-//			oprLine += ",";
-//		mdpAddr = OP_GETMDP(opWord) & 0xFFFF;
-//		if ((rb = OP_GETRB(opWord)) < REG_ZERO)
-//			oprLine += fmt::sprintf("%04X(r%d)", mdpAddr, rb);
-//		else
-//			oprLine += fmt::sprintf("%04X", mdpAddr);
-//	}
-//	else if (opFlags & OPR_RB)
-//	{
-//		rb = OP_GETRB(opWord) & 0x1F;
-//		if (opFlags & OPR_IDX)
-//			oprLine += fmt::sprintf("(r%d)", rb);
-//		else
-//		{
-//			if (oprLine.size() > 0)
-//				oprLine += ",";
-//			if ((opFlags & OPR_LIT) && (opWord & OPC_LIT))
-//				oprLine += fmt::sprintf("#%02X", OP_GETLIT(opWord));
-//			else
-//				oprLine += fmt::sprintf("r%d", rb);
-//		}
-//	}
-//
-//	if (opFlags & OPR_RC)
-//	{
-//		if (oprLine.size() > 0)
-//			oprLine += ',';
-//		oprLine += fmt::sprintf("r%d", OP_GETRC(opWord) & 0x1F);
-//	}
-//
-//	fmt::printf("%s %s\n", line, oprLine);
-//
-//	// advance next PC address
-//	return 4;
-	return 0;
+	opCode = space->read8(vAddr);
+	vAddr = (vAddr + 1) & pcMask;
+
+	line = fmt::sprintf("%03X %02X ", sAddr, opCode);
+	if (opCodes[opCode] != nullptr)
+	{
+		opMask =  opCodes[opCode]->opMask;
+		opcName = opCodes[opCode]->opName;
+		oprLine = opCodes[opCode]->opReg;
+		switch (opCodes[opCode]->opType)
+		{
+		case OPR_NOPE:
+			oprLine = opCodes[opCode]->opReg;
+			break;
+
+		case OPR_REG:
+			reg = opCode & opCodes[opCode]->opMask;
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg);
+			break;
+
+		case OPR_LIT:
+			addr = space->read8(vAddr);
+			vAddr = (vAddr + 1) & pcMask;
+			line += fmt::sprintf("%02X", addr & 0xFF);
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
+			break;
+
+		case OPR_REG|OPR_LIT:
+			reg = opCode & opCodes[opCode]->opMask;
+			addr = space->read8(vAddr);
+			vAddr = (vAddr + 1) & pcMask;
+			line += fmt::sprintf("%02X", addr & 0xFF);
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
+			break;
+
+		case OPR_ADDR2:
+			addr = space->read8(vAddr) | (vAddr & 0xF00);
+			vAddr = (vAddr + 1) & pcMask;
+			line += fmt::sprintf("%02X", addr & 0xFF);
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
+			break;
+
+		case OPR_REG|OPR_ADDR2:
+			reg = opCode & opCodes[opCode]->opMask;
+			addr = space->read8(vAddr) | (vAddr & 0xF00);
+			vAddr = (vAddr + 1) & pcMask;
+			line += fmt::sprintf("%02X", addr & 0xFF);
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
+			break;
+
+		case OPR_ADDR3:
+			addr = ((opCode & 0xE0) << 3) | space->read8(vAddr);
+			vAddr = (vAddr + 1) & pcMask;
+			line += fmt::sprintf("%02X", addr & 0xFF);
+			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
+		}
+	}
+	else
+		opcName = fmt::sprintf("<Unknown opcode = %02X>", opCode);
+
+	fmt::printf("%-10s %-5s %s\n", line, opcName, oprLine);
+
+	return vAddr - sAddr;
 }
 
 void mcs48_cpuDevice::initOpcodeTable()
@@ -117,6 +103,29 @@ void mcs48_cpuDevice::initOpcodeTable()
 
 	for (int idx = 0; opTable[idx].opName != nullptr; idx++)
 	{
+		uint8_t opCode = opTable[idx].opCode;
+		uint8_t opMask = opTable[idx].opMask;
+
 		fmt::printf("Opcode: %s\n", opTable[idx].opName);
+
+		if (opMask == 0x00)
+			opCodes[opCode] = &opTable[idx];
+		else if (opMask == 0xE0)
+		{
+			uint8_t bit = 0;
+			while(((opMask >> bit) & 1) == 0)
+				bit++;
+			int count = (opMask >> bit) + 1;
+			for (int opIndex = opCode; count; opIndex += (1 << bit), count--)
+			{
+				opCodes[opIndex] = &opTable[idx];
+				fmt::printf("Name: %s Opcode: %02X\n", opTable[idx].opName, opIndex);
+			}
+		}
+		else for (int opIndex = opCode; opIndex < (opCode + opMask + 1); opIndex++)
+		{
+			opCodes[opIndex] = &opTable[idx];
+			fmt::printf("Name: %s Opcode: %02X\n", opTable[idx].opName, opIndex);
+		}
 	}
 }

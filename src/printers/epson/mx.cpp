@@ -50,7 +50,7 @@ void mx_prDevice::mx80(SystemConfig &config)
 
 	setCommands(mx_Commands);
 
-	cpu = mcs8049(config, "cpu", 0);
+	cpu = i8049(config, "cpu", 0);
 	cpu->setAddressMap(AS_PROGRAM, &mx_prDevice::mx_sbus);
 
 
@@ -68,7 +68,7 @@ void mx_prDevice::mx80(SystemConfig &config)
 void mx_prDevice::mx100(SystemConfig &config)
 {
 
-	cpu = mcs8049(config, "cpu", 0);
+	cpu = i8049(config, "cpu", 0);
 	cpu->setAddressMap(AS_PROGRAM, &mx_prDevice::mx_sbus);
 
 //	cssc   = CSSC(config, "cssc", 0);

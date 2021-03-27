@@ -9,10 +9,17 @@
 
 #include "emu/devproc.h"
 
+#define OPR_NOPE    0x00
+#define OPR_REG     0x01
+#define OPR_LIT     0x02
+#define OPR_ADDR2   0x04
+#define OPR_ADDR3   0x08
+
 struct mcs48op_t
 {
 	cchar_t   *opName;
 	cchar_t   *opReg;
+	uint8_t    opType;
 	uint8_t    opCode;
 	uint8_t    opMask;
 	const int  cycle;
@@ -22,7 +29,7 @@ class mcs48_cpuDevice : public cpuDevice
 {
 public:
 	mcs48_cpuDevice(const SystemConfig &config, const DeviceType &type,
-		const string &tagName, Device *owner, uint64_t clock, int aWidth);
+		const string &tagName, Device *owner, uint64_t clock, int paWidth, int daWidth);
 	virtual ~mcs48_cpuDevice() = default;
 
 	// Virtual function calls from execution interface
@@ -40,18 +47,34 @@ public:
 
 	mapConfigList getAddressConfigList() const;
 
+	uint8_t fetchi();
+
 	// Debugging tools
 	string getStringAddress(offs_t addr);
 	int list(Console *cty, offs_t vAddr) override;
 
+	void setInternalROM(aspace::AddressList &map);
+
+	// Internal data space setup
+	void setData64(aspace::AddressList &map);
+	void setData128(aspace::AddressList &map);
+	void setData256(aspace::AddressList &map);
+
 protected:
+	uint8_t  opCode;
+	uint8_t  gReg[8]; // General registers (R0-R7)
+
+	uint16_t pcAddr;
+	uint16_t pcMask;
 
 
 	mapAddressConfig mapProgramConfig;
 	mapAddressConfig mapDataConfig;
+	mapAddressConfig mapPortConfig;
 
 	mapAddressSpace *mapProgram = nullptr;
 	mapAddressSpace *mapData = nullptr;
+	mapAddressSpace *mapPort = nullptr;
 
 	mcs48op_t *opCodes[256];
 
@@ -59,74 +82,74 @@ protected:
 };
 
 
-class mcs8035_cpuDevice : public mcs48_cpuDevice
+class i8035_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8035_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8035_cpuDevice() = default;
+	i8035_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8035_cpuDevice() = default;
 
 };
 
-class mcs8039_cpuDevice : public mcs48_cpuDevice
+class i8039_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8039_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8039_cpuDevice() = default;
+	i8039_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8039_cpuDevice() = default;
 
 };
 
-class mcs8040_cpuDevice : public mcs48_cpuDevice
+class i8040_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8040_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8040_cpuDevice() = default;
+	i8040_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8040_cpuDevice() = default;
 
 };
 
-class mcs8048_cpuDevice : public mcs48_cpuDevice
+class i8048_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8048_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8048_cpuDevice() = default;
+	i8048_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8048_cpuDevice() = default;
 
 };
 
-class mcs8049_cpuDevice : public mcs48_cpuDevice
+class i8049_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8049_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8049_cpuDevice() = default;
+	i8049_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8049_cpuDevice() = default;
 
 };
 
-class mcs8050_cpuDevice : public mcs48_cpuDevice
+class i8050_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8050_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8050_cpuDevice() = default;
+	i8050_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8050_cpuDevice() = default;
 
 };
 
-class mcs8749_cpuDevice : public mcs48_cpuDevice
+class i8749_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8749_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8749_cpuDevice() = default;
+	i8749_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8749_cpuDevice() = default;
 
 };
 
-class mcs8750_cpuDevice : public mcs48_cpuDevice
+class i8750_cpuDevice : public mcs48_cpuDevice
 {
 public:
-	mcs8750_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
-	virtual ~mcs8750_cpuDevice() = default;
+	i8750_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
+	virtual ~i8750_cpuDevice() = default;
 
 };
 
-DECLARE_DEVICE_TYPE(mcs8035, mcs8035_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8039, mcs8039_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8040, mcs8040_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8049, mcs8049_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8050, mcs8050_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8749, mcs8749_cpuDevice);
-DECLARE_DEVICE_TYPE(mcs8750, mcs8750_cpuDevice);
+DECLARE_DEVICE_TYPE(i8035, i8035_cpuDevice);
+DECLARE_DEVICE_TYPE(i8039, i8039_cpuDevice);
+DECLARE_DEVICE_TYPE(i8040, i8040_cpuDevice);
+DECLARE_DEVICE_TYPE(i8049, i8049_cpuDevice);
+DECLARE_DEVICE_TYPE(i8050, i8050_cpuDevice);
+DECLARE_DEVICE_TYPE(i8749, i8749_cpuDevice);
+DECLARE_DEVICE_TYPE(i8750, i8750_cpuDevice);

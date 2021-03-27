@@ -10,11 +10,23 @@
 
 void mcs48_cpuDevice::init()
 {
+	pcMask = 0x7FF;
+
+	mapProgram = getAddressSpace(AS_PROGRAM);
+	mapData = getAddressSpace(AS_DATA);
+//	mapPort = getAddressSpace(AS_PORT);
 }
 
 void mcs48_cpuDevice::setPCAddress(offs_t addr)
 {
 //	state.pcAddr = addr;
+}
+
+uint8_t mcs48_cpuDevice::fetchi()
+{
+	uint16_t addr = pcAddr;
+	pcAddr = ((pcAddr + 1) & 0x7FF) | (pcAddr & 0x800);
+	return mapProgram->read8(addr);
 }
 
 void mcs48_cpuDevice::step(Console *user)
@@ -57,5 +69,27 @@ void mcs48_cpuDevice::run()
 
 void mcs48_cpuDevice::execute()
 {
+	uint16_t newAddr;
 
+	// Fetch instruction from instruction stream
+	opCode = fetchi();
+
+	switch(opCode)
+	{
+	case 0x00:
+		// NOP instruction
+		// Do nothing
+		return;
+
+	case 0x14: case 0x34: case 0x54: case 0x74:
+	case 0x94: case 0xB4: case 0xD4: case 0xE4:
+		// CALL instruction
+		newAddr = ((uint16_t(opCode) << 3) & 0x700) | fetchi();
+		pcAddr  = (newAddr & 0x7FF) | (pcAddr & 0x800);
+		return;
+
+	default:
+		dbg.log("*** Unimplemented opcode = %02X\n", opCode);
+		return;
+	}
 }
