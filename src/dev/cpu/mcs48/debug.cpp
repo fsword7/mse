@@ -31,7 +31,7 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 	string line, opcName, oprLine = "";
 
 	opCode = space->read8(vAddr);
-	vAddr = (vAddr + 1) & pcMask;
+	vAddr = (vAddr + 1) & 0x7FF;
 
 	line = fmt::sprintf("%03X %02X ", sAddr, opCode);
 	if (opCodes[opCode] != nullptr)
@@ -52,7 +52,7 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 
 		case OPR_LIT:
 			addr = space->read8(vAddr);
-			vAddr = (vAddr + 1) & pcMask;
+			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
 			break;
@@ -60,14 +60,14 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 		case OPR_REG|OPR_LIT:
 			reg = opCode & opCodes[opCode]->opMask;
 			addr = space->read8(vAddr);
-			vAddr = (vAddr + 1) & pcMask;
+			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
 			break;
 
 		case OPR_ADDR2:
 			addr = space->read8(vAddr) | (vAddr & 0xF00);
-			vAddr = (vAddr + 1) & pcMask;
+			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
 			break;
@@ -75,14 +75,14 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 		case OPR_REG|OPR_ADDR2:
 			reg = opCode & opCodes[opCode]->opMask;
 			addr = space->read8(vAddr) | (vAddr & 0xF00);
-			vAddr = (vAddr + 1) & pcMask;
+			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
 			break;
 
 		case OPR_ADDR3:
 			addr = ((opCode & 0xE0) << 3) | space->read8(vAddr);
-			vAddr = (vAddr + 1) & pcMask;
+			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
 		}

@@ -15,6 +15,26 @@
 #define OPR_ADDR2   0x04
 #define OPR_ADDR3   0x08
 
+#define RREG(rn)	gReg[(rn) & 0x7]
+
+// PSW status bit definitions
+#define PSW_C		0x80	// Carry bit
+#define PSW_A		0x40
+#define PSW_F		0x20
+#define PSW_B		0x10
+
+#define STS_IBF		0x02
+#define STS_OBF		0x01
+
+// Feature mask bit definitions
+#define ARCH_MB			0x01
+#define ARCH_EXTBUS		0x02
+#define ARCH_UPI41		0x10
+#define ARCH_I802X		0x20
+#define ARCH_I8048		(ARCH_MB|ARCH_EXTBUS)
+
+#define chargeCycles(cycle)
+
 struct mcs48op_t
 {
 	cchar_t   *opName;
@@ -48,25 +68,38 @@ public:
 	mapConfigList getAddressConfigList() const;
 
 	uint8_t fetchi();
+	void    updateRegisters();
+
+	void    executeJcc(bool flag);
 
 	// Debugging tools
 	string getStringAddress(offs_t addr);
 	int list(Console *cty, offs_t vAddr) override;
 
-	void setInternalROM(aspace::AddressList &map);
+	// External program space access setup
+	void setProgram1K(aspace::AddressList &map);
+	void setProgram2K(aspace::AddressList &map);
+	void setProgram4K(aspace::AddressList &map);
 
-	// Internal data space setup
+	// Internal data space access setup
 	void setData64(aspace::AddressList &map);
 	void setData128(aspace::AddressList &map);
 	void setData256(aspace::AddressList &map);
 
 protected:
-	uint8_t  opCode;
-	uint8_t  gReg[8]; // General registers (R0-R7)
+	uint8_t  opCode;			// Current instruction in progress
+	uint8_t *gReg = nullptr;	// registers (pointer to data memory)
+	uint8_t  aReg;				// Accumulator register
+	uint8_t  pReg[3];			// I/O port registers
+	uint8_t  pswReg;			// Processor Status Word register
+	bool     f1Flag;			// F1 flag
 
-	uint16_t pcAddr;
-	uint16_t pcMask;
+	uint16_t a11Addr;			// 11-bit address enable    (0x000 or 0x800)
+	uint16_t pcAddr;			// Program counter register (0x000 - 0x7FF)
 
+	bool		eaFlag;			// External ROM access enable
+
+	uint8_t *data = nullptr;	// Internal data memory access
 
 	mapAddressConfig mapProgramConfig;
 	mapAddressConfig mapDataConfig;

@@ -19,7 +19,8 @@ mcs48_cpuDevice::mcs48_cpuDevice(const SystemConfig &config, const DeviceType &t
 	const string &tagName, Device *owner, uint64_t clock, int paWidth, int daWidth)
 : cpuDevice(config, type, tagName, owner, clock),
   mapProgramConfig("program", LittleEndian, 8, 16, 8, paWidth, 16, 0),
-  mapDataConfig("data", LittleEndian, 8, 16, 8, daWidth, 16, 0)
+  mapDataConfig("data", LittleEndian, 8, 16, 8, daWidth, 16, 0),
+  mapPortConfig("port", LittleEndian, 8, 16, 8, 8, 16, 0)
 {
 	// Initialize opcode table for disassembler
 	initOpcodeTable();
@@ -30,13 +31,23 @@ mapConfigList mcs48_cpuDevice::getAddressConfigList() const
 	return mapConfigList {
 		{ aspace::asProgram, &mapProgramConfig },
 		{ aspace::asData,    &mapDataConfig    },
-//		{ aspace::asPort,    &mapPortConfig    }
+		{ aspace::asPort,    &mapPortConfig    }
 	};
 }
 
-void mcs48_cpuDevice::setInternalROM(AddressList &map)
+void mcs48_cpuDevice::setProgram1K(AddressList &map)
 {
-	map(0x000, 0x7FF).rom();
+	map(0x000, 0x3FF).rom().region("main");
+}
+
+void mcs48_cpuDevice::setProgram2K(AddressList &map)
+{
+	map(0x000, 0x7FF).rom().region("main");
+}
+
+void mcs48_cpuDevice::setProgram4K(AddressList &map)
+{
+	map(0x000, 0xFFF).rom().region("main");
 }
 
 void mcs48_cpuDevice::setData64(AddressList &map)
