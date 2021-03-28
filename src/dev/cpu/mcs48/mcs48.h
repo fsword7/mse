@@ -18,10 +18,18 @@
 #define RREG(rn)	gReg[(rn) & 0x7]
 
 // PSW status bit definitions
-#define PSW_C		0x80	// Carry bit
-#define PSW_A		0x40
-#define PSW_F		0x20
-#define PSW_B		0x10
+//
+// +--+--+--+--+--+--+--+--+
+// |CY|AC|F0|RB| 1|  Stack |
+// +--+--+--+--+--+--+--+--+
+//  07 06 05 04 03 02 01 00
+
+#define PSW_CY		0x80	// Carry bit
+#define PSW_AC		0x40	// Auxiliary carry bit
+#define PSW_F0		0x20	// Flag 0 bit
+#define PSW_RB		0x10	// Register bank
+#define PSW_MBO		0x08	// MBO (must be one) bit
+#define PSW_STK		0x07	// Stack pointer
 
 #define STS_IBF		0x02
 #define STS_OBF		0x01
@@ -34,6 +42,26 @@
 #define ARCH_I8048		(ARCH_MB|ARCH_EXTBUS)
 
 #define chargeCycles(cycle)
+
+// internal program access
+#define readp(a)		mapProgram->read8(a)
+#define writep(a, v)	mapProgram->write8(a, v)
+
+// internal data access
+//#define readd(a)		mapData->read(a)
+//#define writed(a, v)	mapData->write(a, v)
+//#define accessd(a)		mapData->access(a)
+#define readd(a)		idata[a]
+#define writed(a, v)	idata[a] = v
+#define accessd(a)		&idata[a]
+
+// external bus access
+#define readb()
+#define writeb(v)
+
+// external I/O port access
+#define readio(a)
+#define writeio(a, v)
 
 struct mcs48op_t
 {
@@ -69,7 +97,9 @@ public:
 
 	uint8_t fetchi();
 	void    updateRegisters();
-
+	void    push_pc_psw();
+	void    pull_pc_psw();
+	void    pull_pc();
 	void    executeJcc(bool flag);
 
 	// Debugging tools
@@ -94,12 +124,17 @@ protected:
 	uint8_t  pswReg;			// Processor Status Word register
 	bool     f1Flag;			// F1 flag
 
+	uint8_t  tReg = 0;          // Timer register
+
 	uint16_t a11Addr;			// 11-bit address enable    (0x000 or 0x800)
 	uint16_t pcAddr;			// Program counter register (0x000 - 0x7FF)
 
-	bool		eaFlag;			// External ROM access enable
+	bool     eaFlag = true;			// External ROM access enable
+	bool	 irqFlag = false;
+	bool     irqInProgress = false; // IRQ in progress
 
-	uint8_t *data = nullptr;	// Internal data memory access
+//	required_shared_ptr<uint8_t> idata;
+	uint8_t idata[256]; // internal data memory (temporary - to be removed later)
 
 	mapAddressConfig mapProgramConfig;
 	mapAddressConfig mapDataConfig;
