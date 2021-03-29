@@ -24,6 +24,11 @@ set(MSE_CPP_SRCS
 	dev/cpu/mcs48/opcodes.cpp
 	dev/cpu/pdp10/pdp10.cpp
 	dev/cpu/pdp11/pdp11.cpp
+	dev/cpu/upd7810/debug.cpp
+	dev/cpu/upd7810/execute.cpp
+	dev/cpu/upd7810/load.cpp
+	dev/cpu/upd7810/upd7810.cpp
+#	dev/cpu/upd7810/opcodes.cpp
 	dev/cpu/vax/vax.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
@@ -76,6 +81,7 @@ set(MSE_H_SRCS
 	dev/cpu/mcs48/mcs48.h
 	dev/cpu/pdp10/pdp10.h
 	dev/cpu/pdp11/pdp11.h
+	dev/cpu/upd7810/upd7810.h
 	dev/cpu/vax/vax.h
 	emu/map/addrmap.h
 	emu/map/he.h
