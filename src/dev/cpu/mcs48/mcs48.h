@@ -101,6 +101,8 @@ public:
 	void    pull_pc_psw();
 	void    pull_pc();
 	void    executeJcc(bool flag);
+	void opADD(uint8_t data);
+	void opADDC(uint8_t data);
 
 	// Debugging tools
 	string getStringAddress(offs_t addr);
@@ -130,6 +132,10 @@ protected:
 	uint16_t pcAddr;			// Program counter register (0x000 - 0x7FF)
 
 	bool     eaFlag = true;			// External ROM access enable
+
+	bool     xirqEnable = false;    // External interrupt enable
+	bool     tirqEnable = false;    // Timer interrupt enable
+
 	bool	 irqFlag = false;
 	bool     irqInProgress = false; // IRQ in progress
 

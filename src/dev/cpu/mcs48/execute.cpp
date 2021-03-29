@@ -82,6 +82,36 @@ void mcs48_cpuDevice::executeJcc(bool flag)
 		pcAddr = pch | offset;
 }
 
+void mcs48_cpuDevice::opADD(uint8_t val)
+{
+	uint16_t tmp8 = aReg + val;
+	uint16_t tmp4 = (aReg & 0x0F) + (val & 0x0F);
+
+	// Update condition status
+	pswReg &= ~(PSW_CY|PSW_AC);
+	pswReg |= (tmp4 << 2) & PSW_AC;
+	pswReg |= (tmp8 >> 1) & PSW_CY;
+
+	// Update A register as result
+	aReg = tmp8;
+}
+
+void mcs48_cpuDevice::opADDC(uint8_t val)
+{
+	uint16_t carry = (pswReg & PSW_CY) >> 7;
+	uint16_t tmp8 = aReg + val + carry;
+	uint16_t tmp4 = (aReg & 0x0F) + (val & 0x0F) + carry;
+
+	// Update condition status
+	pswReg &= ~(PSW_CY|PSW_AC);
+	pswReg |= (tmp4 << 2) & PSW_AC;
+	pswReg |= (tmp8 >> 1) & PSW_CY;
+
+	// Update A register as result
+	aReg = tmp8;
+
+}
+
 void mcs48_cpuDevice::step(Console *user)
 {
 //	// Save current log flags and
@@ -130,6 +160,44 @@ void mcs48_cpuDevice::execute()
 
 	switch(opCode)
 	{
+	case 0x68: case 0x69: case 0x6A: case 0x6B:
+	case 0x6C: case 0x6D: case 0x6E: case 0x6F:
+		// ADD A,Rn instruction
+		chargeCycles(1);
+		opADD(RREG(opCode));
+		return;
+
+	case 0x60: case 0x61:
+		// ADD A,@Rn instruction
+		chargeCycles(1);
+		opADD(readd(RREG(opCode)));
+		return;
+
+	case 0x03:
+		// ADD A,#n instruction
+		chargeCycles(2);
+		opADD(fetchi());
+		return;
+
+	case 0x78: case 0x79: case 0x7A: case 0x7B:
+	case 0x7C: case 0x7D: case 0x7E: case 0x7F:
+		// ADDC A,Rn instruction
+		chargeCycles(1);
+		opADDC(RREG(opCode));
+		return;
+
+	case 0x70: case 0x71:
+		// ADDC A,@Rn instruction
+		chargeCycles(1);
+		opADDC(readd(RREG(opCode)));
+		return;
+
+	case 0x13:
+		// ADDC A,#n instruction
+		chargeCycles(2);
+		opADDC(fetchi());
+		return;
+
 	case 0x58: case 0x59: case 0x5A: case 0x5B:
 	case 0x5C: case 0x5D: case 0x5E: case 0x5F:
 		// ANL A,Rn instruction
@@ -206,6 +274,22 @@ void mcs48_cpuDevice::execute()
 		f1Flag = !f1Flag;
 		return;
 
+	case 0x57:
+		// DA instruction
+		chargeCycles(1);
+		if (((aReg & 0x0F) > 0x09) || (pswReg & PSW_AC))
+		{
+			if (aReg > 0xF9)
+				pswReg |= PSW_CY;
+			aReg += 0x06;
+		}
+		if (((aReg & 0xF0) > 0x90) || (pswReg & PSW_CY))
+		{
+			aReg += 0x60;
+			pswReg |= PSW_CY;
+		}
+		return;
+
 	case 0x07:
 		// DEC A instruction
 		chargeCycles(1);
@@ -219,11 +303,51 @@ void mcs48_cpuDevice::execute()
 		RREG(opCode)--;
 		return;
 
+	case 0x15:
+		// DIS I instruction
+		chargeCycles(1);
+		xirqEnable = false;
+		return;
+
+	case 0x35:
+		// DIS TCNTI instruction
+		tirqEnable = false;
+		return;
+
 	case 0xE8: case 0xE9: case 0xEA: case 0xEB:
 	case 0xEC: case 0xED: case 0xEE: case 0xEF:
 		// DJNZ Rn,address instruction
 		chargeCycles(2);
 		executeJcc(--RREG(opCode) != 0);
+		return;
+
+	case 0x05:
+		// EN I instruction
+		chargeCycles(1);
+		xirqEnable = true;
+		return;
+
+	case 0x25:
+		// EN TCNTI instruction
+		tirqEnable = true;
+		return;
+
+	case 0x08:
+		// INS A,BUS instruction
+		chargeCycles(2);
+//		aReg = readb();
+		return;
+
+	case 0x09:
+		// IN A,P1 instruction
+		chargeCycles(2);
+//		aReg = readio(1);
+		return;
+
+	case 0x0A:
+		// IN A,P2 instruction
+		chargeCycles(2);
+//		aReg = readio(2);
 		return;
 
 	case 0x17:
@@ -411,6 +535,29 @@ void mcs48_cpuDevice::execute()
 		aReg |= fetchi();
 		return;
 
+	case 0x02:
+		// OUTL BUS,A instruction
+		chargeCycles(2);
+		writeb(aReg);
+		return;
+
+	case 0x39:
+		// OUTL P1,A instruction
+		chargeCycles(2);
+		writeio(1, aReg);
+		return;
+
+	case 0x3A:
+		// OUTL P2,A instruction
+		chargeCycles(2);
+		writeio(2, aReg);
+		return;
+
+	case 0x80:
+		// RAD instruction
+		chargeCycles(2);
+		return;
+
 	case 0x83:
 		// RET instruction
 		chargeCycles(2);
@@ -422,6 +569,34 @@ void mcs48_cpuDevice::execute()
 		chargeCycles(2);
 		irqInProgress = false;
 		pull_pc_psw();
+		return;
+
+	case 0xE7:
+		// RL A instruction
+		chargeCycles(1);
+		aReg = (aReg << 1) | (aReg >> 7);
+		return;
+
+	case 0xF7:
+		// RLC A instruction
+		chargeCycles(1);
+		tmp = aReg & PSW_CY;
+		aReg = (aReg << 1) | (pswReg >> 7);
+		pswReg = (pswReg & ~PSW_CY) | tmp;
+		return;
+
+	case 0x77:
+		// RR A instruction
+		chargeCycles(1);
+		aReg = (aReg >> 1) | (aReg << 7);
+		return;
+
+	case 0x67:
+		// RRC A instruction
+		chargeCycles(1);
+		tmp = (aReg << 7) & PSW_CY;
+		aReg = (aReg >> 1) | (pswReg & PSW_CY);
+		pswReg = (pswReg & ~PSW_CY) | tmp;
 		return;
 
 	case 0xE5:
