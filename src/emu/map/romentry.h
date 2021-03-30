@@ -52,6 +52,10 @@
 
 #define ROM_END		{ nullptr, nullptr, ROM_TYPE_END }
 
+#define ROM_GETFLAGS(entry)			((entry)->flags)
+
+#define ROMENTRY_ISREGION(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_REGION)
+#define ROMENTRY_ISEND(entry)		((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_END)
 
 struct romEntry_t
 {
@@ -59,3 +63,5 @@ struct romEntry_t
 	ctag_t		*hash;		// Hash checksum string
 	uint32_t	flags;		// ROM entry flags
 };
+
+typedef const romEntry_t cromEntry_t;

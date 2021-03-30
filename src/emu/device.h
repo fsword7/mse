@@ -162,6 +162,7 @@ class DeviceInterface;
 class diExternalBus;
 class diExecute;
 class diDebug;
+struct romEntry_t;
 
 class Device
 : public BindedDelegate,
@@ -198,6 +199,9 @@ public:
 	inline bool isStarted() const { return flagStarted; }
 	inline Device *getOwner() const { return ownDevice; }
 
+	// Memory management function calls
+	const romEntry_t *mapGetROMEntries();
+
 	// local device function calls
 	void configure(SystemConfig &config);
 	void start();
@@ -210,6 +214,7 @@ public:
 	virtual void devStart() {}
 	virtual void devStop() {}
 	virtual void devReset() {}
+	virtual romEntry_t *devGetROMEntries() { return nullptr; }
 
 	void completeConfig(); // complete final configuration
 
@@ -225,6 +230,8 @@ private:
 	bool flagStarted = false;
 
 	cstag_t devName;
+
+	const romEntry_t *romEntries = nullptr;
 
 	// device interface section
 	ifList_t ifList;
@@ -273,6 +280,7 @@ class DeviceIterator
 {
 public:
 	DeviceIterator(Device &dev) : devRoot(dev) {}
+//	DeviceIterator(Machine &system) : devRoot(machine.getSystemDevice()) {}
 
 	class iterator
 	{

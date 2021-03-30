@@ -11,6 +11,8 @@
 #include "emu/sysconfig.h"
 #include "emu/devsys.h"
 
+class romLoader;
+
 class Machine
 {
 public:
@@ -43,6 +45,8 @@ private:
 
 	mutable fs::path ownFolder;
 	mutable LogFile  logFile;
+
+	romLoader *loader = nullptr;
 
 	// External bus manager
 	aspace::BusManager busManager;

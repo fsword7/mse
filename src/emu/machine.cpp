@@ -8,6 +8,7 @@
 #include "emu/core.h"
 #include "emu/dibus.h"
 #include "emu/map/map.h"
+#include "emu/romloader.h"
 #include "emu/machine.h"
 
 Machine::Machine(const SystemConfig &config, cstag_t &tagName)
@@ -54,6 +55,9 @@ void Machine::start(Console *cty)
 //		dev.setMachine(this);
 //	for (Device &dev : DeviceIterator(*sysDevice))
 //		dev.completeConfig();
+
+	// Iniitalize ROM entries
+	loader = new romLoader(this, *cty);
 
 	busManager.init(cty);
 }

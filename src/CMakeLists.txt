@@ -47,6 +47,7 @@ set(MSE_CPP_SRCS
 	emu/diexec.cpp
 	emu/engine.cpp
 	emu/machine.cpp
+	emu/romloader.cpp
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
@@ -101,6 +102,7 @@ set(MSE_H_SRCS
 	emu/engine.h
 	emu/list.h
 	emu/machine.h
+	emu/romloader.h
 	emu/templates.h
 	emu/sysconfig.h
 	emu/syslist.h

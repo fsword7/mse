@@ -8,6 +8,7 @@
 #include "emu/core.h"
 #include "emu/didebug.h"
 #include "emu/machine.h"
+#include "emu/map/romentry.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name, Device *owner, uint64_t clock)
 : sysConfig(config), type(type), devName(name), ownDevice(owner)
@@ -69,6 +70,20 @@ void Device::completeConfig()
 //		cout << flush;
 		iface->completeConfig();
 	}
+}
+
+cromEntry_t *Device::mapGetROMEntries()
+{
+	static constexpr romEntry_t romEmpty[] = { ROM_END };
+
+	if (romEntries == nullptr)
+	{
+		romEntries = devGetROMEntries();
+		if (romEntries == nullptr)
+			romEntries = romEmpty;
+	}
+
+	return romEntries;
 }
 
 // ************************************************
