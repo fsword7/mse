@@ -99,6 +99,20 @@ void mx_prDevice::mx_sbus(AddressList &map)
 	map(0x000, 0x7FF).ram().region("main"); // 2048 bytes
 }
 
+static const romEntry_t ROM_NAME(mx80)[] =
+{
+	ROM_REGION("mx80fw", 0x800, 0),
+//	ROM_LOAD("graftrax1.rom", 0x000, 0x7FF, 0, nullptr),
+//	ROM_LOAD("graftrax2.rom", 0x000, 0x7FF, 0, nullptr),
+	ROM_LOAD("graftrax3.rom", 0x000, 0x7FF, 0, nullptr),
+	ROM_END
+};
+
+static const romEntry_t ROM_NAME(mx100)[] =
+{
+	ROM_END
+};
+
 PRINTER(mx80,   nullptr, epson, MX80,  mx_prDevice, mx80,  mx80_init,  "Epson", "MX80", SYSTEM_NOT_WORKING)
 PRINTER(mx100,  nullptr, epson, MX100, mx_prDevice, mx100, mx100_init, "Epson", "MX100", SYSTEM_NOT_WORKING)
 

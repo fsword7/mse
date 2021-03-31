@@ -162,7 +162,6 @@ class DeviceInterface;
 class diExternalBus;
 class diExecute;
 class diDebug;
-struct romEntry_t;
 
 class Device
 : public BindedDelegate,
@@ -214,7 +213,7 @@ public:
 	virtual void devStart() {}
 	virtual void devStop() {}
 	virtual void devReset() {}
-	virtual romEntry_t *devGetROMEntries() { return nullptr; }
+	virtual cromEntry_t *devGetROMEntries() { return nullptr; }
 
 	void completeConfig(); // complete final configuration
 

@@ -45,6 +45,7 @@ struct SystemDriver
 	const char			*section;
 	const DeviceType	&type;
 	sysConfigure	     configure;
+	const romEntry_t	*romEntries;
 
 	const char   *description;
 	const char   *source;		// source file name
@@ -80,6 +81,7 @@ struct SystemDriver
 		#Section, \
 		SYSTEM_TYPE(Name, Class), \
 		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		ROM_NAME(Name), \
 		Description, \
 		__FILE__ \
 	};
@@ -93,6 +95,7 @@ struct SystemDriver
 		#Section, \
 		SYSTEM_TYPE(Name, Class), \
 		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		ROM_NAME(Name), \
 		Description, \
 		__FILE__ \
 	};
@@ -106,6 +109,7 @@ struct SystemDriver
 		#Section, \
 		SYSTEM_TYPE(Name, Class), \
 		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		ROM_NAME(Name), \
 		Description, \
 		__FILE__ \
 	};
@@ -119,6 +123,7 @@ struct SystemDriver
 		#Section, \
 		SYSTEM_TYPE(Name, Class), \
 		[] (SystemConfig &config, Device &owner) { static_cast<Class &>(owner).Configure(config); }, \
+		ROM_NAME(Name), \
 		Description, \
 		__FILE__ \
 	};

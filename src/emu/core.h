@@ -51,6 +51,7 @@ typedef const string cstag_t;
 // Common include packages
 #include "emu/debug.h"
 #include "emu/console.h"
+#include "emu/map/romentry.h"
 #include "emu/sysconfig.h"
 #include "emu/device.h"
 #include "emu/map/map.h"

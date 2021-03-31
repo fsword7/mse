@@ -18,6 +18,7 @@ public:
 
 	// Virtual device function calls
 	void devConfigure(SystemConfig &config);
+	const romEntry_t *devGetROMEntries() { return driver.romEntries; }
 
 private:
 	const SystemDriver &driver;

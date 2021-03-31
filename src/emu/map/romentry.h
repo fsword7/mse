@@ -5,6 +5,8 @@
  *      Author: Tim Stark
  */
 
+#pragma once
+
 // Per-region entry flags
 #define ROM_TYPE_MASK		0x0000000F	// Entry type
 #define ROM_BITWIDTH		0x00000030  // Bit width (0=8-bit, 1=16-but, 2=32-bit, 3=64-bit)
@@ -49,19 +51,37 @@
 #define ROM_ERASE00			SET_FILL(0x00)
 #define ROM_ERASEFF			SET_FILL(0xFF)
 
+#define ROM_REGION(name, length, flags) \
+	{ name, nullptr, ROM_TYPE_REGION | (flags), 0, length, 0 }
 
-#define ROM_END		{ nullptr, nullptr, ROM_TYPE_END }
+#define ROM_LOAD(name, offset, length, flags, hash) \
+	{ name, hash, ROM_TYPE_IMAGE | (flags), offset, length, 0 }
+
+#define ROM_NAME(name)	rom_##name
+#define ROM_END			{ nullptr, nullptr, ROM_TYPE_END, 0, 0, 0 }
 
 #define ROM_GETFLAGS(entry)			((entry)->flags)
 
 #define ROMENTRY_ISREGION(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_REGION)
 #define ROMENTRY_ISEND(entry)		((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_END)
+#define ROMENTRY_ISFILE(entry)		((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_IMAGE)
+
+// ROM region entry
+#define ROMREGION_GETNAME(entry)	((entry).name)
+#define ROMREGION_GETHASH(entry)	((entry).hash)
+#define ROMREGION_GETFLAGS(entry)	((entry).flags)
+#define ROMREGION_GETOFFSET(entry)	((entry).offset)
+#define ROMREGION_GETLENGTH(entry)	((entry).length)
+#define ROMREGION_GETVALUE(entry)	((entry).value)
 
 struct romEntry_t
 {
 	ctag_t		*name;		// Region/file name
 	ctag_t		*hash;		// Hash checksum string
 	uint32_t	flags;		// ROM entry flags
+	uint32_t	offset;		// offset
+	uint32_t	length;		// length
+	uint32_t	value;
 };
 
 typedef const romEntry_t cromEntry_t;

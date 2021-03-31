@@ -118,6 +118,15 @@ void tsunami_sysDevice::es45_sbus(AddressList &map)
 	map(0x00000000000LL, 0x007FFFFFFFFLL).ram().region("main"); // up to 32 GB main memory (default 512 MB space)
 }
 
+static const romEntry_t ROM_NAME(es40)[]
+{
+	ROM_END
+};
+
+static const romEntry_t ROM_NAME(es45)[]
+{
+	ROM_END
+};
 
 COMPUTER(es40,  nullptr, axp, ES40, tsunami_sysDevice, es40,  es40_init,  "DEC", "AlphaServer ES40", SYSTEM_NOT_WORKING)
 COMPUTER(es45,  nullptr, axp, ES45, tsunami_sysDevice, es45,  es45_init,  "DEC", "AlphaServer ES45", SYSTEM_NOT_WORKING)

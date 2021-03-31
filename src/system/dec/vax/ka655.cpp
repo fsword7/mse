@@ -148,6 +148,26 @@ void ka655_sysDevice::mv3900x_init()
 //		ROM_END
 //};
 
+static const romEntry_t ROM_NAME(mv3900)[] =
+{
+		ROM_END
+};
+
+static const romEntry_t ROM_NAME(mv3900x)[] =
+{
+		ROM_END
+};
+
+static const romEntry_t ROM_NAME(vs3900)[] =
+{
+		ROM_END
+};
+
+static const romEntry_t ROM_NAME(vs3900x)[] =
+{
+		ROM_END
+};
+
 // MicroVAX 3x00 series
 //COMPUTER(mv3500,  nullptr, vax, KA650, ka650_device, mv3500,  mv3500_init,  "DEC", "MicroVAX 3500", SYSTEM_NOT_WORKING)
 //COMPUTER(mv3600,  nullptr, vax, KA650, ka650_device, mv3600,  mv3600_init,  "DEC", "MicroVAX 3600", SYSTEM_NOT_WORKING)

@@ -43,6 +43,12 @@ void romLoader::processRegionList()
 		cty.printf("%s: Initializing ROM entries...\n", dev.getDeviceName());
 		for (entry = first(dev); entry != nullptr; entry = next(entry))
 		{
+			rgnName = ROMREGION_GETNAME(*entry);
+			rgnLength = ROMREGION_GETLENGTH(*entry);
+
+			cty.printf("%s: Processing ROM region '%s' length %d (%X) bytes\n",
+				dev.getDeviceName(), rgnName, rgnLength, rgnLength);
+
 
 		}
 	}

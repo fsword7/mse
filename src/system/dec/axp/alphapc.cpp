@@ -130,6 +130,21 @@ void alphapc_sysDevice::pc164sx_sbus(AddressList &map)
 	map(0x0000000000LL, 0x07FFFFFFFFLL).ram().region("main"); // up to 512 MB main memory
 }
 
+static const romEntry_t ROM_NAME(pc164)[]
+{
+	ROM_END
+};
+
+static const romEntry_t ROM_NAME(pc164lx)[]
+{
+	ROM_END
+};
+
+static const romEntry_t ROM_NAME(pc164sx)[]
+{
+	ROM_END
+};
+
 COMPUTER(pc164,    nullptr, axp, PC164, alphapc_sysDevice, pc164,  pc164_init,  "DEC", "AlphaPC 164", SYSTEM_NOT_WORKING)
 COMPUTER(pc164lx,  nullptr, axp, PC164LX, alphapc_sysDevice, pc164lx,  pc164lx_init,  "DEC", "AlphaPC 164LX", SYSTEM_NOT_WORKING)
 COMPUTER(pc164sx,  nullptr, axp, PC164SX, alphapc_sysDevice, pc164sx,  pcl64sx_init,  "DEC", "AlphaPC 164SX", SYSTEM_NOT_WORKING)
