@@ -142,6 +142,7 @@ namespace aspace
 		inline uint16_t getAddrRadix() const { return config.getAddrRadix(); }
 		inline int16_t  getAddrShift() const { return config.getAddrShift(); }
 		inline int16_t  getPageShift() const { return config.getPageShift(); }
+		inline offs_t   getAddrMask() const  { return addrMask; }
 
 		// Unmapped value setting
 		inline void setUnmapLowValue()          { unmapValue = 0; }
@@ -187,6 +188,39 @@ namespace aspace
 		// Optional main memory space
 		uint8_t *memData = nullptr;
 		uint64_t memSize = 0;
+	};
+
+	template <int dWidth, int aShift, endian_t type>
+	class MemoryAccess
+	{
+		friend class AddressSpace;
+
+		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
+
+		static constexpr uint64_t nativeBytes = 1 << dWidth;
+		static constexpr uint64_t nativeMask = dWidth + aShift >= 0 ? (1u << (dWidth + aShift)) - 1 : 0;
+
+	public:
+		MemoryAccess() = default;
+
+		inline AddressSpace &getSpace() { return *space; }
+
+	private:
+		void set(AddressSpace *space, const void *read, const void *write)
+		{
+			this->space = space;
+			this->addrMask = space->getAddrMask();
+			this->readDispatch = (const HandlerRead<dWidth, aShift, type> *const *)(read);
+			this->writeDispatch = (const HandlerWrite<dWidth, aShift, type> *const *)(write);
+		}
+
+	private:
+		AddressSpace *space = nullptr;
+		offs_t addrMask = 0;
+
+		const HandlerRead<dWidth, aShift, type> *readDispatch = nullptr;
+		const HandlerWrite<dWidth, aShift, type> *writeDispatch = nullptr;
+
 	};
 
 	class MemoryBlock
