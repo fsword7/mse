@@ -6,8 +6,11 @@
  */
 
 #include "emu/core.h"
+#include "emu/map/map.h"
 #include "emu/romloader.h"
 #include "emu/machine.h"
+
+using namespace aspace;
 
 romLoader::romLoader(Machine *sys, Console &cty)
 : system(sys), cty(cty)
@@ -32,11 +35,37 @@ cromEntry_t *romLoader::next(cromEntry_t *entry)
 	return !ROMENTRY_ISEND(entry) ? entry : nullptr;
 }
 
+void romLoader::openImageFile(ctag_t *name, cromEntry_t *entry)
+{
+
+}
+
+void romLoader::closeImageFile()
+{
+
+}
+
+void romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev)
+{
+	while (ROMENTRY_ISREGIONEND(entry))
+	{
+		if (ROMENTRY_ISFILE(entry))
+		{
+			cromEntry_t *base = entry;
+			int imageLength = 0;
+
+			cty.printf("%s: Loading image file '%s'...\n", dev.getDeviceName(), ROM_GETNAME(entry));
+			openImageFile(name, entry);
+		}
+	}
+}
+
 void romLoader::processRegionList()
 {
 	tag_t      *rgnName;
 	uint32_t    rgnLength;
 	cromEntry_t *entry;
+	BusManager  &sbus = system->getExternalBusManager();
 
 	for (Device &dev : DeviceIterator(*system->getSystemDevice()))
 	{
@@ -50,6 +79,20 @@ void romLoader::processRegionList()
 				dev.getDeviceName(), rgnName, rgnLength, rgnLength);
 
 
+			if (ROMREGION_ISROMDATA(*entry))
+			{
+				uint8_t  width = ROMREGION_GETWIDTH(*entry) / 8;
+				endian_t type  = ROMREGION_ISBIGENDIAN(*entry) ? BigEndian : LittleEndian;
+				uint8_t  fill  = 0;
+
+				region = sbus.allocateRegion(rgnName, rgnLength, width, type);
+
+				if (ROMREGION_HASFILLVALUE(*entry))
+					fill = ROMREGION_GETFILL(*entry);
+				memset(region->getBase(), fill, region->getSize());
+
+				processImageEntries(rgnName, entry, entry+1, dev);
+			}
 		}
 	}
 }
