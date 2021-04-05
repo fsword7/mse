@@ -143,6 +143,7 @@ namespace aspace
 		inline int16_t  getAddrShift() const { return config.getAddrShift(); }
 		inline int16_t  getPageShift() const { return config.getPageShift(); }
 		inline offs_t   getAddrMask() const  { return addrMask; }
+		inline uint64_t getUnmapped() const  { return unmapValue; }
 
 		// Unmapped value setting
 		inline void setUnmapLowValue()          { unmapValue = 0; }

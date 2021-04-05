@@ -7,6 +7,10 @@
 
 #pragma once
 
+#define HB_LEVEL3 48
+#define HB_LEVEL2 32
+#define HB_LEVEL1 16
+
 namespace aspace
 {
 
@@ -16,6 +20,14 @@ namespace aspace
 	template <> struct HandlerSize<1> { using uintx_t = uint16_t; };
 	template <> struct HandlerSize<2> { using uintx_t = uint32_t; };
 	template <> struct HandlerSize<3> { using uintx_t = uint64_t; };
+
+	constexpr int determineDispatchLowBits(int highBits, int dWidth, int aShift)
+	{
+		return (highBits > HB_LEVEL3) ? HB_LEVEL3 :
+			   (highBits > HB_LEVEL2) ? HB_LEVEL2 :
+			   (highBits > HB_LEVEL1) ? HB_LEVEL1 :
+			   (dWidth - aShift);
+	}
 
 	class HandlerEntry
 	{
@@ -84,8 +96,8 @@ namespace aspace
 
 		virtual ~HandlerWrite();
 
-		virtual uintx_t write(offs_t off, uintx_t data) = 0;
-		virtual uintx_t write(offs_t off, uintx_t data, uintx_t mask) = 0;
+		virtual void write(offs_t off, uintx_t data) = 0;
+		virtual void write(offs_t off, uintx_t data, uintx_t mask) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
 	};
 }

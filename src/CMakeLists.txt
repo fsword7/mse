@@ -32,6 +32,8 @@ set(MSE_CPP_SRCS
 	dev/cpu/vax/vax.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
+	emu/map/hedr.cpp
+	emu/map/hedw.cpp
 	emu/map/hem.cpp
 	emu/map/heun.cpp
 	emu/map/map.cpp
@@ -88,6 +90,8 @@ set(MSE_H_SRCS
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/hea.h
+	emu/map/hedr.h
+	emu/map/hedw.h
 	emu/map/hem.cpp
 	emu/map/map.h
 	emu/command.h
