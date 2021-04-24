@@ -7,9 +7,11 @@
 
 #pragma once
 
-#define HB_LEVEL3 48
-#define HB_LEVEL2 32
-#define HB_LEVEL1 16
+// High bit address for paging
+#define HB_LEVEL3 48	// 48-63 address width
+#define HB_LEVEL2 32	// 32-47 address width
+#define HB_LEVEL1 16	// 16-31 address width
+#define HB_LEVEL0 0		// 0-15 address width
 
 namespace aspace
 {
@@ -20,6 +22,14 @@ namespace aspace
 	template <> struct HandlerSize<1> { using uintx_t = uint16_t; };
 	template <> struct HandlerSize<2> { using uintx_t = uint32_t; };
 	template <> struct HandlerSize<3> { using uintx_t = uint64_t; };
+
+	constexpr int determineLevel(int highBits)
+	{
+		return	(highBits > HB_LEVEL3) ? 3 :
+				(highBits > HB_LEVEL2) ? 2 :
+				(highBits > HB_LEVEL1) ? 1 :
+				0;
+	}
 
 	constexpr int determineDispatchLowBits(int highBits, int dWidth, int aShift)
 	{

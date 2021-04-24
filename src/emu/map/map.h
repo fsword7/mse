@@ -191,20 +191,166 @@ namespace aspace
 		uint64_t memSize = 0;
 	};
 
-	template <int dWidth, int aShift, endian_t type>
-	class MemoryAccess
+	template <int Level, int dWidth, int aShift, endian_t type>
+	class MemoryAccessSpecific
 	{
 		friend class AddressSpace;
 
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 
 		static constexpr uint64_t nativeBytes = 1 << dWidth;
-		static constexpr uint64_t nativeMask = dWidth + aShift >= 0 ? (1u << (dWidth + aShift)) - 1 : 0;
+		static constexpr uint64_t nativeMask = dWidth - aShift >= 0 ? (1u << (dWidth - aShift)) - 1 : 0;
 
 	public:
-		MemoryAccess() = default;
+		MemoryAccessSpecific() = default;
 
 		inline AddressSpace &getSpace() { return *space; }
+		// **** Read access function calls
+
+		uint8_t read8(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize)
+				return memData[addr];
+
+			// Check memory block ranges
+		//	for (int idx = 0; idx < mapMemories.size(); idx++)
+		//	{
+		//		mapMemory *mem = mapMemories[idx];
+		//
+		//		if (addr >= mem->baseAddr && addr < mem->endAddr)
+		//			return mem->data[addr - mem->baseAddr];
+		//	}
+
+			return unmapValue;
+		}
+
+		uint16_t read16(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x1);
+				return *((uint16_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		uint16_t read16u(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint16_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		uint32_t read32(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x3);
+				return *((uint32_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		uint32_t read32u(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint32_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		uint64_t read64(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x7);
+				return *((uint64_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		uint64_t read64u(offs_t addr, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				return *((uint64_t *)ptr);
+			}
+			return unmapValue;
+		}
+
+		void readBlock(offs_t addr, uint8_t *data, uint64_t size)
+		{
+			if (addr < memSize) {
+				if ((addr + size) > memSize)
+					size = memSize - addr;
+				memcpy(data, &memData[addr], size);
+			}
+		}
+
+		// **** Write access function calls ****
+
+		void write8(offs_t addr, uint8_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize)
+				memData[addr] = data;
+		}
+
+		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x1);
+				*((uint16_t *)ptr) = data;
+			}
+		}
+
+		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint16_t *)ptr) = data;
+			}
+		}
+
+		void write32(offs_t addr, uint32_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x2);
+				*((uint32_t *)ptr) = data;
+			}
+		}
+
+		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint32_t *)ptr) = data;
+			}
+		}
+
+		void write64(offs_t addr, uint64_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + (addr & ~0x3);
+				*((uint64_t *)ptr) = data;
+			}
+		}
+
+		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)
+		{
+			if (addr < memSize) {
+				uint8_t *ptr = memData + addr;
+				*((uint64_t *)ptr) = data;
+			}
+		}
+
+		void writeBlock(offs_t addr, uint8_t *data, uint64_t size)
+		{
+			if (addr < memSize) {
+				if ((addr + size) > memSize)
+					size = memSize - addr;
+				memcpy(&memData[addr], data, size);
+			}
+		}
 
 	private:
 		void set(AddressSpace *space, const void *read, const void *write)
@@ -218,10 +364,21 @@ namespace aspace
 	private:
 		AddressSpace *space = nullptr;
 		offs_t addrMask = 0;
+		uint64_t unmapValue = 0;
 
 		const HandlerRead<dWidth, aShift, type> *readDispatch = nullptr;
 		const HandlerWrite<dWidth, aShift, type> *writeDispatch = nullptr;
 
+		offs_t   memSize = 0;
+		uint8_t *memData = nullptr;
+	};
+
+	template <int highBits, int dWidth, int aShift, endian_t Endian>
+	struct MemoryAccess
+	{
+		static constexpr int Level = determineLevel(highBits);
+
+		using specific = MemoryAccessSpecific<Level, dWidth, aShift, Endian>;
 	};
 
 	class MemoryBlock

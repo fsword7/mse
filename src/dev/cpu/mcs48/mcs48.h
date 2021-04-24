@@ -146,6 +146,10 @@ protected:
 	mapAddressConfig mapDataConfig;
 	mapAddressConfig mapPortConfig;
 
+//	aspace::MemoryAccess<12, 0, 0, LittleEndian> mapProgram1;
+//	aspace::MemoryAccess<8, 0, 0, LittleEndian> mapData1;
+//	aspace::MemoryAccess<8, 0, 0, LittleEndian> mapPort1;
+
 	mapAddressSpace *mapProgram = nullptr;
 	mapAddressSpace *mapData = nullptr;
 	mapAddressSpace *mapPort = nullptr;
