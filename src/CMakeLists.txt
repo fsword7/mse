@@ -16,6 +16,7 @@ set(MSE_CPP_SRCS
 	dev/cpu/alpha/execute.cpp
 	dev/cpu/alpha/load.cpp
 	dev/cpu/alpha/opcodes.cpp
+	dev/cpu/i8080/i8080.cpp
 	dev/cpu/m6500/m6500.cpp
 	dev/cpu/mcs48/debug.cpp
 	dev/cpu/mcs48/execute.cpp
@@ -81,6 +82,7 @@ set(MSE_H_SRCS
 	dev/cpu/alpha/ev6.h
 	dev/cpu/alpha/ev6_ipr.h
 	dev/cpu/alpha/opcode.h
+	dev/cpu/i8080/i8080.h
 	dev/cpu/m6500/m6500.h
 	dev/cpu/mcs48/mcs48.h
 	dev/cpu/pdp10/pdp10.h
