@@ -35,6 +35,10 @@ constexpr const endian_t endianNative = BigEndian;
 #define ENDIAN_VALUE(endian, leValue, beValue)	((endian == LittleEndian) ? (leValue) : (beValue))
 #define NATIVE_ENDIAN(leValue, beValue)			ENDIAN_VALUE(endianNative, leValue, beValue)
 
+template <typename T, typename U> constexpr T makeBitmask(U n)
+{
+	return T((n < (8 * sizeof(T)) ? (std::make_unsigned_t<T>(1) << n) : std::make_unsigned_t<T>(0)) - 1);
+}
 
 using namespace std;
 

@@ -81,6 +81,7 @@ namespace aspace
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 
+		static constexpr offs_t nativeMask = (dWidth - aShift) >= 0 ? makeBitmask<offs_t>(dWidth - aShift) : 0;
 
 		HandlerRead(AddressSpace *space, uint64_t flags)
 		: HandlerEntry(space, flags)
@@ -91,6 +92,19 @@ namespace aspace
 		virtual uintx_t read(offs_t off) = 0;
 		virtual uintx_t read(offs_t off, uintx_t mask) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
+
+		// inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
+		// {
+		// 	// sAddr &= ~nativeMask;
+		// 	// eAddr |= nativeMask;
+		// 	if (mAddr != 0)
+		// 		populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
+		// 	else
+		// 		populateNoMirror(sAddr, eAddr, sAddr, eAddr);
+		// }
+
+		// virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror) = 0;
+		// virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin) = 0;
 	};
 
 	template <int dWidth, int aShift, int endian>
@@ -99,6 +113,7 @@ namespace aspace
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 
+		static constexpr offs_t nativeMask = (dWidth - aShift) >= 0 ? makeBitmask<offs_t>(dWidth - aShift) : 0;
 
 		HandlerWrite(AddressSpace *space, uint64_t flags)
 		: HandlerEntry(space, flags)
@@ -109,5 +124,18 @@ namespace aspace
 		virtual void write(offs_t off, uintx_t data) = 0;
 		virtual void write(offs_t off, uintx_t data, uintx_t mask) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
+
+		// inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
+		// {
+		// 	// sAddr &= ~nativeMask;
+		// 	// eAddr |= nativeMask;
+		// 	if (mAddr != 0)
+		// 		populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
+		// 	else
+		// 		populateNoMirror(sAddr, eAddr, sAddr, eAddr);
+		// }
+
+		// virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror) = 0;
+		// virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin) = 0;
 	};
 }
