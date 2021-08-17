@@ -12,4 +12,6 @@
 class i8080_cpuDevice : public cpuDevice
 {
 
+
+    aspace::MemoryAccess<16, 0, 0, LittleEndian>::specific mapProgram;
 };

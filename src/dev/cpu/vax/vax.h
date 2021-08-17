@@ -103,6 +103,5 @@ protected:
 
 	mapAddressConfig mapProgramConfig;
 
-	mapAddressSpace *mapProgram = nullptr;
-
+	aspace::MemoryAccess<30, 2, 0, LittleEndian>::specific mapProgram;
 };

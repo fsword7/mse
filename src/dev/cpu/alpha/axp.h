@@ -464,6 +464,8 @@ protected:
 
 	mapAddressSpace *mapProgram = nullptr;
 
+	aspace::MemoryAccess<40, 3, 0, LittleEndian>::specific mapProgram1;
+	
 	Console *log = nullptr;
 };
 
