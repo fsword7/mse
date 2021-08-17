@@ -24,23 +24,27 @@ void Device::configure(SystemConfig &config)
 	// device initialization
 	config.begin(this);
 	devConfigure(config);
+	configureDevice(config);
 }
 
 void Device::start()
 {
 	devStart();
+	startDevice();
 	flagStarted = true;
 }
 
 void Device::stop()
 {
 	devStop();
+	stopDevice();
 	flagStarted = false;
 }
 
 void Device::reset()
 {
 	devReset();
+	resetDevice();
 }
 
 void Device::setMachine(Machine *sys)
@@ -74,16 +78,18 @@ void Device::completeConfig()
 
 cromEntry_t *Device::mapGetROMEntries()
 {
-	static constexpr romEntry_t romEmpty[] = { ROM_END };
+	static constexpr romEntry_t firmwareEmpty[] = { ROM_END };
 
-	if (romEntries == nullptr)
+	if (firmwareEntries == nullptr)
 	{
-		romEntries = devGetROMEntries();
-		if (romEntries == nullptr)
-			romEntries = romEmpty;
+		firmwareEntries = devGetROMEntries();
+		if (firmwareEntries == nullptr)
+			firmwareEntries = getDeviceFirmwareEntries();
+		if (firmwareEntries == nullptr)
+			firmwareEntries = firmwareEmpty;
 	}
 
-	return romEntries;
+	return firmwareEntries;
 }
 
 // ************************************************

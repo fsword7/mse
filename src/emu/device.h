@@ -215,6 +215,12 @@ public:
 	virtual void devReset() {}
 	virtual cromEntry_t *devGetROMEntries() { return nullptr; }
 
+	virtual void configureDevice(SystemConfig &config) {}
+	virtual void startDevice() {}
+	virtual void stopDevice() {}
+	virtual void resetDevice() {}
+	virtual cromEntry_t *getDeviceFirmwareEntries() { return nullptr; }
+
 	void completeConfig(); // complete final configuration
 
 protected:
@@ -230,7 +236,7 @@ private:
 
 	cstag_t devName;
 
-	const romEntry_t *romEntries = nullptr;
+	const romEntry_t *firmwareEntries = nullptr;
 
 	// device interface section
 	ifList_t ifList;
