@@ -14,6 +14,20 @@ diExecute::diExecute(device_t *owner)
 	owner->ifExecute = this;
 }
 
+void diExecute::setPCAddress(offs_t addr)
+{
+}
+
+bool diExecute::load(ifstream &fin, offs_t off)
+{
+	return false;
+}
+
+void diExecute::step(Console *user)
+{
+
+}
+
 void diExecute::execute()
 {
 //	thread myThis;

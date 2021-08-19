@@ -25,11 +25,11 @@ public:
 
 	// Abstract function calls
 	virtual void run() = 0;
-	virtual void step(Console *user) = 0; // single step function call
+	virtual void step(Console *user); // single step function call
 
-	virtual void setPCAddress(offs_t addr) = 0;
+	virtual void setPCAddress(offs_t addr);
 
-	virtual bool load(ifstream &fin, offs_t off) = 0;
+	virtual bool load(ifstream &fin, offs_t off);
 //	virtual bool save(ofstream &fout) = 0;
 
 //	void boot();

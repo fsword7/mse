@@ -30,3 +30,8 @@ void diDebug::setLogFile(Machine *sys)
 	assert(sys != nullptr);
 	dbg.setLogFile(sys->getLogFile());
 }
+
+int diDebug::list(Console *cty, offs_t vAddr)
+{
+	return 0;
+}

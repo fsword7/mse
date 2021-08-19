@@ -18,7 +18,7 @@ public:
 
 	void setLogFile(Machine *sys); // { dbg.setLogFile(sys->getLogFile()); }
 
-	virtual int list(Console *cty, offs_t vAddr) = 0;
+	virtual int list(Console *cty, offs_t vAddr);
 
 #ifdef DEBUG
 	inline Debug *getDebugSetting() const { return &dbg; }
