@@ -17,6 +17,7 @@ set(MSE_CPP_SRCS
 	dev/cpu/alpha/load.cpp
 	dev/cpu/alpha/opcodes.cpp
 	dev/cpu/i8080/i8080.cpp
+	dev/cpu/i8080/debug.cpp
 	dev/cpu/i8080/execute.cpp
 	dev/cpu/m6500/m6500.cpp
 	dev/cpu/mcs48/debug.cpp
