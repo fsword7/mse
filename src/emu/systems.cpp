@@ -12,6 +12,7 @@
 
 #include "system/dec/axp/externs.h"
 #include "system/dec/vax/externs.h"
+#include "terminals/dec/externs.h"
 
 const SystemDriver *SystemList::sysList[] =
 {
@@ -31,6 +32,9 @@ const SystemDriver *SystemList::sysList[] =
 		&SYSTEM_NAME(vs3900),
 		&SYSTEM_NAME(vs3900x),
 
+		// Terminal series
+		&SYSTEM_NAME(vt100),
+		
 		// Epson
 		// Printer series
 		&SYSTEM_NAME(mx80),

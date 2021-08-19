@@ -63,6 +63,7 @@ set(MSE_CPP_SRCS
 	system/dec/axp/tsunami.cpp
 	system/dec/vax/ka650.cpp
 	system/dec/vax/ka655.cpp
+	terminals/dec/vt100.cpp
 )
 
 set(MSE_H_SRCS
@@ -125,6 +126,7 @@ set(MSE_H_SRCS
 	system/dec/vax/externs.h
 	system/dec/vax/ka650.h
 	system/dec/vax/ka655.h
+	terminals/dec/vt100.h
 )
 
 add_definitions(-DDEBUG)
