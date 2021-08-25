@@ -23,9 +23,15 @@ namespace aspace
 
 		~HandlerReadUnmapped() = default;
 
-		inline ctag_t *getName() const { return "unmapped"; }
+		// inline ctag_t *getName() const { return "unmapped"; }
+		string getName() const { return "unmapped"; }
 
-		uintx_t read(offs_t offset, offs_t mask)
+		uintx_t read(offs_t offset)
+		{
+			return rhe::space->getUnmapped();
+		}
+
+		uintx_t read(offs_t offset, uintx_t mask)
 		{
 			return rhe::space->getUnmapped();
 		}
@@ -45,14 +51,14 @@ namespace aspace
 
 		~HandlerWriteUnmapped() = default;
 
-		inline ctag_t *getName() const { return "unmapped"; }
+		string getName() const { return "unmapped"; }
 
-		void write(offs_t offset, offs_t data)
+		void write(offs_t offset, uintx_t data)
 		{
 
 		}
 
-		void write(offs_t offset, offs_t data, offs_t mask)
+		void write(offs_t offset, uintx_t data, uintx_t mask)
 		{
 
 		}
@@ -71,9 +77,14 @@ namespace aspace
 
 		~HandlerReadNop() = default;
 
-		inline ctag_t *getName() const { return "nop"; }
+		string getName() const { return "nop"; }
 
-		uintx_t read(offs_t offset, offs_t mask)
+		uintx_t read(offs_t offset)
+		{
+			return rhe::space->getUnmapped();
+		}
+
+		uintx_t read(offs_t offset, uintx_t mask)
 		{
 			return rhe::space->getUnmapped();
 		}
@@ -92,14 +103,14 @@ namespace aspace
 
 		~HandlerWriteNop() = default;
 
-		inline ctag_t *getName() const { return "nop"; }
+		string getName() const { return "nop"; }
 
-		void write(offs_t offset, offs_t data)
+		void write(offs_t offset, uintx_t data)
 		{
 
 		}
 
-		void write(offs_t offset, offs_t data, offs_t mask)
+		void write(offs_t offset, uintx_t data, uintx_t mask)
 		{
 
 		}

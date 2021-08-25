@@ -33,10 +33,10 @@ namespace aspace {
 			Device *dev = bus.getDevice();
 
 			// Assigned unmapped/nop dispatch calls
-			// unmapRead = new HandlerReadUnmapped<dwidth, aShift>(this);
-			// unmapWrite = new HandlerWriteUnmapped<dWidth, aShift>(this);
-			// nopRead = new HandlerReadNop<dWidth, aShift>(this);
-			// nopWrite = new HandlerWriteNop<dWidth, aShift>(this);
+			unmapRead = new HandlerReadUnmapped<dWidth, aShift>(this);
+			unmapWrite = new HandlerWriteUnmapped<dWidth, aShift>(this);
+			nopRead = new HandlerReadNop<dWidth, aShift>(this);
+			nopWrite = new HandlerWriteNop<dWidth, aShift>(this);
 
 			HandlerEntry::range r = { 0, static_cast<offs_t>(~0ull >> ((sizeof(offs_t) * 8) - addrWidth)) };
 

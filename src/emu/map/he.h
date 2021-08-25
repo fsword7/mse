@@ -53,10 +53,10 @@ namespace aspace
 		: space(space), flags(flags), refCount(1)
 		{ }
 
-		virtual ~HandlerEntry() {}
+		virtual ~HandlerEntry() = default;
 
-
-		virtual string getName() = 0;
+		// virtual ctag_t *getName() const = 0;
+		virtual string getName() const = 0;
 
 		inline void ref(int count = 1)
 		{
@@ -94,7 +94,7 @@ namespace aspace
 		: HandlerEntry(space, flags)
 		{ }
 
-		virtual ~HandlerRead();
+		virtual ~HandlerRead() = default;
 
 		virtual uintx_t read(offs_t off) = 0;
 		virtual uintx_t read(offs_t off, uintx_t mask) = 0;
@@ -126,7 +126,7 @@ namespace aspace
 		: HandlerEntry(space, flags)
 		{ }
 
-		virtual ~HandlerWrite();
+		virtual ~HandlerWrite() = default;
 
 		virtual void write(offs_t off, uintx_t data) = 0;
 		virtual void write(offs_t off, uintx_t data, uintx_t mask) = 0;
