@@ -10,15 +10,15 @@
 namespace aspace
 {
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerReadMemory : public HandlerReadAddress<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerReadMemory : public HandlerReadAddress<dWidth, aShift>
 	{
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
-		using inh = HandlerReadAddress<dWidth, aShift, Endian>;
+		using inh = HandlerReadAddress<dWidth, aShift>;
 
 		HandlerReadMemory(AddressSpace *space)
-		: HandlerReadAddress<dWidth, aShift, Endian>(space, 0)
+		: HandlerReadAddress<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerReadMemory() = default;
@@ -42,15 +42,15 @@ namespace aspace
 		uintx_t *baseData = nullptr;
 	};
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerWriteMemory : public HandlerWriteAddress<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerWriteMemory : public HandlerWriteAddress<dWidth, aShift>
 	{
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
-		using inh = HandlerWriteAddress<dWidth, aShift, Endian>;
+		using inh = HandlerWriteAddress<dWidth, aShift>;
 
 		HandlerWriteMemory(AddressSpace *space)
-		: HandlerWriteAddress<dWidth, aShift, Endian>(space, 0)
+		: HandlerWriteAddress<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerWriteMemory() = default;

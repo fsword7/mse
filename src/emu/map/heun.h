@@ -10,15 +10,15 @@
 namespace aspace
 {
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerReadUnmapped : public HandlerRead<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerReadUnmapped : public HandlerRead<dWidth, aShift>
 	{
 	public:
-		using uintx_t = typename HandlerRead<dWidth, aShift, Endian>::uintx_t;
-		using rhe = HandlerRead<dWidth, aShift, Endian>;
+		using uintx_t = typename HandlerRead<dWidth, aShift>::uintx_t;
+		using rhe = HandlerRead<dWidth, aShift>;
 
 		HandlerReadUnmapped(AddressSpace *space)
-		: HandlerRead<dWidth, aShift, Endian>(space, 0)
+		: HandlerRead<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerReadUnmapped() = default;
@@ -31,16 +31,16 @@ namespace aspace
 		}
 	};
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerWriteUnmapped : public HandlerWrite<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerWriteUnmapped : public HandlerWrite<dWidth, aShift>
 	{
 	public:
-		using uintx_t = typename HandlerRead<dWidth, aShift, Endian>::uintx_t;
-		using whe = HandlerWrite<dWidth, aShift, Endian>;
+		using uintx_t = typename HandlerRead<dWidth, aShift>::uintx_t;
+		using whe = HandlerWrite<dWidth, aShift>;
 
 
 		HandlerWriteUnmapped(AddressSpace *space)
-		: HandlerWrite<dWidth, aShift, Endian>(space, 0)
+		: HandlerWrite<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerWriteUnmapped() = default;
@@ -58,15 +58,15 @@ namespace aspace
 		}
 	};
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerReadNop : public HandlerRead<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerReadNop : public HandlerRead<dWidth, aShift>
 	{
 	public:
-		using uintx_t = typename HandlerRead<dWidth, aShift, Endian>::uintx_t;
-		using rhe = HandlerRead<dWidth, aShift, Endian>;
+		using uintx_t = typename HandlerRead<dWidth, aShift>::uintx_t;
+		using rhe = HandlerRead<dWidth, aShift>;
 
 		HandlerReadNop(AddressSpace *space)
-		: HandlerRead<dWidth, aShift, Endian>(space, 0)
+		: HandlerRead<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerReadNop() = default;
@@ -79,15 +79,15 @@ namespace aspace
 		}
 	};
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerWriteNop : public HandlerWrite<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerWriteNop : public HandlerWrite<dWidth, aShift>
 	{
 	public:
-		using uintx_t = typename HandlerRead<dWidth, aShift, Endian>::uintx_t;
-		using whe = HandlerWrite<dWidth, aShift, Endian>;
+		using uintx_t = typename HandlerRead<dWidth, aShift>::uintx_t;
+		using whe = HandlerWrite<dWidth, aShift>;
 
 		HandlerWriteNop(AddressSpace *space)
-		: HandlerWrite<dWidth, aShift, Endian>(space, 0)
+		: HandlerWrite<dWidth, aShift>(space, 0)
 		{ }
 
 		~HandlerWriteNop() = default;

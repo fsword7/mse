@@ -10,15 +10,15 @@
 namespace aspace
 {
 
-	template <int highBits, int dWidth, int aShift, int Endian>
-	class HandlerWriteDispatch : public HandlerWrite<dWidth, aShift, Endian>
+	template <int highBits, int dWidth, int aShift>
+	class HandlerWriteDispatch : public HandlerWrite<dWidth, aShift>
 	{
 	public:
 
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 		HandlerWriteDispatch(AddressSpace *space, const HandlerEntry::range &init,
-			HandlerWrite<dWidth, aShift, Endian> *handler = nullptr)
-		: HandlerWrite<dWidth, aShift, Endian>(space, 0)
+			HandlerWrite<dWidth, aShift> *handler = nullptr)
+		: HandlerWrite<dWidth, aShift>(space, 0)
 		{
 			// Initialize dispatch table
 			assert(handler != nullptr);
@@ -60,7 +60,7 @@ namespace aspace
 
 		static constexpr offs_t   bitMask  = (1u << bitCount) - 1;
 
-		HandlerWrite<dWidth, aShift, Endian> *dispatch[count];
+		HandlerWrite<dWidth, aShift> *dispatch[count];
 		HandlerEntry::range ranges[count];
 	};
 

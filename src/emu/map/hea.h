@@ -9,14 +9,14 @@
 
 namespace aspace
 {
-	template <int dWidth, int aShift, int Endian>
-	class HandlerReadAddress : public HandlerRead<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerReadAddress : public HandlerRead<dWidth, aShift>
 	{
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 
 		HandlerReadAddress(AddressSpace *space, uint32_t flags)
-		: HandlerRead<dWidth, aShift, Endian>(space, flags)
+		: HandlerRead<dWidth, aShift>(space, flags)
 		{ }
 		~HandlerReadAddress() = default;
 
@@ -31,14 +31,14 @@ namespace aspace
 		offs_t maskAddress = 0;
 	};
 
-	template <int dWidth, int aShift, int Endian>
-	class HandlerWriteAddress : public HandlerWrite<dWidth, aShift, Endian>
+	template <int dWidth, int aShift>
+	class HandlerWriteAddress : public HandlerWrite<dWidth, aShift>
 	{
 	public:
 
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 		HandlerWriteAddress(AddressSpace *space, uint32_t flags)
-		: HandlerWrite<dWidth, aShift, Endian>(space, flags)
+		: HandlerWrite<dWidth, aShift>(space, flags)
 		{ }
 		~HandlerWriteAddress() = default;
 

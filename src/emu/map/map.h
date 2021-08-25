@@ -304,8 +304,8 @@ namespace aspace
 		offs_t addrMask = 0;
 		uint64_t unmapValue = 0;
 
-		const HandlerRead<dWidth, aShift, type> *readDispatch = nullptr;
-		const HandlerWrite<dWidth, aShift, type> *writeDispatch = nullptr;
+		const HandlerRead<dWidth, aShift> *readDispatch = nullptr;
+		const HandlerWrite<dWidth, aShift> *writeDispatch = nullptr;
 
 		offs_t   memSize = 0;
 		uint8_t *memData = nullptr;
@@ -486,8 +486,8 @@ namespace aspace
 		offs_t addrMask = 0;
 		uint64_t unmapValue = 0;
 
-		const HandlerRead<dWidth, aShift, type> *readDispatch = nullptr;
-		const HandlerWrite<dWidth, aShift, type> *writeDispatch = nullptr;
+		const HandlerRead<dWidth, aShift> *readDispatch = nullptr;
+		const HandlerWrite<dWidth, aShift> *writeDispatch = nullptr;
 
 		offs_t   memSize = 0;
 		uint8_t *memData = nullptr;
@@ -496,7 +496,7 @@ namespace aspace
 	template <int highBits, int dWidth, int aShift, endian_t type>
 	struct MemoryAccess
 	{
-		static constexpr int Level = determineLevel(highBits);
+		static constexpr int Level = determineDispatchLevel(highBits);
 
 		using specific = MemoryAccessSpecific<Level, dWidth, aShift, type>;
 		using cache = MemoryAccessCache<dWidth, aShift, type>;
@@ -678,8 +678,8 @@ namespace aspace
 	{
 		this->space = space;
 		this->addrMask = space->getAddrMask();
-		this->readDispatch = (const HandlerRead<dWidth, aShift, type> *const *)(read);
-		this->writeDispatch = (const HandlerWrite<dWidth, aShift, type> *const *)(write);
+		this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 	template <int dWidth, int aShift, endian_t type>
@@ -688,8 +688,8 @@ namespace aspace
 	{
 		this->space = space;
 		this->addrMask = space->getAddrMask();
-		this->readDispatch = (const HandlerRead<dWidth, aShift, type> *const *)(read);
-		this->writeDispatch = (const HandlerWrite<dWidth, aShift, type> *const *)(write);
+		this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 }

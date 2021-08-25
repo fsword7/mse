@@ -7,6 +7,13 @@
 
 #pragma once
 
+// Address width definition types
+//
+// 0 -  8-bit address width
+// 1 - 16-bit address width
+// 2 - 32-bit address width
+// 3 - 64-bit address width
+
 // High bit address for paging
 #define HB_LEVEL3 48	// 48-63 address width
 #define HB_LEVEL2 32	// 32-47 address width
@@ -23,19 +30,19 @@ namespace aspace
 	template <> struct HandlerSize<2> { using uintx_t = uint32_t; };
 	template <> struct HandlerSize<3> { using uintx_t = uint64_t; };
 
-	constexpr int determineLevel(int highBits)
+	constexpr int determineDispatchLevel(int aWidth) // address width access
 	{
-		return	(highBits > HB_LEVEL3) ? 3 :
-				(highBits > HB_LEVEL2) ? 2 :
-				(highBits > HB_LEVEL1) ? 1 :
+		return	(aWidth > HB_LEVEL3) ? 3 :
+				(aWidth > HB_LEVEL2) ? 2 :
+				(aWidth > HB_LEVEL1) ? 1 :
 				0;
 	}
 
-	constexpr int determineDispatchLowBits(int highBits, int dWidth, int aShift)
+	constexpr int determineDispatchLowBits(int aWidth, int dWidth, int aShift)
 	{
-		return (highBits > HB_LEVEL3) ? HB_LEVEL3 :
-			   (highBits > HB_LEVEL2) ? HB_LEVEL2 :
-			   (highBits > HB_LEVEL1) ? HB_LEVEL1 :
+		return (aWidth > HB_LEVEL3) ? HB_LEVEL3 :
+			   (aWidth > HB_LEVEL2) ? HB_LEVEL2 :
+			   (aWidth > HB_LEVEL1) ? HB_LEVEL1 :
 			   (dWidth - aShift);
 	}
 
@@ -75,7 +82,7 @@ namespace aspace
 		};
 	};
 
-	template <int dWidth, int aShift, int endian>
+	template <int dWidth, int aShift>
 	class HandlerRead : public HandlerEntry
 	{
 	public:
@@ -107,7 +114,7 @@ namespace aspace
 		// virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin) = 0;
 	};
 
-	template <int dWidth, int aShift, int endian>
+	template <int dWidth, int aShift>
 	class HandlerWrite : public HandlerEntry
 	{
 	public:
