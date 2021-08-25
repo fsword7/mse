@@ -26,6 +26,8 @@ namespace aspace
 
 #include "emu/map/he.h"
 #include "emu/map/heun.h"
+// #include "emu/map/hedr.h"
+// #include "emu/map/hedw.h"
 
 class cpuDevice;
 class Machine;
@@ -576,6 +578,12 @@ namespace aspace
 		// Optional main memory space
 		uint8_t *memData = nullptr;
 		uint64_t memSize = 0;
+
+		// Unmapped/no-operation read/write accesses
+		HandlerEntry *unmapRead = nullptr;
+		HandlerEntry *unmapWrite = nullptr;
+		HandlerEntry *nopRead = nullptr;
+		HandlerEntry *nopWrite = nullptr;
 	};
 
 	class MemoryBlock
