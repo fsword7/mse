@@ -14,7 +14,9 @@
 #include "emu/engine.h"
 
 #include "dev/cpu/i8080/i8080.h"
+#include "dev/video/vt100.h"
 #include "terminals/dec/vt100.h"
+
 
 using namespace aspace;
 
