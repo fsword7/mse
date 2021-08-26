@@ -81,11 +81,35 @@ void AddressSpace::prepare(Console *cty)
 	}
 }
 
+void AddressSpace::populateEntry(const AddressEntry *entry, accessType rwType)
+{
+	mapHandler data = (rwType == accRead) ? entry->read : entry->write;
+
+	switch(data.type)
+	{
+		case mapNone:
+			return;
+		case mapROMSpace:
+			if (rwType == accWrite)
+				return;
+			// fallthrough
+		case mapRAMSpace:
+			setMemorySpace(entry->addrStart, entry->addrEnd, entry->addrMirror, entry->memData, rwType);
+			break;
+	}
+}
+
 void AddressSpace::populate(Console *cty)
 {
 	fmt::printf("%s: Populating for %s address space\n", device.getDeviceName(), asInfo[space]);
 
 	assert(map != nullptr);
+
+	// for (AddressEntry *entry : map->list)
+	// {
+	// 	populateEntry(entry, accRead);
+	// 	populateEntry(entry, accWrite);
+	// }
 }
 
 void AddressSpace::allocate(Console *cty)

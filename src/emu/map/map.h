@@ -25,9 +25,11 @@ namespace aspace
 //typedef uint64_t offs_t;
 
 #include "emu/map/he.h"
-#include "emu/map/heun.h"
-#include "emu/map/hedr.h"
-#include "emu/map/hedw.h"
+// #include "emu/map/heun.h"
+// #include "emu/map/hedr.h"
+// #include "emu/map/hedw.h"
+// #include "emu/map/hea.h"
+// #include "emu/map/hem.h"
 
 class cpuDevice;
 class Machine;
@@ -35,6 +37,11 @@ class Console;
 
 namespace aspace
 {
+	template <int dWidth, int aShift> class HandlerReadUnmapped;
+	template <int dWidth, int aShift> class HandlerWriteUnmapped;
+	template <int dWidth, int aShift> class HandlerReadNop;
+	template <int dWidth, int aShift> class HandlerWriteNop;
+
 	using Constructor = NamedDelegate<void (AddressList &)>;
 
 	using read8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
@@ -128,8 +135,8 @@ namespace aspace
 
 	class AddressList;
 	class AddressSpace;
+	class AddressEntry;
 	class BusManager;
-
 
 	template <int Level, int dWidth, int aShift, endian_t type>
 	class MemoryAccessSpecific
@@ -151,16 +158,6 @@ namespace aspace
 		{
 			if (addr < memSize)
 				return memData[addr];
-
-			// Check memory block ranges
-		//	for (int idx = 0; idx < mapMemories.size(); idx++)
-		//	{
-		//		mapMemory *mem = mapMemories[idx];
-		//
-		//		if (addr >= mem->baseAddr && addr < mem->endAddr)
-		//			return mem->data[addr - mem->baseAddr];
-		//	}
-
 			return unmapValue;
 		}
 
@@ -333,16 +330,6 @@ namespace aspace
 		{
 			if (addr < memSize)
 				return memData[addr];
-
-			// Check memory block ranges
-		//	for (int idx = 0; idx < mapMemories.size(); idx++)
-		//	{
-		//		mapMemory *mem = mapMemories[idx];
-		//
-		//		if (addr >= mem->baseAddr && addr < mem->endAddr)
-		//			return mem->data[addr - mem->baseAddr];
-		//	}
-
 			return unmapValue;
 		}
 
@@ -507,6 +494,8 @@ namespace aspace
 	class AddressSpace
 	{
 	public:
+		enum accessType { accRead, accWrite };
+
 		AddressSpace(BusManager &manager, diExternalBus &bus, int space);
 
 		virtual ~AddressSpace() = default;
@@ -522,6 +511,21 @@ namespace aspace
 		inline offs_t   getAddrMask() const  { return addrMask; }
 		inline uint64_t getUnmapped() const  { return unmapValue; }
 
+		// inline HandlerEntry *getUnmappedRead() const { return unmapRead; }
+		// inline HandlerEntry *getUnmappedWrite() const { return unmapWrite; }
+		
+		template <int dWidth, int aShift>
+		HandlerReadUnmapped<dWidth, aShift> *getUnmappedRead() const
+		{
+			return static_cast<HandlerReadUnmapped<dWidth, aShift> *>(unmapRead);
+		}
+
+		template <int dWidth, int aShift>
+		HandlerWriteUnmapped<dWidth, aShift> *getUnmappedWrite() const
+		{
+			return static_cast<HandlerWriteUnmapped<dWidth, aShift> *>(unmapWrite);
+		}
+
 		// Unmapped value setting
 		inline void setUnmapLowValue()          { unmapValue = 0; }
 		inline void setUnmapHighValue()         { unmapValue = ~0ull; }
@@ -531,6 +535,10 @@ namespace aspace
 		void prepare(Console *cty);
 		void populate(Console *cty);
 		void allocate(Console *cty);
+		
+		void populateEntry(const AddressEntry *entry, accessType rwType);
+
+		virtual void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) = 0;
 
 		template <int Level, int dWidth, int aShift, endian_t type>
 		void setMemorySpecific(MemoryAccessSpecific<Level, dWidth, aShift, type> memAccess)
@@ -701,6 +709,12 @@ namespace aspace
 	}
 
 }
+
+#include "emu/map/heun.h"
+#include "emu/map/hedr.h"
+#include "emu/map/hedw.h"
+#include "emu/map/hea.h"
+#include "emu/map/hem.h"
 
 using mapSpaceType     = aspace::SpaceType;
 using mapConfigEntry   = aspace::ConfigEntry;

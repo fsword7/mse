@@ -18,6 +18,8 @@ namespace aspace
 	{
 		mapNone = 0,
 		mapAccess,		// Accessible
+		mapROMSpace,	// ROM space
+		mapRAMSpace,	// RAM space
 		mapPort,		// I/O type access
 		mapDelegate,	// Device delegate (callbacks)
 		mapNop,			// Non-operation - do nothing
@@ -55,10 +57,10 @@ namespace aspace
 		}
 
 		// RAM/ROM access list
-		AddressEntry &ram()   { read.type = mapAccess; write.type = mapAccess; return *this; }
-		AddressEntry &rom()   { read.type = mapAccess; write.type = mapNop;    return *this; }
-		AddressEntry &ronly() { read.type = mapAccess;  return *this; }
-		AddressEntry &wonly() { write.type = mapAccess; return *this; }
+		AddressEntry &ram()   { read.type = mapRAMSpace; write.type = mapRAMSpace; return *this; }
+		AddressEntry &rom()   { read.type = mapROMSpace; write.type = mapNop;      return *this; }
+		AddressEntry &ronly() { read.type = mapRAMSpace;  return *this; }
+		AddressEntry &wonly() { write.type = mapRAMSpace; return *this; }
 
 		// User-defined memory configuration management
 		AddressEntry &expandable()       { expFlag = true; return *this; }

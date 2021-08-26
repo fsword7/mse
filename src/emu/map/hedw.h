@@ -21,6 +21,8 @@ namespace aspace
 		: HandlerWrite<dWidth, aShift>(space, 0)
 		{
 			// Initialize dispatch table
+			if (handler == nullptr)
+				handler = space->getUnmappedWrite<dWidth, aShift>();
 			assert(handler != nullptr);
 			handler->ref(count);
 			for (int idx = 0; idx < count; idx++)

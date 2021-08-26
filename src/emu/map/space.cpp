@@ -361,6 +361,25 @@ namespace aspace {
 				dev->getDeviceName(), r.start, r.end, addrWidth);
 		}
 
+		void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) override
+		{
+
+			if (rwType == accRead)
+			{
+				auto handler = new HandlerReadMemory<dWidth, aShift>(this, data);
+
+				rootRead->populate(addrStart, addrEnd, addrMirror, handler);
+			}
+
+			if (rwType == accWrite)
+			{
+				auto handler = new HandlerWriteMemory<dWidth, aShift>(this, data);
+
+				rootWrite->populate(addrStart, addrEnd, addrMirror, handler);
+			}
+		}
+
+
 		// **** Read access function calls
 
 		uint8_t read8(offs_t addr, cpuDevice *cpu)
