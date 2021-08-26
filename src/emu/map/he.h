@@ -20,6 +20,8 @@
 #define HB_LEVEL1 16	// 16-31 address width
 #define HB_LEVEL0 0		// 0-15 address width
 
+class cpuDevice;
+
 namespace aspace
 {
 
@@ -96,22 +98,22 @@ namespace aspace
 
 		virtual ~HandlerRead() = default;
 
-		virtual uintx_t read(offs_t off) = 0;
-		virtual uintx_t read(offs_t off, uintx_t mask) = 0;
+		virtual uintx_t read(offs_t off, cpuDevice *cpu) = 0;
+		virtual uintx_t read(offs_t off, uintx_t mask, cpuDevice *cpu) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
 
-		// inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
-		// {
-		// 	// sAddr &= ~nativeMask;
-		// 	// eAddr |= nativeMask;
-		// 	if (mAddr != 0)
-		// 		populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
-		// 	else
-		// 		populateNoMirror(sAddr, eAddr, sAddr, eAddr);
-		// }
+		inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
+		{
+			sAddr &= ~nativeMask;
+			eAddr |= nativeMask;
+			if (mAddr != 0)
+				populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
+			else
+				populateNoMirror(sAddr, eAddr, sAddr, eAddr);
+		}
 
-		// virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror) = 0;
-		// virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin) = 0;
+		virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror, HandlerRead<dWidth, aShift> *handler) {}
+		virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, HandlerRead<dWidth, aShift> *handler) {}
 	};
 
 	template <int dWidth, int aShift>
@@ -128,21 +130,21 @@ namespace aspace
 
 		virtual ~HandlerWrite() = default;
 
-		virtual void write(offs_t off, uintx_t data) = 0;
-		virtual void write(offs_t off, uintx_t data, uintx_t mask) = 0;
+		virtual void write(offs_t off, uintx_t data, cpuDevice *cpu) = 0;
+		virtual void write(offs_t off, uintx_t data, uintx_t mask, cpuDevice *cpu) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
 
-		// inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
-		// {
-		// 	// sAddr &= ~nativeMask;
-		// 	// eAddr |= nativeMask;
-		// 	if (mAddr != 0)
-		// 		populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
-		// 	else
-		// 		populateNoMirror(sAddr, eAddr, sAddr, eAddr);
-		// }
+		inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr)
+		{
+			sAddr &= ~nativeMask;
+			eAddr |= nativeMask;
+			if (mAddr != 0)
+				populateMirror(sAddr, eAddr, sAddr, eAddr, mAddr);
+			else
+				populateNoMirror(sAddr, eAddr, sAddr, eAddr);
+		}
 
-		// virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror) = 0;
-		// virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin) = 0;
+		virtual void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror, HandlerWrite<dWidth, aShift> *handler) {}
+		virtual void populateNoMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, HandlerWrite<dWidth, aShift> *handler) {}
 	};
 }
