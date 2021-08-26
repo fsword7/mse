@@ -46,6 +46,8 @@ class i8080_cpuDevice : public cpuDevice
         void run();
         void execute();
 
+        void startDevice();
+        
     protected:
         void init();
 
