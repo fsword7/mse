@@ -24,9 +24,6 @@ string alpha_cpuDevice::getStringAddress(offs_t addr)
 
 int alpha_cpuDevice::list(Console *cty, offs_t vAddr)
 {
-	using namespace aspace;
-
-	AddressSpace *space = getAddressSpace(AS_PROGRAM);
 	uint32_t opWord, opc, fnc;
 	uint32_t mdpAddr;
 	int rb;
@@ -34,7 +31,7 @@ int alpha_cpuDevice::list(Console *cty, offs_t vAddr)
 
 	opcAlpha *opCode;
 
-	opWord = space->read32(vAddr);
+	opWord = mapProgram.read32(vAddr, nullptr);
 	opc = OP_GETOP(opWord);
 
 	switch (opc)
