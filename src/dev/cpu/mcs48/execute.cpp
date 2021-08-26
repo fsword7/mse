@@ -26,9 +26,9 @@ void mcs48_cpuDevice::init()
 //  tiHist  = 0; // T1 history
 
 	// Reset all memory configurations
-	mapProgram = getAddressSpace(AS_PROGRAM);
-	mapData = getAddressSpace(AS_DATA);
-	mapPort = getAddressSpace(AS_IOPORT);
+	// mapProgram = getAddressSpace(AS_PROGRAM);
+	// mapData = getAddressSpace(AS_DATA);
+	// mapPort = getAddressSpace(AS_IOPORT);
 }
 
 void mcs48_cpuDevice::setPCAddress(offs_t addr)
@@ -40,7 +40,7 @@ uint8_t mcs48_cpuDevice::fetchi()
 {
 	uint16_t addr = pcAddr;
 	pcAddr = ((pcAddr + 1) & 0x7FF) | (pcAddr & 0x800);
-	return mapProgram->read8(addr);
+	return mapProgram.read8(addr, this);
 }
 
 void mcs48_cpuDevice::updateRegisters()

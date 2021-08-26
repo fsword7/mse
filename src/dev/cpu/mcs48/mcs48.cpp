@@ -35,6 +35,15 @@ mapConfigList mcs48_cpuDevice::getAddressConfigList() const
 	};
 }
 
+void mcs48_cpuDevice::startDevice()
+{
+	
+	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
+	getAddressSpace(AS_DATA)->setMemorySpecific(mapData);
+	getAddressSpace(AS_IOPORT)->setMemorySpecific(mapPort);
+
+}
+
 void mcs48_cpuDevice::setProgram1K(AddressList &map)
 {
 	map(0x000, 0x3FF).rom().region("main");

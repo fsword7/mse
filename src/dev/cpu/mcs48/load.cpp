@@ -13,7 +13,7 @@ bool mcs48_cpuDevice::load(ifstream &fin, offs_t off)
 	uint8_t blkData[512];
 	offs_t  soff = off;
 
-	assert(mapProgram != nullptr);
+	// assert(mapProgram != nullptr);
 
 //	if (off == 0)
 //	{
@@ -53,7 +53,7 @@ bool mcs48_cpuDevice::load(ifstream &fin, offs_t off)
 	while (!fin.eof())
 	{
 		fin.read((char *)blkData, sizeof(blkData));
-		mapProgram->writeBlock(off, blkData, fin.gcount());
+		mapProgram.writeBlock(off, blkData, fin.gcount());
 		off += fin.gcount();
 	}
 	fin.close();

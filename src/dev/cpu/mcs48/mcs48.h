@@ -44,13 +44,13 @@
 #define chargeCycles(cycle)
 
 // internal program access
-#define readp(a)		mapProgram->read8(a)
-#define writep(a, v)	mapProgram->write8(a, v)
+#define readp(a)		mapProgram.read8(a, this)
+#define writep(a, v)	mapProgram.write8(a, v, this)
 
 // internal data access
-//#define readd(a)		mapData->read(a)
-//#define writed(a, v)	mapData->write(a, v)
-//#define accessd(a)		mapData->access(a)
+//#define readd(a)		mapData.read(a, this)
+//#define writed(a, v)	mapData.write(a, v, this)
+//#define accessd(a)		mapData.access(a, this)
 #define readd(a)		idata[a]
 #define writed(a, v)	idata[a] = v
 #define accessd(a)		&idata[a]
@@ -85,7 +85,9 @@ public:
 	void setPCAddress(offs_t addr) override;
 	bool load(ifstream &fin, offs_t off) override;
 
-	void devReset() override { init(); }
+	// Virtual device function calls
+	void startDevice() override;
+	void resetDevice() override { init(); }
 
 	void initOpcodeTable();
 
@@ -146,13 +148,13 @@ protected:
 	mapAddressConfig mapDataConfig;
 	mapAddressConfig mapPortConfig;
 
-	aspace::MemoryAccess<12, 0, 0, LittleEndian>::specific mapProgram1;
-	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapData1;
-	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapPort1;
+	aspace::MemoryAccess<12, 0, 0, LittleEndian>::specific mapProgram;
+	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapData;
+	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapPort;
 
-	mapAddressSpace *mapProgram = nullptr;
-	mapAddressSpace *mapData = nullptr;
-	mapAddressSpace *mapPort = nullptr;
+	mapAddressSpace *mapProgram1 = nullptr;
+	mapAddressSpace *mapData1 = nullptr;
+	mapAddressSpace *mapPort1 = nullptr;
 
 	mcs48op_t *opCodes[256];
 

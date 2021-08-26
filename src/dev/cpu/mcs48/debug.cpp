@@ -21,16 +21,13 @@ string mcs48_cpuDevice::getStringAddress(offs_t addr)
 
 int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 {
-	using namespace aspace;
-
-	AddressSpace *space = getAddressSpace(AS_PROGRAM);
 	uint8_t  opCode, opMask;
 	uint16_t reg;
 	uint16_t addr;
 	uint16_t sAddr = vAddr;
 	string line, opcName, oprLine = "";
 
-	opCode = space->read8(vAddr);
+	opCode = mapProgram.read8(vAddr, this);
 	vAddr = (vAddr + 1) & 0x7FF;
 
 	line = fmt::sprintf("%03X %02X ", sAddr, opCode);
@@ -51,7 +48,7 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 			break;
 
 		case OPR_LIT:
-			addr = space->read8(vAddr);
+			addr = mapProgram.read8(vAddr, this);
 			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
@@ -59,14 +56,14 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 
 		case OPR_REG|OPR_LIT:
 			reg = opCode & opCodes[opCode]->opMask;
-			addr = space->read8(vAddr);
+			addr = mapProgram.read8(vAddr, this);
 			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
 			break;
 
 		case OPR_ADDR2:
-			addr = space->read8(vAddr) | (vAddr & 0xF00);
+			addr = mapProgram.read8(vAddr, this) | (vAddr & 0xF00);
 			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
@@ -74,14 +71,14 @@ int mcs48_cpuDevice::list(Console *cty, offs_t vAddr)
 
 		case OPR_REG|OPR_ADDR2:
 			reg = opCode & opCodes[opCode]->opMask;
-			addr = space->read8(vAddr) | (vAddr & 0xF00);
+			addr = mapProgram.read8(vAddr, this) | (vAddr & 0xF00);
 			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, reg, addr);
 			break;
 
 		case OPR_ADDR3:
-			addr = ((opCode & 0xE0) << 3) | space->read8(vAddr);
+			addr = ((opCode & 0xE0) << 3) | mapProgram.read8(vAddr, this);
 			vAddr = (vAddr + 1) & 0x7FF;
 			line += fmt::sprintf("%02X", addr & 0xFF);
 			oprLine = fmt::sprintf(opCodes[opCode]->opReg, addr);
