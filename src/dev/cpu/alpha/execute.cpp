@@ -108,7 +108,7 @@ void alpha_cpuDevice::init()
 	// procesor-specific reset
 	preset();
 
-	mapProgram = getAddressSpace(AS_PROGRAM);
+	// mapProgram = getAddressSpace(AS_PROGRAM);
 }
 
 void alpha_cpuDevice::setPCAddress(offs_t addr)
@@ -211,7 +211,7 @@ int alpha_cpuDevice::fetchi(uint64_t addr, uint32_t &data)
 		state.iCache[idx].pAddr = pAddr;
 
 		// Fetch 2048-byte data block from memeory
-		mapProgram->readBlock(state.iCache[idx].pAddr,
+		mapProgram.readBlock(state.iCache[idx].pAddr,
 			(uint8_t *)&state.iCache[idx].data, ICACHE_LINE_SIZE*4);
 
 		state.iCacheLast = idx;
@@ -220,7 +220,7 @@ int alpha_cpuDevice::fetchi(uint64_t addr, uint32_t &data)
 
 	// Instruction cache disabled
 
-	data = mapProgram->read32(state.pcAddr, this);
+	data = mapProgram.read32(state.pcAddr, this);
 	return 0;
 }
 

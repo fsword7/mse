@@ -17,7 +17,7 @@ bool alpha_cpuDevice::load(ifstream &fin, offs_t off)
 	romHeader romHdr;
 	uint64_t  romSize;
 
-	assert(mapProgram != nullptr);
+	// assert(mapProgram != nullptr);
 
 	if (off == 0)
 	{
@@ -57,7 +57,7 @@ bool alpha_cpuDevice::load(ifstream &fin, offs_t off)
 	while (!fin.eof())
 	{
 		fin.read((char *)blkData, sizeof(blkData));
-		mapProgram->writeBlock(off, blkData, fin.gcount());
+		mapProgram.writeBlock(off, blkData, fin.gcount());
 		off += fin.gcount();
 	}
 	fin.close();

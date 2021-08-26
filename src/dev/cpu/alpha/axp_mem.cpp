@@ -25,10 +25,10 @@ uint64_t alpha_cpuDevice::readp(uint64_t pAddr, int size)
 {
 	switch (size)
 	{
-		case LN_QUAD: return mapProgram->read64(pAddr, this);
-		case LN_LONG: return mapProgram->read32(pAddr, this);
-		case LN_WORD: return mapProgram->read16(pAddr, this);
-		case LN_BYTE: return mapProgram->read8(pAddr, this);
+		case LN_QUAD: return mapProgram.read64(pAddr, this);
+		case LN_LONG: return mapProgram.read32(pAddr, this);
+		case LN_WORD: return mapProgram.read16(pAddr, this);
+		case LN_BYTE: return mapProgram.read8(pAddr, this);
 	}
 	return 0;
 }
@@ -38,10 +38,10 @@ void alpha_cpuDevice::writep(uint64_t pAddr, uint64_t data, int size)
 {
 	switch (size)
 	{
-		case LN_QUAD: mapProgram->write64(pAddr, data, this); break;
-		case LN_LONG: mapProgram->write32(pAddr, data, this); break;
-		case LN_WORD: mapProgram->write16(pAddr, data, this); break;
-		case LN_BYTE: mapProgram->write8(pAddr, data, this);  break;
+		case LN_QUAD: mapProgram.write64(pAddr, data, this); break;
+		case LN_LONG: mapProgram.write32(pAddr, data, this); break;
+		case LN_WORD: mapProgram.write16(pAddr, data, this); break;
+		case LN_BYTE: mapProgram.write8(pAddr, data, this);  break;
 	}
 }
 

@@ -221,15 +221,15 @@
 #define SXT48(val) (((val) & 0x0000800000000000LL) \
 	? ((val) | 0xFFFF000000000000LL) : ((val) & 0x0000FFFFFFFFFFFFLL))
 
-//#define readv8(vAddr)  mapProgram->read8(vAddr, this)
-//#define readv16(vAddr) mapProgram->read16(vAddr, this)
-//#define readv32(vAddr) mapProgram->read32(vAddr, this)
-//#define readv64(vAddr) mapProgram->read64(vAddr, this)
+//#define readv8(vAddr)  mapProgram.read8(vAddr, this)
+//#define readv16(vAddr) mapProgram.read16(vAddr, this)
+//#define readv32(vAddr) mapProgram.read32(vAddr, this)
+//#define readv64(vAddr) mapProgram.read64(vAddr, this)
 //
-//#define writev8(vAddr, data)  mapProgram->write8(vAddr, data, this)
-//#define writev16(vAddr, data) mapProgram->write16(vAddr, data, this)
-//#define writev32(vAddr, data) mapProgram->write32(vAddr, data, this)
-//#define writev64(vAddr, data) mapProgram->write64(vAddr, data, this)
+//#define writev8(vAddr, data)  mapProgram.write8(vAddr, data, this)
+//#define writev16(vAddr, data) mapProgram.write16(vAddr, data, this)
+//#define writev32(vAddr, data) mapProgram.write32(vAddr, data, this)
+//#define writev64(vAddr, data) mapProgram.write64(vAddr, data, this)
 
 #define readv8(vAddr)  readv(vAddr, LN_BYTE)
 #define readv16(vAddr) readv(vAddr, LN_WORD)
@@ -462,9 +462,7 @@ protected:
 
 	mapAddressConfig mapProgramConfig;
 
-	mapAddressSpace *mapProgram = nullptr;
-
-	aspace::MemoryAccess<40, 3, 0, LittleEndian>::specific mapProgram1;
+	aspace::MemoryAccess<40, 3, 0, LittleEndian>::specific mapProgram;
 	
 	Console *log = nullptr;
 };

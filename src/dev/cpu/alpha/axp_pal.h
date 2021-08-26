@@ -33,10 +33,10 @@
 
 #define DOPC_HW_REI		setPC(state.iRegs[RB])
 
-#define DOPC_HW_LDL		RAV = mapProgram->read32(RBV + DISP12);
-#define DOPC_HW_LDQ		RAV = mapProgram->read64(RBV + DISP12);
-#define DOPC_HW_STL		mapProgram->write32(RBV + DISP12, RAV);
-#define DOPC_HW_STQ		mapProgram->write64(RBV + DISP12, RAV);
+#define DOPC_HW_LDL		RAV = mapProgram.read32(RBV + DISP12, this);
+#define DOPC_HW_LDQ		RAV = mapProgram.read64(RBV + DISP12, this);
+#define DOPC_HW_STL		mapProgram.write32(RBV + DISP12, RAV, this);
+#define DOPC_HW_STQ		mapProgram.write64(RBV + DISP12, RAV, this);
 
 //#define DOPC_HW_LDL                                        \
 //	switch (func)                                          \
