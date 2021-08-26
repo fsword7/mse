@@ -23,16 +23,22 @@ namespace aspace
 
 		~HandlerReadMemory() = default;
 
-		inline ctag_t *getName() const { return "memory"; }
-		inline void setBase(uintx_t *base) { baseData = base; }
+		string getName() const override { return "memory"; }
+		void setBase(uintx_t *base) override { baseData = base; }
 
-		uintx_t read(offs_t offset, uintx_t mask)
+		uintx_t read(offs_t offset) override
 		{
 			assert(baseData != nullptr);
 			return baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
 		}
 
-		uintx_t *access(offs_t offset)
+		uintx_t read(offs_t offset, uintx_t mask) override
+		{
+			assert(baseData != nullptr);
+			return baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
+		}
+
+		uintx_t *access(offs_t offset) override
 		{
 			assert(baseData != nullptr);
 			return &baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
@@ -55,23 +61,23 @@ namespace aspace
 
 		~HandlerWriteMemory() = default;
 
-		inline ctag_t *getName() const { return "memory"; }
-		inline void setBase(uintx_t *base) { baseData = base; }
+		string getName() const override { return "memory"; }
+		void setBase(uintx_t *base) override { baseData = base; }
 
-		void write(offs_t offset, uintx_t data)
+		void write(offs_t offset, uintx_t data) override
 		{
 			assert(baseData != nullptr);
 			baseData[((offset - inh::baseAddress) & inh::maskAddrss) >> (dWidth + aShift)] = data;
 		}
 
-		void write(offs_t offset, uintx_t data, uintx_t mask)
+		void write(offs_t offset, uintx_t data, uintx_t mask) override
 		{
 			assert(baseData != nullptr);
 			offs_t off = ((offset - inh::baseAddress) & inh::maskAddrss) >> (dWidth + aShift);
 			baseData[off] = (baseData[off] & ~mask) | (data & mask);
 		}
 
-		uintx_t *access(offs_t offset)
+		uintx_t *access(offs_t offset) override
 		{
 			assert(baseData != nullptr);
 			return &baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];

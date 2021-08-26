@@ -23,7 +23,7 @@ namespace aspace
 
 		~HandlerReadUnmapped() = default;
 
-		// inline ctag_t *getName() const { return "unmapped"; }
+		// ctag_t *getName() const { return "unmapped"; }
 		string getName() const { return "unmapped"; }
 
 		uintx_t read(offs_t offset)
@@ -51,6 +51,7 @@ namespace aspace
 
 		~HandlerWriteUnmapped() = default;
 
+		// ctag_t *getName() const { return "unmapped"; }
 		string getName() const { return "unmapped"; }
 
 		void write(offs_t offset, uintx_t data)
@@ -77,6 +78,7 @@ namespace aspace
 
 		~HandlerReadNop() = default;
 
+		// ctag_t *getName() const { return "nop"; }
 		string getName() const { return "nop"; }
 
 		uintx_t read(offs_t offset)
@@ -103,6 +105,7 @@ namespace aspace
 
 		~HandlerWriteNop() = default;
 
+		// ctag_t *getName() const { return "nop"; }
 		string getName() const { return "nop"; }
 
 		void write(offs_t offset, uintx_t data)

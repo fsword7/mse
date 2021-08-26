@@ -26,8 +26,8 @@ namespace aspace
 
 #include "emu/map/he.h"
 #include "emu/map/heun.h"
-// #include "emu/map/hedr.h"
-// #include "emu/map/hedw.h"
+#include "emu/map/hedr.h"
+#include "emu/map/hedw.h"
 
 class cpuDevice;
 class Machine;

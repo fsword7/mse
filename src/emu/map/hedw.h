@@ -37,7 +37,7 @@ namespace aspace
 				dispatch[idx]->unref();
 		}
 
-		inline ctag_t *getName() { return "dispatch"; }
+		string getName() const override { return "dispatch"; }
 
 		void write(offs_t offset, uintx_t data) override
 		{

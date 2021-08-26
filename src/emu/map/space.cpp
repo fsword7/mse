@@ -17,9 +17,9 @@ namespace aspace {
 	template <int Level, int dWidth, int aShift, endian_t eType>
 	class AddressSpaceSpecific : public AddressSpace
 	{
-		// using uintx_t = typename HeaderSize<dWidth>::uintx_t;
-		// using thisType = AddressSpaceAccess<dWidth, aShift, endian>;
-		// using nativeType = uintx_t;
+		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
+		using thisType = AddressSpaceSpecific<Level, dWidth, aShift, eType>;
+		using nativeType = uintx_t;
 
 		static constexpr uint64_t nativeBytes = 1 << dWidth;
 		static constexpr uint64_t nativeStep = (aShift < 0) ? nativeBytes << labs(aShift) : nativeBytes >> labs(aShift);
@@ -45,6 +45,16 @@ namespace aspace {
 			// 	case 4:
 			// 		rootRead = new HandlerReadDispatch<4, dWidth, aShift>(this, r, nullptr);
 			// 		rootWrite = new HandlerWriteDispatch<4, dWidth, aShift>(this, r, nullptr);
+			// 		break;
+
+			// 	case 5:
+			// 		rootRead = new HandlerReadDispatch<5, dWidth, aShift>(this, r, nullptr);
+			// 		rootWrite = new HandlerWriteDispatch<5, dWidth, aShift>(this, r, nullptr);
+			// 		break;
+
+			// 	case 6:
+			// 		rootRead = new HandlerReadDispatch<6, dWidth, aShift>(this, r, nullptr);
+			// 		rootWrite = new HandlerWriteDispatch<6, dWidth, aShift>(this, r, nullptr);
 			// 		break;
 
 			// 	default:

@@ -36,20 +36,20 @@ namespace aspace
 				dispatch[idx]->unref();
 		}
 
-		inline ctag_t *getName() { return "dispatch"; }
+		string getName() const override { return "dispatch"; }
 
 		uintx_t read(offs_t offset) override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
-			return dispatch[off]->read(offset, data);
+			return dispatch[off]->read(offset);
 		}
 
 		uintx_t read(offs_t offset, uintx_t mask) override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
-			return dispatch[off]->read(offset, data, mask);
+			return dispatch[off]->read(offset, mask);
 		}
 
 	protected:
