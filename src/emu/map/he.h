@@ -98,6 +98,8 @@ namespace aspace
 
 		virtual ~HandlerRead() = default;
 
+		virtual HandlerRead<dWidth, aShift> *const *getDispatch() const { return nullptr; };
+
 		virtual uintx_t read(offs_t off, cpuDevice *cpu) = 0;
 		virtual uintx_t read(offs_t off, uintx_t mask, cpuDevice *cpu) = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
@@ -129,6 +131,8 @@ namespace aspace
 		{ }
 
 		virtual ~HandlerWrite() = default;
+
+		virtual HandlerWrite<dWidth, aShift> *const *getDispatch() const { return nullptr; };
 
 		virtual void write(offs_t off, uintx_t data, cpuDevice *cpu) = 0;
 		virtual void write(offs_t off, uintx_t data, uintx_t mask, cpuDevice *cpu) = 0;

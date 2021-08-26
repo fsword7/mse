@@ -306,8 +306,8 @@ namespace aspace
 		offs_t addrMask = 0;
 		uint64_t unmapValue = 0;
 
-		const HandlerRead<dWidth, aShift> *readDispatch = nullptr;
-		const HandlerWrite<dWidth, aShift> *writeDispatch = nullptr;
+		const HandlerRead<dWidth, aShift> *const *readDispatch = nullptr;
+		const HandlerWrite<dWidth, aShift> *const *writeDispatch = nullptr;
 
 		offs_t   memSize = 0;
 		uint8_t *memData = nullptr;
@@ -488,8 +488,8 @@ namespace aspace
 		offs_t addrMask = 0;
 		uint64_t unmapValue = 0;
 
-		const HandlerRead<dWidth, aShift> *readDispatch = nullptr;
-		const HandlerWrite<dWidth, aShift> *writeDispatch = nullptr;
+		const HandlerRead<dWidth, aShift> *const *readDispatch = nullptr;
+		const HandlerWrite<dWidth, aShift> *const *writeDispatch = nullptr;
 
 		offs_t   memSize = 0;
 		uint8_t *memData = nullptr;
@@ -686,8 +686,8 @@ namespace aspace
 	{
 		this->space = space;
 		this->addrMask = space->getAddrMask();
-		this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
-		this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
+		// this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		// this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 	template <int dWidth, int aShift, endian_t type>
@@ -696,8 +696,8 @@ namespace aspace
 	{
 		this->space = space;
 		this->addrMask = space->getAddrMask();
-		this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
-		this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
+		// this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		// this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 }

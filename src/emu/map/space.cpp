@@ -40,28 +40,322 @@ namespace aspace {
 
 			HandlerEntry::range r = { 0, static_cast<offs_t>(~0ull >> ((sizeof(offs_t) * 8) - addrWidth)) };
 
-			// switch (addrWidth)
-			// {
-			// 	case 4:
-			// 		rootRead = new HandlerReadDispatch<4, dWidth, aShift>(this, r, nullptr);
-			// 		rootWrite = new HandlerWriteDispatch<4, dWidth, aShift>(this, r, nullptr);
-			// 		break;
+			switch (addrWidth)
+			{
+				case 4:
+					rootRead = new HandlerReadDispatch<4, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<4, dWidth, aShift>(this, r, nullptr);
+					break;
 
-			// 	case 5:
-			// 		rootRead = new HandlerReadDispatch<5, dWidth, aShift>(this, r, nullptr);
-			// 		rootWrite = new HandlerWriteDispatch<5, dWidth, aShift>(this, r, nullptr);
-			// 		break;
+				case 5:
+					rootRead = new HandlerReadDispatch<5, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<5, dWidth, aShift>(this, r, nullptr);
+					break;
 
-			// 	case 6:
-			// 		rootRead = new HandlerReadDispatch<6, dWidth, aShift>(this, r, nullptr);
-			// 		rootWrite = new HandlerWriteDispatch<6, dWidth, aShift>(this, r, nullptr);
-			// 		break;
+				case 6:
+					rootRead = new HandlerReadDispatch<6, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<6, dWidth, aShift>(this, r, nullptr);
+					break;
 
-			// 	default:
-			// 		fmt::printf("%s: Invalid dispatch handler - address %d width %d shift\n",
-			// 			dev->getDeviceName(), addrWidth, aShift);
-			// 		break;
-			// }
+				case 7:
+					rootRead = new HandlerReadDispatch<7, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<7, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 8:
+					rootRead = new HandlerReadDispatch<8, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<8, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 9:
+					rootRead = new HandlerReadDispatch<9, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<9, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 10:
+					rootRead = new HandlerReadDispatch<10, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<10, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 11:
+					rootRead = new HandlerReadDispatch<11, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<11, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 12:
+					rootRead = new HandlerReadDispatch<12, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<12, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 13:
+					rootRead = new HandlerReadDispatch<13, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<13, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 14:
+					rootRead = new HandlerReadDispatch<14, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<14, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 15:
+					rootRead = new HandlerReadDispatch<15, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<15, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 16:
+					rootRead = new HandlerReadDispatch<16, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<16, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 17:
+					rootRead = new HandlerReadDispatch<17, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<17, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 18:
+					rootRead = new HandlerReadDispatch<18, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<18, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 19:
+					rootRead = new HandlerReadDispatch<19, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<19, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 20:
+					rootRead = new HandlerReadDispatch<20, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<20, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 21:
+					rootRead = new HandlerReadDispatch<21, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<21, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 22:
+					rootRead = new HandlerReadDispatch<22, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<22, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 23:
+					rootRead = new HandlerReadDispatch<23, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<23, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 24:
+					rootRead = new HandlerReadDispatch<24, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<24, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 25:
+					rootRead = new HandlerReadDispatch<25, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<25, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 26:
+					rootRead = new HandlerReadDispatch<26, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<26, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 27:
+					rootRead = new HandlerReadDispatch<27, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<27, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 28:
+					rootRead = new HandlerReadDispatch<28, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<28, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 29:
+					rootRead = new HandlerReadDispatch<29, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<29, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 30:
+					rootRead = new HandlerReadDispatch<30, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<30, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 31:
+					rootRead = new HandlerReadDispatch<31, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<31, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				case 32:
+					rootRead = new HandlerReadDispatch<32, dWidth, aShift>(this, r, nullptr);
+					rootWrite = new HandlerWriteDispatch<32, dWidth, aShift>(this, r, nullptr);
+					break;
+
+				// case 33:
+				// 	rootRead = new HandlerReadDispatch<33, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<33, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 34:
+				// 	rootRead = new HandlerReadDispatch<34, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<34, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 35:
+				// 	rootRead = new HandlerReadDispatch<35, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<35, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 36:
+				// 	rootRead = new HandlerReadDispatch<36, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<36, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 37:
+				// 	rootRead = new HandlerReadDispatch<37, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<37, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 38:
+				// 	rootRead = new HandlerReadDispatch<38, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<38, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 39:
+				// 	rootRead = new HandlerReadDispatch<39, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<39, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 40:
+				// 	rootRead = new HandlerReadDispatch<40, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<40, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 41:
+				// 	rootRead = new HandlerReadDispatch<41, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<41, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 42:
+				// 	rootRead = new HandlerReadDispatch<42, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<42, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 43:
+				// 	rootRead = new HandlerReadDispatch<43, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<43, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 44:
+				// 	rootRead = new HandlerReadDispatch<44, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<44, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 45:
+				// 	rootRead = new HandlerReadDispatch<45, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<45, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 46:
+				// 	rootRead = new HandlerReadDispatch<46, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<46, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 47:
+				// 	rootRead = new HandlerReadDispatch<47, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<47, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 48:
+				// 	rootRead = new HandlerReadDispatch<48, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<48, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 49:
+				// 	rootRead = new HandlerReadDispatch<49, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<49, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 50:
+				// 	rootRead = new HandlerReadDispatch<50, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<50, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 51:
+				// 	rootRead = new HandlerReadDispatch<51, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<51, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 52:
+				// 	rootRead = new HandlerReadDispatch<52, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<52, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 53:
+				// 	rootRead = new HandlerReadDispatch<53, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<53, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 54:
+				// 	rootRead = new HandlerReadDispatch<54, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<54, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 55:
+				// 	rootRead = new HandlerReadDispatch<55, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<55, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 56:
+				// 	rootRead = new HandlerReadDispatch<56, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<56, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 57:
+				// 	rootRead = new HandlerReadDispatch<57, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<57, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 58:
+				// 	rootRead = new HandlerReadDispatch<58, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<58, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 59:
+				// 	rootRead = new HandlerReadDispatch<59, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<59, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 60:
+				// 	rootRead = new HandlerReadDispatch<60, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<60, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 61:
+				// 	rootRead = new HandlerReadDispatch<61, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<61, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 62:
+				// 	rootRead = new HandlerReadDispatch<62, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<62, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 63:
+				// 	rootRead = new HandlerReadDispatch<63, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<63, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				// case 64:
+				// 	rootRead = new HandlerReadDispatch<64, dWidth, aShift>(this, r, nullptr);
+				// 	rootWrite = new HandlerWriteDispatch<64, dWidth, aShift>(this, r, nullptr);
+				// 	break;
+
+				default:
+					fmt::printf("%s: Invalid dispatch handler - address %d width %d shift\n",
+						dev->getDeviceName(), addrWidth, aShift);
+					break;
+			}
+
+			// Assign dispatch table for direct read/write accesses
+			dispatchRead = rootRead->getDispatch();
+			dispatchWrite = rootWrite->getDispatch();
 
 			fmt::printf("%s: Address range: %llX - %llX (%d-bit addressing)\n",
 				dev->getDeviceName(), r.start, r.end, addrWidth);
@@ -208,6 +502,10 @@ namespace aspace {
 	private:
 		HandlerRead<dWidth, aShift> *rootRead = nullptr;
 		HandlerWrite<dWidth, aShift> *rootWrite = nullptr;
+
+		// For read/write access function calls
+		const HandlerRead<dWidth, aShift> *const *dispatchRead = nullptr;
+		const HandlerWrite<dWidth, aShift> *const *dispatchWrite = nullptr;
 	};
 
 	// template <int dWidth, int aShift, int endian>

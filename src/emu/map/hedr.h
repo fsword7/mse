@@ -36,7 +36,7 @@ namespace aspace
 				dispatch[idx]->unref();
 		}
 
-		HandlerRead<dWidth, aShift> *const *getDispatch() const { return dispatch; }
+		HandlerRead<dWidth, aShift> *const *getDispatch() const override { return dispatch; }
 
 		string getName() const override { return "dispatch"; }
 
@@ -44,14 +44,14 @@ namespace aspace
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
-			return dispatch[off]->read(offset);
+			return dispatch[off]->read(offset, cpu);
 		}
 
 		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
-			return dispatch[off]->read(offset, mask);
+			return dispatch[off]->read(offset, mask, cpu);
 		}
 
 		void populateMirror(offs_t sAddr, offs_t eAddr, offs_t sOrgin, offs_t eOrgin, offs_t mirror, HandlerRead<dWidth, aShift> *handler) override;
