@@ -281,8 +281,9 @@ public:
 	void setPCAddress(offs_t addr) override;
 	bool load(ifstream &fin, offs_t off) override;
 
-	void devReset() override { init(); }
-
+	// Virtual device function calls
+	void startDevice() override;
+	void resetDevice() override { init(); }
 
 	inline void setPALAddress(offs_t addr) { state.palBase = addr; }
 

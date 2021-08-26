@@ -26,3 +26,10 @@ mapConfigList alpha_cpuDevice::getAddressConfigList() const
 		{ aspace::asProgram, &mapProgramConfig }
 	};
 }
+
+void alpha_cpuDevice::startDevice()
+{
+
+	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
+	
+}
