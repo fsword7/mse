@@ -25,7 +25,8 @@ protected:
 	void openImageFile(ctag_t *name, cromEntry_t *entry);
 	void closeImageFile();
 
-	cromEntry_t *processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev);
+	// cromEntry_t *processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev);
+	void processImageEntries(ctag_t *name, cromEntry_t *&entry, const Device &dev);
 	void processRegionList();
 
 	Console &cty;

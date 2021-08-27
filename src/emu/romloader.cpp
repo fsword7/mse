@@ -28,8 +28,8 @@ cromEntry_t *romLoader::first(Device &dev)
 
 cromEntry_t *romLoader::next(cromEntry_t *entry)
 {
-	entry++;
-	if (ROMENTRY_ISREGION(entry))
+//	entry++;
+	while (!ROMENTRY_ISREGIONEND(entry))
 		entry++;
 
 	return !ROMENTRY_ISEND(entry) ? entry : nullptr;
@@ -45,8 +45,11 @@ void romLoader::closeImageFile()
 
 }
 
-cromEntry_t *romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev)
+// cromEntry_t *romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev)
+void romLoader::processImageEntries(ctag_t *name, cromEntry_t *&entry, const Device &dev)
 {
+	cromEntry_t *parent = entry++;
+
 	while (!ROMENTRY_ISREGIONEND(entry))
 	{
 		if (ROMENTRY_ISFILE(entry))
@@ -56,10 +59,9 @@ cromEntry_t *romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, c
 
 			cty.printf("%s: Loading image file '%s'...\n", dev.getDeviceName(), ROM_GETNAME(entry));
 			openImageFile(name, entry);
+			entry++;
 		}
-		entry++;
 	}
-	return ++entry;
 }
 
 void romLoader::processRegionList()
@@ -93,8 +95,8 @@ void romLoader::processRegionList()
 					fill = ROMREGION_GETFILL(*entry);
 				memset(region->getBase(), fill, region->getSize());
 
-				entry = processImageEntries(rgnName, entry, entry+1, dev);
-				cty.printf("%s: Emd of ROM region\n", dev.getDeviceName());
+				// entry = processImageEntries(rgnName, entry, entry+1, dev);
+				processImageEntries(rgnName, entry, dev);
 			}
 		}
 		cty.printf("%s: End of ROM entries\n", dev.getDeviceName());
