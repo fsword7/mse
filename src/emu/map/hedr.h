@@ -17,7 +17,7 @@ namespace aspace
 
 		HandlerReadDispatch(AddressSpace *space, const HandlerEntry::range &init,
 			HandlerRead<dWidth, aShift> *handler = nullptr)
-		: HandlerRead<dWidth, aShift>(space, 0)
+		: HandlerRead<dWidth, aShift>(space, HandlerEntry::heDispatch)
 		{
 			// Initialize dispatch table
 			if (handler == nullptr)
@@ -42,14 +42,14 @@ namespace aspace
 
 		string getName() const override { return "dispatch"; }
 
-		uintx_t read(offs_t offset, cpuDevice *cpu) override
+		uintx_t read(offs_t offset, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
 			return dispatch[off]->read(offset, cpu);
 		}
 
-		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) override
+		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);

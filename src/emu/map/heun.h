@@ -26,12 +26,12 @@ namespace aspace
 		// ctag_t *getName() const { return "unmapped"; }
 		string getName() const { return "unmapped"; }
 
-		uintx_t read(offs_t offset, cpuDevice *cpu)
+		uintx_t read(offs_t offset, cpuDevice *cpu) const override
 		{
 			return rhe::space->getUnmapped();
 		}
 
-		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu)
+		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) const override
 		{
 			return rhe::space->getUnmapped();
 		}
@@ -54,12 +54,12 @@ namespace aspace
 		// ctag_t *getName() const { return "unmapped"; }
 		string getName() const { return "unmapped"; }
 
-		void write(offs_t offset, uintx_t data, cpuDevice *cpu)
+		void write(offs_t offset, uintx_t data, cpuDevice *cpu) const override
 		{
 
 		}
 
-		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu)
+		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu) const override
 		{
 
 		}
@@ -81,12 +81,12 @@ namespace aspace
 		// ctag_t *getName() const { return "nop"; }
 		string getName() const { return "nop"; }
 
-		uintx_t read(offs_t offset, cpuDevice *cpu)
+		uintx_t read(offs_t offset, cpuDevice *cpu) const override
 		{
 			return rhe::space->getUnmapped();
 		}
 
-		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu)
+		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) const override
 		{
 			return rhe::space->getUnmapped();
 		}
@@ -108,12 +108,12 @@ namespace aspace
 		// ctag_t *getName() const { return "nop"; }
 		string getName() const { return "nop"; }
 
-		void write(offs_t offset, uintx_t data, cpuDevice *cpu)
+		void write(offs_t offset, uintx_t data, cpuDevice *cpu) const override
 		{
 
 		}
 
-		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu)
+		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu) const override
 		{
 
 		}

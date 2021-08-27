@@ -51,6 +51,9 @@ namespace aspace
 	class HandlerEntry
 	{
 	public:
+		static constexpr uint32_t heDispatch    = 0x00000001;
+		static constexpr uint32_t hePassthrough = 0x00000002;
+
 		HandlerEntry(AddressSpace *space, uint64_t flags)
 		: space(space), flags(flags), refCount(1)
 		{ }
@@ -59,6 +62,9 @@ namespace aspace
 
 		// virtual ctag_t *getName() const = 0;
 		virtual string getName() const = 0;
+
+		inline bool isDispatch() const    { return flags & heDispatch; }
+		inline bool isPassthrough() const { return flags & hePassthrough; }
 
 		inline void ref(int count = 1)
 		{
@@ -74,7 +80,7 @@ namespace aspace
 
 	protected:
 		AddressSpace *space;
-		uint64_t      flags;
+		uint32_t      flags;
 		mutable int   refCount = 0;
 
 		struct range
@@ -100,8 +106,8 @@ namespace aspace
 
 		virtual HandlerRead<dWidth, aShift> *const *getDispatch() const { return nullptr; };
 
-		virtual uintx_t read(offs_t off, cpuDevice *cpu) = 0;
-		virtual uintx_t read(offs_t off, uintx_t mask, cpuDevice *cpu) = 0;
+		virtual uintx_t read(offs_t off, cpuDevice *cpu) const = 0;
+		virtual uintx_t read(offs_t off, uintx_t mask, cpuDevice *cpu) const = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
 
 		inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr, HandlerRead<dWidth, aShift> *handler)
@@ -140,8 +146,8 @@ namespace aspace
 
 		virtual HandlerWrite<dWidth, aShift> *const *getDispatch() const { return nullptr; };
 
-		virtual void write(offs_t off, uintx_t data, cpuDevice *cpu) = 0;
-		virtual void write(offs_t off, uintx_t data, uintx_t mask, cpuDevice *cpu) = 0;
+		virtual void write(offs_t off, uintx_t data, cpuDevice *cpu) const = 0;
+		virtual void write(offs_t off, uintx_t data, uintx_t mask, cpuDevice *cpu) const = 0;
 		virtual void *getAccess(offs_t off) const { return nullptr; }
 
 		inline void populate(offs_t sAddr, offs_t eAddr, offs_t mAddr, HandlerWrite<dWidth, aShift> *handler)

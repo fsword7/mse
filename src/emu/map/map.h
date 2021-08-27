@@ -138,6 +138,11 @@ namespace aspace
 	class AddressEntry;
 	class BusManager;
 
+	// class MemoryAccessHeader
+	// {
+
+	// }
+
 	template <int Level, int dWidth, int aShift, endian_t type>
 	class MemoryAccessSpecific
 	{
@@ -145,6 +150,7 @@ namespace aspace
 
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 
+		static constexpr int      pageBits = determineDispatchLowBits(Level, dWidth, aShift);
 		static constexpr uint64_t nativeBytes = 1 << dWidth;
 		static constexpr uint64_t nativeMask = dWidth - aShift >= 0 ? (1u << (dWidth - aShift)) - 1 : 0;
 
@@ -154,10 +160,24 @@ namespace aspace
 		inline AddressSpace &getSpace() { return *space; }
 		// **** Read access function calls
 
+	private:
+		inline uintx_t readNative(offs_t addr, cpuDevice *cpu)
+		{
+			return readDispatch[(addr & addrMask) >> pageBits]->read(addr, cpu);
+		}
+
+		inline void writeNative(offs_t addr, uintx_t data, cpuDevice *cpu)
+		{
+			writeDispatch[(addr & addrMask) >> pageBits]->write(addr, data, cpu);
+		}
+
+	public:
 		uint8_t read8(offs_t addr, cpuDevice *cpu)
 		{
 			if (addr < memSize)
 				return memData[addr];
+			// if (dWidth == 0)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -167,6 +187,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x1);
 				return *((uint16_t *)ptr);
 			}
+			// if (dWidth == 1)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -185,6 +207,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x3);
 				return *((uint32_t *)ptr);
 			}
+			// if (dWidth == 2)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -203,6 +227,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x7);
 				return *((uint64_t *)ptr);
 			}
+			// if (dWidth == 3)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -230,6 +256,8 @@ namespace aspace
 		{
 			if (addr < memSize)
 				memData[addr] = data;
+			// if (dWidth == 0)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -238,6 +266,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x1);
 				*((uint16_t *)ptr) = data;
 			}
+			// if (dWidth == 1)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -254,6 +284,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x2);
 				*((uint32_t *)ptr) = data;
 			}
+			// if (dWidth == 2)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
@@ -270,6 +302,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x3);
 				*((uint64_t *)ptr) = data;
 			}
+			// if (dWidth == 3)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)
@@ -715,6 +749,7 @@ namespace aspace
 #include "emu/map/hedw.h"
 #include "emu/map/hea.h"
 #include "emu/map/hem.h"
+#include "emu/map/hep.h"
 
 using mapSpaceType     = aspace::SpaceType;
 using mapConfigEntry   = aspace::ConfigEntry;

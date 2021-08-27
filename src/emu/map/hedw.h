@@ -18,7 +18,7 @@ namespace aspace
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 		HandlerWriteDispatch(AddressSpace *space, const HandlerEntry::range &init,
 			HandlerWrite<dWidth, aShift> *handler = nullptr)
-		: HandlerWrite<dWidth, aShift>(space, 0)
+		: HandlerWrite<dWidth, aShift>(space, HandlerEntry::heDispatch)
 		{
 			// Initialize dispatch table
 			if (handler == nullptr)
@@ -43,14 +43,14 @@ namespace aspace
 
 		string getName() const override { return "dispatch"; }
 
-		void write(offs_t offset, uintx_t data, cpuDevice *cpu) override
+		void write(offs_t offset, uintx_t data, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
 			dispatch[off]->write(offset, data, cpu);
 		}
 
-		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu) override
+		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
 			assert(dispatch[off] != nullptr);
