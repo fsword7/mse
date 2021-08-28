@@ -28,25 +28,65 @@ cromEntry_t *romLoader::first(Device &dev)
 
 cromEntry_t *romLoader::next(cromEntry_t *entry)
 {
-//	entry++;
 	while (!ROMENTRY_ISREGIONEND(entry))
 		entry++;
 
 	return !ROMENTRY_ISEND(entry) ? entry : nullptr;
 }
 
-void romLoader::openImageFile(ctag_t *name, cromEntry_t *entry)
+emu::ioFile *romLoader::processImageFile(fs::path pathName, cromEntry_t *entry)
 {
+	auto imageFile = new emu::ioFile(0);
 
+	fs::path fileName = pathName / ROM_GETNAME(entry);
+
+	if (!imageFile->open(fileName))
+	{
+		delete imageFile;
+		imageFile = nullptr;
+	}
+
+	return imageFile;
+}
+
+void romLoader::openImageFile(fs::path pkgName, cromEntry_t *entry)
+{
+	imageFile = processImageFile(pkgName, entry);
 }
 
 void romLoader::closeImageFile()
 {
+	imageFile->close();
+	delete imageFile;
+	imageFile = nullptr;
+}
 
+int romLoader::readImageData(uint8_t *buffer, int length, cromEntry_t *entry)
+{
+	int actual = 0;
+
+	// if (imageFile != nullptr)
+	// 	actual = imageFile->read(buffer, length);
+	return actual;
+}
+
+bool romLoader::loadImageData(cromEntry_t *parent, cromEntry_t *entry)
+{
+	// int length = ROM_GETLENGTH(entry);
+	// int skip = ROM_GETSKIP(entry);
+	// int dShift = ROM_GETBITSHIFT(entry);
+	// int dMask = ((1 << ROM_GETBITWIDTH(entry)));
+	// int gSize = ROM_GETGROUPSIZE(entry);
+	// int reversed = ROM_ISREVERSED(entry);
+	// int nGroups = (length + gSize - 1) / gSize;
+	// uint8_t *base = region->getBase() + ROM_GETOFFSET(entry);
+	// int bufSize;
+
+	return false;
 }
 
 // cromEntry_t *romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev)
-void romLoader::processImageEntries(ctag_t *name, cromEntry_t *&entry, const Device &dev)
+void romLoader::processImageEntries(ctag_t *pkgName, cromEntry_t *&entry, const Device &dev)
 {
 	cromEntry_t *parent = entry++;
 
@@ -58,14 +98,20 @@ void romLoader::processImageEntries(ctag_t *name, cromEntry_t *&entry, const Dev
 			int imageLength = 0;
 
 			cty.printf("%s: Loading image file '%s'...\n", dev.getDeviceName(), ROM_GETNAME(entry));
-			openImageFile(name, entry);
+			openImageFile(pkgName, entry);
 			entry++;
+
+			if (imageFile != nullptr)
+				closeImageFile();
 		}
+		else
+			entry++;
 	}
 }
 
 void romLoader::processRegionList()
 {
+	tag_t      *pkgName;
 	tag_t      *rgnName;
 	uint32_t    rgnLength;
 	cromEntry_t *entry;
@@ -73,9 +119,19 @@ void romLoader::processRegionList()
 
 	for (Device &dev : DeviceIterator(*system->getSystemDevice()))
 	{
-		cty.printf("%s: Initializing ROM entries...\n", dev.getDeviceName());
+		pkgName = dev.getShortName();
+
+		cty.printf("%s: Initializing ROM entries for %s...\n", dev.getDeviceName(), pkgName);
 		for (entry = first(dev); entry != nullptr; entry = next(entry))
 		{
+			if (ROMENTRY_ISCONTAINER(entry))
+			{
+				pkgName = ROM_GETNAME(entry);
+				cty.printf("%s: Package '%s' container\n",
+					dev.getDeviceName(), pkgName);
+				continue;
+			}
+
 			rgnName = ROMREGION_GETNAME(*entry);
 			rgnLength = ROMREGION_GETLENGTH(*entry);
 
@@ -96,7 +152,7 @@ void romLoader::processRegionList()
 				memset(region->getBase(), fill, region->getSize());
 
 				// entry = processImageEntries(rgnName, entry, entry+1, dev);
-				processImageEntries(rgnName, entry, dev);
+				processImageEntries(pkgName, entry, dev);
 			}
 		}
 		cty.printf("%s: End of ROM entries\n", dev.getDeviceName());

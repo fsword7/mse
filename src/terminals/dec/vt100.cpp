@@ -49,15 +49,15 @@ void vt100_vtDevice::vt100_iomem(AddressList &map)
 }
 
 static const romEntry_t ROM_NAME(vt100)[] =
-{   
+{      
     ROM_REGION("vt100fw", 0x2000, 0),
-    ROM_LOAD("23-061E2-00.E56", 0x0000, 0x0800, 0, nullptr),
-    ROM_LOAD("23-032E2-00.E52", 0x0800, 0x0800, 0, nullptr),
-    ROM_LOAD("23-033E2-00.E45", 0x1000, 0x0800, 0, nullptr),
-    ROM_LOAD("23-034E2-00.E40", 0x1800, 0x0800, 0, nullptr),
+    ROM_LOAD("23-061e2-00.e56", 0x0000, 0x0800, 0, nullptr),
+    ROM_LOAD("23-032e2-00.e52", 0x0800, 0x0800, 0, nullptr),
+    ROM_LOAD("23-033e2-00.e45", 0x1000, 0x0800, 0, nullptr),
+    ROM_LOAD("23-034e2-00.e40", 0x1800, 0x0800, 0, nullptr),
 
     ROM_REGION("chargen", 0x0800, 0),
-    ROM_LOAD("23-018E2-00.E4", 0x0000, 0x0800, 0, nullptr),
+    ROM_LOAD("23-018e2-00.e4", 0x0000, 0x0800, 0, nullptr),
 
 	ROM_END
 };

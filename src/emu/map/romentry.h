@@ -32,6 +32,7 @@
 #define ROM_TYPE_REGION		1			// Region entry
 #define ROM_TYPE_IMAGE		2			// ROM image space
 #define ROM_TYPE_FILL		3			// Filling ROM space
+#define ROM_TYPE_CONTAINER	4			// container package
 
 // Per-region ROM bit width definitions
 #define ROM_REGION_8BIT		0x00000000	// 8-bit data width
@@ -55,6 +56,9 @@
 #define ROM_ERASE00			SET_FILL(0x00)
 #define ROM_ERASEFF			SET_FILL(0xFF)
 
+#define ROM_CONTAINER(name) \
+	{ name, nullptr, ROM_TYPE_CONTAINER, 0, 0, 0 }
+
 #define ROM_REGION(name, length, flags) \
 	{ name, nullptr, ROM_TYPE_REGION | (flags), 0, length, 0 }
 
@@ -67,6 +71,7 @@
 #define ROM_GETFLAGS(entry)			((entry)->flags)
 #define ROM_GETNAME(entry)			((entry)->name)
 
+#define ROMENTRY_ISCONTAINER(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_CONTAINER)
 #define ROMENTRY_ISREGION(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_REGION)
 #define ROMENTRY_ISEND(entry)		((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_END)
 #define ROMENTRY_ISFILE(entry)		((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_IMAGE)

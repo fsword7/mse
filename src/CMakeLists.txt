@@ -66,6 +66,7 @@ set(MSE_CPP_SRCS
 	emu/didebug.cpp
 	emu/diexec.cpp
 	emu/engine.cpp
+	emu/fileio.cpp
 	emu/machine.cpp
 	emu/romloader.cpp
 	emu/sysconfig.cpp
