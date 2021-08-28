@@ -70,6 +70,8 @@
 
 #define ROM_GETFLAGS(entry)			((entry)->flags)
 #define ROM_GETNAME(entry)			((entry)->name)
+#define ROM_GETLENGTH(entry)		((entry)->length)
+#define ROM_GETOFFSET(entry)		((entry)->offset)
 
 #define ROMENTRY_ISCONTAINER(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_CONTAINER)
 #define ROMENTRY_ISREGION(entry)	((ROM_GETFLAGS(entry) & ROM_TYPE_MASK) == ROM_TYPE_REGION)

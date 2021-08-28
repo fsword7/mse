@@ -36,16 +36,19 @@ cromEntry_t *romLoader::next(cromEntry_t *entry)
 
 emu::ioFile *romLoader::processImageFile(fs::path pathName, cromEntry_t *entry)
 {
+	fs::path fwPath = "fw";
 	auto imageFile = new emu::ioFile(0);
 
-	fs::path fileName = pathName / ROM_GETNAME(entry);
+	fs::path fileName = fwPath / pathName / ROM_GETNAME(entry);
 
 	if (!imageFile->open(fileName))
 	{
+		cty.printf("Failed to open %s\n", fileName);
+
 		delete imageFile;
 		imageFile = nullptr;
 	}
-
+	cty.printf("Opening '%s'...\n", fileName);
 	return imageFile;
 }
 
@@ -65,24 +68,34 @@ int romLoader::readImageData(uint8_t *buffer, int length, cromEntry_t *entry)
 {
 	int actual = 0;
 
-	// if (imageFile != nullptr)
-	// 	actual = imageFile->read(buffer, length);
+	if (imageFile != nullptr)
+		actual = imageFile->read(buffer, length);
 	return actual;
 }
 
 bool romLoader::loadImageData(cromEntry_t *parent, cromEntry_t *entry)
 {
-	// int length = ROM_GETLENGTH(entry);
+	int offset = ROM_GETOFFSET(entry);
+	int length = ROM_GETLENGTH(entry);
 	// int skip = ROM_GETSKIP(entry);
 	// int dShift = ROM_GETBITSHIFT(entry);
 	// int dMask = ((1 << ROM_GETBITWIDTH(entry)));
 	// int gSize = ROM_GETGROUPSIZE(entry);
 	// int reversed = ROM_ISREVERSED(entry);
 	// int nGroups = (length + gSize - 1) / gSize;
-	// uint8_t *base = region->getBase() + ROM_GETOFFSET(entry);
+	uint8_t *base = region->getBase() + offset;
+	int actual;
 	// int bufSize;
 
-	return false;
+	cty.printf("%s: Reading image data: off=%X len=%X\n", ROM_GETNAME(entry), offset, length);
+	actual = readImageData(base, length, entry);
+	if (actual != length)
+	{
+		cty.printf("%s: Got %d (%X) bytes - expected %d (%X) bytes\n",
+			ROM_GETNAME(entry), actual, actual, length, length);
+		return false;
+	}
+	return true;
 }
 
 // cromEntry_t *romLoader::processImageEntries(ctag_t *name, cromEntry_t *parent, cromEntry_t *entry, const Device &dev)
@@ -99,10 +112,13 @@ void romLoader::processImageEntries(ctag_t *pkgName, cromEntry_t *&entry, const 
 
 			cty.printf("%s: Loading image file '%s'...\n", dev.getDeviceName(), ROM_GETNAME(entry));
 			openImageFile(pkgName, entry);
-			entry++;
 
 			if (imageFile != nullptr)
+			{
+				loadImageData(parent, entry);
 				closeImageFile();
+			}
+			entry++;
 		}
 		else
 			entry++;
