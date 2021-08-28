@@ -758,5 +758,6 @@ using mapConfigList    = aspace::ConfigList;
 using mapAddressConfig = aspace::AddressConfig;
 using mapAddressSpace  = aspace::AddressSpace;
 using mapMemoryBlock   = aspace::MemoryBlock;
+using mapMemoryRegion  = aspace::MemoryRegion;
 using mapBusManager    = aspace::BusManager;
 

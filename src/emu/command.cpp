@@ -37,6 +37,13 @@ CommandStatus cmdDump(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// dumpr <system> <suboptions ...>
+CommandStatus cmdDumpr(Console *user, args_t &args)
+{
+	user->engine.cmdDumpr(user, args);
+	return cmdOk;
+}
+
 // execute <device> [address]
 CommandStatus cmdExecute(Console *user, args_t &args)
 {
@@ -141,6 +148,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "debug",		cmdDebug,	nullptr },
 		{ "dial",		cmdDial,	nullptr },
 		{ "dump",		cmdDump,	nullptr },
+		{ "dumpr",		cmdDumpr,	nullptr },
 		{ "execute",	cmdExecute, nullptr },
 		{ "exit",		cmdExit,	nullptr },
 		{ "halt",		cmdHalt,	nullptr },

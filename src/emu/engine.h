@@ -51,6 +51,7 @@ public:
 	CommandStatus cmdDial(Console *user, args_t &args);
 	CommandStatus cmdDebug(Console *user, args_t &args);
 	CommandStatus cmdDump(Console *user, args_t &args);
+	CommandStatus cmdDumpr(Console *user, args_t &args);
 	CommandStatus cmdExecute(Console *user, args_t &args);
 	CommandStatus cmdExit(Console *user, args_t &args);
 	CommandStatus cmdHalt(Console *user, args_t &args);

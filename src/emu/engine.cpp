@@ -339,6 +339,74 @@ CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus SystemEngine::cmdDumpr(Console *user, args_t &args)
+{
+	using namespace aspace;
+
+	offs_t sAddr, eAddr = -1ull;
+	Machine *sys = nullptr;
+	string rgnName;
+
+	char *strAddr;
+
+	sys = findSystem(args.current());
+	if (sys == nullptr) {
+		user->printf("%s: unknown system\n", args.current());
+		return cmdOk;
+	}
+
+	args.next();
+	rgnName = args.getNext();
+
+	sscanf(args.current().c_str(), "%x", &sAddr);
+	if ((strAddr = strchr(args.current().c_str(), '-')) != nullptr)
+		sscanf(strAddr+1, "%x", &eAddr);
+	else {
+		if (args.size() > 3) {
+			args.next();
+			sscanf(args.current().c_str(), "%x", &eAddr);
+			eAddr = sAddr + eAddr - 1;
+		} else if (eAddr == -1)
+			eAddr = sAddr + 0x140 - 1;
+	}
+
+	mapMemoryRegion *region = sys->getExternalBusManager().findRegion(rgnName);
+	if (region == nullptr)
+	{
+		user->printf("%s: Unknown region %s - aborted.\n", sys->getDeviceName(), rgnName);
+		return cmdOk;
+	}
+
+	const uint8_t *base = region->getBase();
+	
+	offs_t rgnSize = region->getSize();
+	if (eAddr >= rgnSize)
+		eAddr = rgnSize - 1;
+
+	int       idx;
+	char      line[256], lasc[32];
+	char      *lptr, *pasc;
+	uint32_t  data;
+	uint32_t  sts;
+
+	while (sAddr <= eAddr) {
+		lptr = line;
+		pasc = lasc;
+		lptr += sprintf(lptr, "%08X: ", sAddr);
+		for (idx = 0; (idx < 16) && (sAddr <= eAddr); idx++) {
+			data = base[sAddr++];
+			lptr += sprintf(lptr, "%02X%c", data, (idx == 7) ? '-' : ' ');
+			*pasc++ = ((data >= 32) && (data < 127)) ? data : '.';
+		}
+		*pasc = '\0';
+		*lptr = '\0';
+
+		user->printf("%s |%-16s|\n", line, lasc);
+	}
+
+	return cmdOk;
+}
+
 CommandStatus SystemEngine::cmdExecute(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
@@ -681,6 +749,7 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		{ "debug",		SystemEngine::cmdDebug,		nullptr },
 		{ "dial",		SystemEngine::cmdDial,		nullptr },
 		{ "dump",		SystemEngine::cmdDump,		nullptr },
+		{ "dumpr",		SystemEngine::cmdDumpr,		nullptr },
 		{ "execute",	SystemEngine::cmdExecute,	nullptr },
 		{ "exit",		SystemEngine::cmdExit,		nullptr },
 		{ "halt",		SystemEngine::cmdHalt,		nullptr },
