@@ -325,12 +325,6 @@ namespace aspace
 
 	private:
 		void set(AddressSpace *space, const void *read, const void *write);
-		// {
-		// 	this->space = space;
-		// 	// this->addrMask = space->getAddrMask();
-		// 	this->readDispatch = (const HandlerRead<dWidth, aShift, type> *const *)(read);
-		// 	this->writeDispatch = (const HandlerWrite<dWidth, aShift, type> *const *)(write);
-		// }
 
 	private:
 		AddressSpace *space = nullptr;
@@ -497,12 +491,6 @@ namespace aspace
 
 	private:
 		void set(AddressSpace *space, const void *read, const void *write);
-		// {
-		// 	this->space = space;
-		// 	// this->addrMask = space->getAddrMask();
-		// 	this->readDispatch = (const HandlerRead<dWidth, aShift, type> *const *)(read);
-		// 	this->writeDispatch = (const HandlerWrite<dWidth, aShift, type> *const *)(write);
-		// }
 
 	private:
 		AddressSpace *space = nullptr;
@@ -574,16 +562,23 @@ namespace aspace
 
 		virtual void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) = 0;
 
-		template <int Level, int dWidth, int aShift, endian_t type>
-		void setMemorySpecific(MemoryAccessSpecific<Level, dWidth, aShift, type> memAccess)
-		{
+		virtual std::pair<const void *, const void *> getSpecificDispatches() = 0;
+		virtual std::pair<const void *, const void *> getCacheDispatches() = 0;
 
+		template <int Level, int dWidth, int aShift, endian_t type>
+		void setMemorySpecific(MemoryAccessSpecific<Level, dWidth, aShift, type> &memAccess)
+		{
+			std::pair<const void *, const void *> rw = getSpecificDispatches();
+
+			memAccess.set(this, rw.first, rw.second);
 		}
 
 		template <int dWidth, int aShift, endian_t type>
-		void setMemoryCache(MemoryAccessCache<dWidth, aShift, type> memAccess)
+		void setMemoryCache(MemoryAccessCache<dWidth, aShift, type> &memAccess)
 		{
+			std::pair<const void *, const void *> rw = getCacheDispatches();
 
+			memAccess.set(this, rw.first, rw.second);
 		}
 
 		// Virtual function calls
@@ -727,19 +722,19 @@ namespace aspace
 	set(AddressSpace *space, const void *read, const void *write)
 	{
 		this->space = space;
-		this->addrMask = space->getAddrMask();
-		// this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
-		// this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
+		addrMask = space->getAddrMask();
+		readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 	template <int dWidth, int aShift, endian_t type>
 	void MemoryAccessCache<dWidth, aShift, type>::
 	set(AddressSpace *space, const void *read, const void *write)
 	{
-		this->space = space;
-		this->addrMask = space->getAddrMask();
-		// this->readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
-		// this->writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
+		// this->space = space;
+		// addrMask = space->getAddrMask();
+		// readDispatch = (const HandlerRead<dWidth, aShift> *const *)(read);
+		// writeDispatch = (const HandlerWrite<dWidth, aShift> *const *)(write);
 	}
 
 }

@@ -361,6 +361,28 @@ namespace aspace {
 				dev->getDeviceName(), r.start, r.end, addrWidth);
 		}
 
+
+		std::pair<const void *, const void *> getSpecificDispatches() override
+		{
+			std::pair<const void *, const void *> rw;
+
+			rw.first = dispatchRead;
+			rw.second = dispatchWrite;
+
+			return rw;
+		}
+
+		std::pair<const void *, const void *> getCacheDispatches() override
+		{
+			std::pair<const void *, const void *> rw;
+
+			rw.first = rootRead;
+			rw.second = rootWrite;
+
+			return rw;
+		}
+
+
 		void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) override
 		{
 
