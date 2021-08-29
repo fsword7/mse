@@ -105,11 +105,11 @@ void AddressSpace::populate(Console *cty)
 
 	assert(map != nullptr);
 
-	// for (AddressEntry *entry : map->list)
-	// {
-	// 	populateEntry(entry, accRead);
-	// 	populateEntry(entry, accWrite);
-	// }
+	for (AddressEntry *entry : map->list)
+	{
+		populateEntry(entry, accRead);
+		populateEntry(entry, accWrite);
+	}
 }
 
 void AddressSpace::allocate(Console *cty)

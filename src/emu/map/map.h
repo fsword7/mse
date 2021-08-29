@@ -60,7 +60,7 @@ namespace aspace
 		asData,			// Data address space
 		asPort			// I/O port address space
 	};
-
+	
 	class AddressConfig
 	{
 	public:
