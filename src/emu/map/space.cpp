@@ -361,7 +361,14 @@ namespace aspace {
 				dev->getDeviceName(), r.start, r.end, addrWidth);
 		}
 
-
+		void dumpMaps(vector<mapEntry> &readMap, vector<mapEntry>  &writeMap) const
+		{
+			readMap.clear();
+			writeMap.clear();
+			rootRead->dumpMap(readMap);
+			rootWrite->dumpMap(writeMap);
+		}
+		
 		std::pair<const void *, const void *> getSpecificDispatches() override
 		{
 			std::pair<const void *, const void *> rw;
