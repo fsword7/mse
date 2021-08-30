@@ -41,6 +41,15 @@ Machine *Machine::create(ostream &out, const SystemDriver *driver, cstag_t &tagN
 	return machine;
 }
 
+void Machine::startAllDevices(Console *cty)
+{
+	for (Device &dev : DeviceIterator(*system))
+	{
+		cty->printf("%s: starting %s device\n", dev.getDeviceName(), dev.getShortName());
+		dev.start();
+	}
+}
+
 void Machine::reset(Console *cty)
 {
 }
@@ -60,8 +69,16 @@ void Machine::start(Console *cty)
 	loader = new romLoader(this, *cty);
 
 	busManager.init(cty);
+
+	// Now start all devices
+	startAllDevices(cty);
 }
 
 void Machine::stop(Console *cty)
 {
+	for (Device &dev : DeviceIterator(*system))
+	{
+		cty->printf("%s: stopping %s device\n", dev.getDeviceName(), dev.getShortName());
+		dev.stop();
+	}
 }

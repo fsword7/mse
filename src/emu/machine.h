@@ -31,6 +31,8 @@ public:
 
 	static Machine *create(ostream &out, const SystemDriver *driver, cstag_t &devName);
 
+	void startAllDevices(Console *cty);
+
 	// Command function calls
 	void reset(Console *cty);
 	void start(Console *cty);
