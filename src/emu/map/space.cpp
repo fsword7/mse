@@ -20,11 +20,15 @@ namespace aspace {
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
 		using thisType = AddressSpaceSpecific<Level, dWidth, aShift, eType>;
 		using nativeType = uintx_t;
-
+		
+		static constexpr int      pageBits = determineDispatchLowBits(Level, dWidth, aShift);
 		static constexpr uint64_t nativeBytes = 1 << dWidth;
-		static constexpr uint64_t nativeStep = (aShift < 0) ? nativeBytes << labs(aShift) : nativeBytes >> labs(aShift);
-		static constexpr uint64_t nativeMask = nativeStep - 1;
-		static constexpr uint64_t nativeBits = nativeBytes * 8;
+		static constexpr uint64_t nativeMask = dWidth - aShift >= 0 ? (1u << (dWidth - aShift)) - 1 : 0;
+
+		// static constexpr uint64_t nativeBytes = 1 << dWidth;
+		// static constexpr uint64_t nativeStep = (aShift < 0) ? nativeBytes << labs(aShift) : nativeBytes >> labs(aShift);
+		// static constexpr uint64_t nativeMask = nativeStep - 1;
+		// static constexpr uint64_t nativeBits = nativeBytes * 8;
 
 	public:
 		AddressSpaceSpecific(BusManager &manager, diExternalBus &bus, int space, int addrWidth)
@@ -392,6 +396,7 @@ namespace aspace {
 
 		void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) override
 		{
+			assert(data != nullptr);
 
 			if (rwType == accRead)
 			{
@@ -408,6 +413,16 @@ namespace aspace {
 			}
 		}
 
+		inline uintx_t readNative(offs_t addr, cpuDevice *cpu)
+		{
+			return dispatchRead[(addr & addrMask) >> pageBits]->read(addr, cpu);
+		}
+
+		inline void writeNative(offs_t addr, uintx_t data, cpuDevice *cpu)
+		{
+			dispatchWrite[(addr & addrMask) >> pageBits]->write(addr, data, cpu);
+		}
+
 
 		// **** Read access function calls
 
@@ -415,7 +430,8 @@ namespace aspace {
 		{
 			if (addr < memSize)
 				return memData[addr];
-
+			if (dWidth == 0)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -425,6 +441,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x1);
 				return *((uint16_t *)ptr);
 			}
+			// if (dWidth == 1)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -443,6 +461,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x3);
 				return *((uint32_t *)ptr);
 			}
+			// if (dWidth == 2)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -461,6 +481,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x7);
 				return *((uint64_t *)ptr);
 			}
+			// if (dWidth == 3)
+			// 	return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -488,6 +510,8 @@ namespace aspace {
 		{
 			if (addr < memSize)
 				memData[addr] = data;
+			// if (dWidth == 0)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -496,6 +520,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x1);
 				*((uint16_t *)ptr) = data;
 			}
+			// if (dWidth == 1)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -512,6 +538,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x2);
 				*((uint32_t *)ptr) = data;
 			}
+			// if (dWidth == 2)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
@@ -528,6 +556,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x3);
 				*((uint64_t *)ptr) = data;
 			}
+			// if (dWidth == 3)
+			// 	writeNative(addr, data, cpu);
 		}
 
 		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)

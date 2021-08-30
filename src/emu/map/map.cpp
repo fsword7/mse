@@ -49,7 +49,9 @@ void AddressSpace::prepare(Console *cty)
 				device.getDeviceName(), asInfo[space], map->gaddrMask, config.getAddrWidth(), addrMask);
 		addrMask = map->gaddrMask;
 	}
-//	unmapValue = 0xA5A5A5A5A5A5A5A5ull;
+
+	// MemoryRegion *rgnDevice = nullptr;
+	// offs_t        rgmSize   = (rgnDevice != nullptr) ? rgnDevice->getSize() : 0;
 
 	for (AddressEntry *entry : map->list)
 	{
@@ -77,6 +79,16 @@ void AddressSpace::prepare(Console *cty)
 
 			// Assign region space to that memory space
 			entry->memData = region->getBase();
+		}
+
+		// Allocate anonymous memory space for that address space
+		if (entry->memData == nullptr && (entry->read.type == mapROMSpace ||
+				entry->read.type == mapRAMSpace || entry->write.type == mapRAMSpace))
+		{
+			fmt::printf("%s(%s): %llX-%llX - allocating anonymous memory space\n", device.getDeviceName(), asInfo[space],
+				entry->addrStart, entry->addrEnd);
+			entry->memData = manager.allocateMemory(this, entry->addrStart, entry->addrEnd,
+				entry->addrEnd - entry->addrStart + 1);
 		}
 	}
 }

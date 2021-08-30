@@ -30,6 +30,7 @@ mapConfigList i8080_cpuDevice::getAddressConfigList() const
 void i8080_cpuDevice::startDevice()
 {
 
+	printf("Hello? Yes here\n");
 	// Assigns system bus access spaces
 	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
 	getAddressSpace(AS_IOPORT)->setMemorySpecific(mapIOPort);

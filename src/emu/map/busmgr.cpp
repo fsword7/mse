@@ -102,6 +102,11 @@ void BusManager::allocateMainMemory(uint64_t size, uint8_t value)
 	memset(memData, value, size);
 }
 
+uint8_t *BusManager::allocateMemory(AddressSpace *space, offs_t start, offs_t end, offs_t size)
+{
+	return new uint8_t[size];
+}
+
 MemoryRegion *BusManager::allocateRegion(cstag_t &name, uint64_t size, int width, endian_t type)
 {
 	MemoryRegion *region = new MemoryRegion(system, name, size, width, type);

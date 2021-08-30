@@ -176,8 +176,8 @@ namespace aspace
 		{
 			if (addr < memSize)
 				return memData[addr];
-			// if (dWidth == 0)
-			// 	return readNative(addr, cpu);
+			if (dWidth == 0)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -187,8 +187,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x1);
 				return *((uint16_t *)ptr);
 			}
-			// if (dWidth == 1)
-			// 	return readNative(addr, cpu);
+			if (dWidth == 1)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -207,8 +207,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x3);
 				return *((uint32_t *)ptr);
 			}
-			// if (dWidth == 2)
-			// 	return readNative(addr, cpu);
+			if (dWidth == 2)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -227,8 +227,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x7);
 				return *((uint64_t *)ptr);
 			}
-			// if (dWidth == 3)
-			// 	return readNative(addr, cpu);
+			if (dWidth == 3)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 
@@ -256,8 +256,8 @@ namespace aspace
 		{
 			if (addr < memSize)
 				memData[addr] = data;
-			// if (dWidth == 0)
-			// 	writeNative(addr, data, cpu);
+			if (dWidth == 0)
+				writeNative(addr, data, cpu);
 		}
 
 		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -266,8 +266,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x1);
 				*((uint16_t *)ptr) = data;
 			}
-			// if (dWidth == 1)
-			// 	writeNative(addr, data, cpu);
+			if (dWidth == 1)
+				writeNative(addr, data, cpu);
 		}
 
 		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
@@ -284,8 +284,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x2);
 				*((uint32_t *)ptr) = data;
 			}
-			// if (dWidth == 2)
-			// 	writeNative(addr, data, cpu);
+			if (dWidth == 2)
+				writeNative(addr, data, cpu);
 		}
 
 		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
@@ -302,8 +302,8 @@ namespace aspace
 				uint8_t *ptr = memData + (addr & ~0x3);
 				*((uint64_t *)ptr) = data;
 			}
-			// if (dWidth == 3)
-			// 	writeNative(addr, data, cpu);
+			if (dWidth == 3)
+				writeNative(addr, data, cpu);
 		}
 
 		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)
@@ -705,6 +705,7 @@ namespace aspace
 		// Executed from start command
 		void init(Console *cty);
 		void allocate(Console *cty, diExternalBus &bus);
+		uint8_t *allocateMemory(AddressSpace *space, offs_t start, offs_t end, offs_t size);
 
 	private:
 		Machine *system = nullptr;
