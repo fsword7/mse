@@ -36,7 +36,8 @@ void vt100_vtDevice::vt100_init()
 
 void vt100_vtDevice::vt100_mem(AddressList &map)
 {
-    map(0x0000, 0x1FFF).rom(); // ROM space (4 x 2K ROM chips)
+    map.setGlobalAddressMask(0xFFFF);
+    map(0x0000, 0x1FFF).rom().region("vt100fw"); // ROM space (4 x 2K ROM chips)
     map(0x2000, 0x3FFF).ram(); // screen and scratch space
     // 0x4000 - 0x7FFF - unassigned space
     map(0x8000, 0x9FFF).rom(); // program expansion (4 x 2K ROM chips)
