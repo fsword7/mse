@@ -16,3 +16,8 @@ vax_cpuDevice::vax_cpuDevice(const SystemConfig &config, const DeviceType &type,
 	// Initialize opcode table for disassembler
 //	initOpcodeTable();
 }
+
+void vax_cpuDevice::startDevice()
+{
+	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
+}

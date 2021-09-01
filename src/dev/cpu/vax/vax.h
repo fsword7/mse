@@ -79,6 +79,8 @@ public:
 		const string &tagName, Device *owner, uint64_t clock, int aWidth);
 	virtual ~vax_cpuDevice() = default;
 
+	void startDevice() override;
+	
 protected:
 	struct
 	{
