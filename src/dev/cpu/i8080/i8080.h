@@ -31,6 +31,14 @@ class i8080_cpuDevice : public cpuDevice
             cpuid_8085A
         };
 
+        enum stateRegisters
+        {
+            i8080_PC, i8080_SP, i8080_A,  i8080_B,
+            i8080_C,  i8080_D,  i8080_E,  i8080_F,
+            i8080_H,  i8080_L,  i8080_AF, i8080_BC,
+            i8080_DE, i8080_HL
+        };
+
 	    i8080_cpuDevice(const SystemConfig &config, const DeviceType &type, const string &tagName, Device *owner, uint64_t clock, cpuType idType);
         i8080_cpuDevice(const SystemConfig &config, const string &tagName, Device *owner, uint64_t clock);
 	    virtual ~i8080_cpuDevice() = default;

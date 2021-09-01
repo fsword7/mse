@@ -29,6 +29,25 @@ mapConfigList i8080_cpuDevice::getAddressConfigList() const
 
 void i8080_cpuDevice::startDevice()
 {
+	
+	// Register CPU registers for debugging purposes
+	{
+		addState(i8080_PC, "PC",  pcReg.uw);
+		addState(i8080_SP, "SP",  spReg.uw);
+		addState(i8080_A,  "A",   afReg.ub.h);
+		addState(i8080_B,  "B",   bcReg.ub.h);
+		addState(i8080_C,  "C",   bcReg.ub.l);
+		addState(i8080_D,  "D",   deReg.ub.h);
+		addState(i8080_E,  "E",   deReg.ub.l);
+		addState(i8080_F,  "F",   afReg.ub.l);
+		addState(i8080_H,  "H",   hlReg.ub.h);
+		addState(i8080_L,  "L",   hlReg.ub.l);
+		addState(i8080_AF, "AF",  afReg.uw);
+		addState(i8080_BC, "BC",  bcReg.uw);
+		addState(i8080_DE, "DE",  deReg.uw);
+		addState(i8080_HL, "HL",  hlReg.uw);
+	}
+
 	// Assigns system bus access spaces
 	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
 	getAddressSpace(AS_IOPORT)->setMemorySpecific(mapIOPort);
