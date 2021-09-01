@@ -31,7 +31,7 @@ AddressSpace::AddressSpace(BusManager &manager, diExternalBus &bus, int space)
   device(*bus.getDevice()), manager(manager),
   space(space)
 {
-
+	addrMask = makeBitmask<offs_t>(config.getAddrWidth());
 }
 
 void AddressSpace::prepare(Console *cty)
@@ -41,7 +41,7 @@ void AddressSpace::prepare(Console *cty)
 	assert(map == nullptr);
 	map = new AddressList(device, space);
 
-	unmapValue = (map->unmapValue == 0) ? 0ull : ~0ull;
+	unmapValue = map->unmapValue;
 	if (map->gaddrMask != 0ull)
 	{
 		if (map->gaddrMask & ~addrMask)

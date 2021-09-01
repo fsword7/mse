@@ -143,12 +143,252 @@ namespace aspace
 
 	// }
 
-	template <int Level, int dWidth, int aShift, endian_t type>
+	inline offs_t convertAddressToByte(offs_t addr, int addrShift) { return (addrShift >= 0) ? addr << addrShift : addr >> -addrShift; }
+
+	template <int dWidth, int aShift, endian_t eType, int tWidth, bool aligned, typename T>
+	typename HandlerSize<tWidth>::uintx_t readMemory(offs_t addr, typename HandlerSize<tWidth>::uintx_t mask, cpuDevice *cpu, T rop)
+	{
+		using targetType = typename HandlerSize<tWidth>::uintx_t;
+		using nativeType = typename HandlerSize<dWidth>::uintx_t;
+
+		constexpr uint64_t targetBytes = 1 << tWidth;
+		constexpr uint64_t targetBits = 8 * targetBytes;
+		constexpr uint64_t nativeBytes = 1 << dWidth;
+		constexpr uint64_t nativeBits = 8 * nativeBytes;
+		constexpr uint64_t nativeStep = aShift >= 0 ? nativeBytes << aShift : nativeBytes >> -aShift;
+		constexpr uint64_t nativeMask = dWidth - aShift >= 0 ? makeBitmask<uint64_t>(dWidth - aShift) : 0;
+
+		if (nativeBytes == targetBytes && (aligned || (addr & nativeMask) == 0))
+			return rop(addr & ~nativeMask, mask, cpu);
+
+		if (nativeBytes > targetBytes)
+		{
+			uint32_t offBits = (convertAddressToByte(addr, aShift) * 8) & (nativeBytes - (aligned ? targetBytes : 1));
+			if (aligned || (offBits + targetBits <= nativeBits))
+			{
+				if (eType != LittleEndian)
+					offBits = nativeBits - targetBits - offBits;
+				return rop(addr & nativeMask, (nativeType)mask << offBits, cpu) >> offBits;
+			}
+		}
+
+		uint32_t offBits = (convertAddressToByte(addr, aShift) * 8) & (nativeBytes - 1);
+		addr &= ~nativeMask;
+
+		if (nativeBytes >= targetBytes)
+		{
+			if (eType == LittleEndian)
+			{
+				// Little-endian unaligned read access
+				targetType result = 0;
+				nativeType curMask = (nativeType)mask << offBits;
+				if (curMask != 0)
+					result = rop(addr, curMask, cpu) >> offBits;
+				offBits = nativeBits - offBits;
+				curMask = mask >> offBits;
+				if (curMask != 0)
+					result |= rop(addr + nativeStep, curMask, cpu) << offBits;
+				return result;
+			}
+			else
+			{
+				// Big-endian unaligned read access
+				constexpr uint32_t nativeShift =
+					((nativeBits > targetBits) ? (nativeBits - targetBits) : 0);
+				targetType result = 0;
+				nativeType leftMask = (nativeType)mask << nativeShift;
+				nativeType curMask = leftMask >> offBits;
+
+				if (curMask != 0)
+					result = rop(addr, curMask, cpu) << offBits;
+				offBits = nativeBits - offBits;
+				curMask = leftMask << offBits;
+				if (curMask != 0)
+					result |= rop(addr + nativeStep, curMask, cpu) >> offBits;
+				return result >> nativeShift;
+			}
+		}
+		else
+		{
+			constexpr uint32_t maxSplits = targetBytes / nativeBytes - 1;
+			targetType result = 0;
+
+			if (eType == LittleEndian)
+			{
+				nativeType curMask = mask << offBits;
+				if (curMask != 0)
+					result = rop(addr, curMask, cpu) >> offBits;
+				// printf("rop: Addr: %X Off: %d Mask %X => %X\n", addr, offBits, curMask, result);
+
+				offBits = nativeBits - offBits;
+				for (uint32_t idx = 0; idx < maxSplits; idx++)
+				{
+					addr += nativeStep;
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						result |= (targetType)rop(addr, curMask, cpu) << offBits;
+					// printf("rop: Addr: %X Off: %d Mask %X => %X\n", addr, offBits, curMask, result);
+					offBits += nativeBits;
+				}
+
+				if (!aligned && offBits < targetBits)
+				{
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						result |= (targetType)rop(addr + nativeStep, curMask, cpu) << offBits;
+					// printf("rop: Addr: $X Off: %d Mask %X => %X\n", addr + nativeStep, offBits, curMask, result);
+				}
+			}
+			else if (eType == BigEndian)
+			{
+				offBits = targetBits - (nativeBits - offBits);
+				nativeType curMask = mask >> offBits;
+				if (curMask != 0)
+					result = rop(addr, curMask, cpu) << offBits;
+
+				for (uint32_t idx = 0; idx < maxSplits; idx++)
+				{
+					offBits -= nativeBits;
+					addr += nativeStep;
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						result |= (targetType)rop(addr, curMask, cpu) << offBits;
+				}
+
+				if (!aligned && offBits != 0)
+				{
+					offBits = nativeBits - offBits;
+					curMask = mask << offBits;
+					if (curMask != 0)
+						result |= (targetType)rop(addr + nativeStep, curMask, cpu) >> offBits;
+				}					
+			}
+
+			return result;
+		}
+	}
+
+	template <int dWidth, int aShift, endian_t eType, int tWidth, bool aligned, typename T>
+	void writeMemory(offs_t addr, typename HandlerSize<tWidth>::uintx_t data, typename HandlerSize<tWidth>::uintx_t mask, cpuDevice *cpu, T wop)
+	{
+		using targetType = typename HandlerSize<tWidth>::uintx_t;
+		using nativeType = typename HandlerSize<dWidth>::uintx_t;
+
+		constexpr uint64_t targetBytes = 1 << tWidth;
+		constexpr uint64_t targetBits = 8 * targetBytes;
+		constexpr uint64_t nativeBytes = 1 << dWidth;
+		constexpr uint64_t nativeBits = 8 * nativeBytes;
+		constexpr uint64_t nativeStep = aShift >= 0 ? nativeBytes << aShift : nativeBytes >> -aShift;
+		constexpr uint64_t nativeMask = dWidth - aShift >= 0 ? makeBitmask<uint64_t>(dWidth + aShift) : 0;
+
+		if (nativeBytes == targetBytes && (aligned || (addr & nativeMask) == 0))
+			return wop(addr & ~nativeMask, data, mask, cpu);
+
+		if (nativeBytes > targetBytes)
+		{
+			uint32_t offBits = (convertAddressToByte(addr, aShift) * 8) & (nativeBytes - (aligned ? targetBytes : 1));
+			if (aligned || (offBits + targetBits <= nativeBits))
+			{
+				if (eType != LittleEndian)
+					offBits = nativeBits - targetBits - offBits;
+				return wop(addr & nativeMask, (nativeType)data << offBits, (nativeType)mask << offBits, cpu);
+			}
+		}
+
+		uint32_t offBits = (convertAddressToByte(addr, aShift) * 8) & (nativeBytes - 1);
+		addr &= ~nativeMask;
+
+		if (nativeBytes >= targetBytes)
+		{
+			if (eType == LittleEndian)
+			{
+				// Little-endian unaligned read access
+				nativeType curMask = (nativeType)mask << offBits;
+				if (curMask != 0)
+					wop(addr, (nativeType)data << offBits, curMask, cpu);
+				offBits = nativeBits - offBits;
+				curMask = mask >> offBits;
+				if (curMask != 0)
+					wop(addr + nativeStep, data >> offBits, curMask, cpu);
+			}
+			else
+			{
+				// Big-endian unaligned read access
+				constexpr uint32_t nativeShift =
+					((nativeBits > targetBits) ? (nativeBits - targetBits) : 0);
+				nativeType leftData = (nativeType)data << nativeShift;
+				nativeType leftMask = (nativeType)mask << nativeShift;
+				nativeType curMask = leftMask >> offBits;
+
+				if (curMask != 0)
+					wop(addr, leftData >> offBits, curMask, cpu);
+				offBits = nativeBits - offBits;
+				curMask = leftMask << offBits;
+				if (curMask != 0)
+					wop(addr + nativeStep, leftData << offBits, curMask, cpu);
+			}
+		}
+		else
+		{
+			constexpr uint32_t maxSplits = targetBytes / nativeBytes - 1;
+
+			if (eType == LittleEndian)
+			{
+				nativeType curMask = mask << offBits;
+				if (curMask != 0)
+					wop(addr, data << offBits, curMask, cpu);
+
+				offBits = nativeBits - offBits;
+				for (uint32_t idx = 0; idx < maxSplits; idx++)
+				{
+					addr += nativeStep;
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						wop(addr, data >> offBits, curMask, cpu);
+					offBits += nativeBits;
+				}
+
+				if (!aligned && offBits < targetBits)
+				{
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						wop(addr + nativeStep, data >> offBits, curMask, cpu);
+				}
+			}
+			else if (eType == BigEndian)
+			{
+				offBits = targetBits - (nativeBits - offBits);
+				nativeType curMask = mask >> offBits;
+				if (curMask != 0)
+					wop(addr, data >> offBits, curMask, cpu);
+
+				for (uint32_t idx = 0; idx < maxSplits; idx++)
+				{
+					offBits -= nativeBits;
+					addr += nativeStep;
+					curMask = mask >> offBits;
+					if (curMask != 0)
+						wop(addr, data >> offBits, curMask, cpu);
+				}
+
+				if (!aligned && offBits != 0)
+				{
+					offBits = nativeBits - offBits;
+					curMask = mask << offBits;
+					if (curMask != 0)
+						wop(addr + nativeStep, data << offBits, curMask, cpu);
+				}					
+			}
+		}
+	}
+
+	template <int Level, int dWidth, int aShift, endian_t eType>
 	class MemoryAccessSpecific
 	{
 		friend class AddressSpace;
 
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
+		using nativeType = typename HandlerSize<dWidth>::uintx_t;
 
 		static constexpr int      pageBits = determineDispatchLowBits(Level, dWidth, aShift);
 		static constexpr uint64_t nativeBytes = 1 << dWidth;
@@ -158,12 +398,23 @@ namespace aspace
 		MemoryAccessSpecific() = default;
 
 		inline AddressSpace &getSpace() { return *space; }
-		// **** Read access function calls
 
 	private:
+
+		inline convertAddresToByte(offs_t addr, int addrShift) { return (addrShift >= 0) ? addr << addrShift : addr >> -addrShift; }
+
 		inline uintx_t readNative(offs_t addr, cpuDevice *cpu)
 		{
+			// printf("Dispatch 1M Offset: (%X & %X) >> %d => %X\n", addr, addrMask,
+			// 	pageBits, (addr & addrMask) >> pageBits);
 			return readDispatch[(addr & addrMask) >> pageBits]->read(addr, cpu);
+		}
+
+		inline uintx_t readNative(offs_t addr, uintx_t mask, cpuDevice *cpu)
+		{
+			// printf("Dispatch 1M Offset: (%X & %X) >> %d => %X\n", addr, addrMask,
+			// 	pageBits, (addr & addrMask) >> pageBits);
+			return readDispatch[(addr & addrMask) >> pageBits]->read(addr, mask, cpu);
 		}
 
 		inline void writeNative(offs_t addr, uintx_t data, cpuDevice *cpu)
@@ -171,74 +422,105 @@ namespace aspace
 			writeDispatch[(addr & addrMask) >> pageBits]->write(addr, data, cpu);
 		}
 
+		inline void writeNative(offs_t addr, uintx_t data, uintx_t mask, cpuDevice *cpu)
+		{
+			writeDispatch[(addr & addrMask) >> pageBits]->write(addr, data, mask, cpu);
+		}
+
+
 	public:
 		uint8_t read8(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize)
-				return memData[addr];
+			// if (addr < memSize)
+			// 	return memData[addr];
 			if (dWidth == 0)
 				return readNative(addr, cpu);
-			return unmapValue;
+			else
+				return readMemory<dWidth, aShift, eType, 0, true>(addr, 0xFF, cpu,
+					[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+						-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint16_t read16(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x1);
-				return *((uint16_t *)ptr);
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x1);
+			// 	return *((uint16_t *)ptr);
+			// }
 			if (dWidth == 1)
 				return readNative(addr, cpu);
-			return unmapValue;
+			else
+				return readMemory<dWidth, aShift, eType, 1, true>(addr, 0xFFFF, cpu,
+					[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+						-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint16_t read16u(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				return *((uint16_t *)ptr);
-			}
-			return unmapValue;
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	return *((uint16_t *)ptr);
+			// }
+			return readMemory<dWidth, aShift, eType, 1, false>(addr, 0xFFFF, cpu,
+				[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+					-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint32_t read32(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x3);
-				return *((uint32_t *)ptr);
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x3);
+			// 	return *((uint32_t *)ptr);
+			// }
 			if (dWidth == 2)
 				return readNative(addr, cpu);
-			return unmapValue;
+			else
+				return readMemory<dWidth, aShift, eType, 2, true>(addr, 0xFFFFFFFF, cpu,
+					[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+						-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint32_t read32u(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				return *((uint32_t *)ptr);
-			}
-			return unmapValue;
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	return *((uint32_t *)ptr);
+			// }
+			return readMemory<dWidth, aShift, eType, 2, false>(addr, 0xFFFFFFFF, cpu,
+				[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+					-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint64_t read64(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x7);
-				return *((uint64_t *)ptr);
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x7);
+			// 	return *((uint64_t *)ptr);
+			// }
 			if (dWidth == 3)
 				return readNative(addr, cpu);
-			return unmapValue;
+			else
+				return readMemory<dWidth, aShift, eType, 3, true>(addr, 0xFFFFFFFF'FFFFFFFull, cpu,
+					[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+						-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		uint64_t read64u(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				return *((uint64_t *)ptr);
-			}
-			return unmapValue;
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	return *((uint64_t *)ptr);
+			// }
+			return readMemory<dWidth, aShift, eType, 3, false>(addr, 0xFFFFFFFF'FFFFFFFFull, cpu,
+				[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+					-> nativeType { return readNative(addr, mask, cpu); });
+			// return unmapValue;
 		}
 
 		void readBlock(offs_t addr, uint8_t *data, uint64_t size)
@@ -254,64 +536,89 @@ namespace aspace
 
 		void write8(offs_t addr, uint8_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize)
-				memData[addr] = data;
+			// if (addr < memSize)
+			// 	memData[addr] = data;
 			if (dWidth == 0)
 				writeNative(addr, data, cpu);
+			else
+				writeMemory<dWidth, aShift, eType, 0, true>(addr, data, 0xFF, cpu,
+					[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+						{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write16(offs_t addr, uint16_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x1);
-				*((uint16_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x1);
+			// 	*((uint16_t *)ptr) = data;
+			// }
 			if (dWidth == 1)
 				writeNative(addr, data, cpu);
+			else
+				writeMemory<dWidth, aShift, eType, 1, true>(addr, data, 0xFFFF, cpu,
+					[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+						{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write16u(offs_t addr, uint16_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				*((uint16_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	*((uint16_t *)ptr) = data;
+			// }
+			writeMemory<dWidth, aShift, eType, 1, false>(addr, data, 0xFFFF, cpu,
+				[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+					{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write32(offs_t addr, uint32_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x2);
-				*((uint32_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x2);
+			// 	*((uint32_t *)ptr) = data;
+			// }
 			if (dWidth == 2)
 				writeNative(addr, data, cpu);
+			else
+				writeMemory<dWidth, aShift, eType, 2, true>(addr, data, 0xFFFFFFFF, cpu,
+					[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+						{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write32u(offs_t addr, uint32_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				*((uint32_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	*((uint32_t *)ptr) = data;
+			// }
+			writeMemory<dWidth, aShift, eType, 2, false>(addr, data, 0xFFFFFFFF, cpu,
+				[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+					{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write64(offs_t addr, uint64_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + (addr & ~0x3);
-				*((uint64_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + (addr & ~0x3);
+			// 	*((uint64_t *)ptr) = data;
+			// }
 			if (dWidth == 3)
 				writeNative(addr, data, cpu);
+			else
+				writeMemory<dWidth, aShift, eType, 3, true>(addr, data, 0xFFFFFFFF'FFFFFFFFull, cpu,
+					[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+						{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void write64u(offs_t addr, uint64_t data, cpuDevice *cpu)
 		{
-			if (addr < memSize) {
-				uint8_t *ptr = memData + addr;
-				*((uint64_t *)ptr) = data;
-			}
+			// if (addr < memSize) {
+			// 	uint8_t *ptr = memData + addr;
+			// 	*((uint64_t *)ptr) = data;
+			// }
+			writeMemory<dWidth, aShift, eType, 3, false>(addr, data, 0xFFFFFFFF'FFFFFFFFull, cpu,
+				[this](offs_t addr, nativeType data, nativeType mask, cpuDevice *cpu)
+					{ writeNative(addr, data, mask, cpu); });
 		}
 
 		void writeBlock(offs_t addr, uint8_t *data, uint64_t size)
@@ -608,8 +915,7 @@ namespace aspace
 
 		AddressList    *map = nullptr;
 
-		offs_t addrMask = 0;
-
+		offs_t   addrMask = 0;
 		uint64_t unmapValue = 0;
 
 		// Optional main memory space

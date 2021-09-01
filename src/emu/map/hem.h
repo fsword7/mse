@@ -15,7 +15,6 @@ namespace aspace
 	{
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
-		using inh = HandlerReadAddress<dWidth, aShift>;
 
 		HandlerReadMemory(AddressSpace *space, void *base)
 		: HandlerReadAddress<dWidth, aShift>(space, 0),
@@ -29,20 +28,22 @@ namespace aspace
 
 		uintx_t read(offs_t offset, cpuDevice *cpu) const override
 		{
+			// printf("Memory: (%X - %X)& %X >> %d => %X\n", offset, inh::baseAddress, inh::maskAddress, (dWidth + aShift),
+			// 	((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift));
 			assert(baseData != nullptr);
-			return baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
+			return baseData[((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift)];
 		}
 
 		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) const override
 		{
 			assert(baseData != nullptr);
-			return baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
+			return baseData[((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift)];
 		}
 
 		void *getAccess(offs_t offset) const override
 		{
 			assert(baseData != nullptr);
-			return &baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
+			return &baseData[((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift)];
 		}
 
 	private:
@@ -54,7 +55,6 @@ namespace aspace
 	{
 	public:
 		using uintx_t = typename HandlerSize<dWidth>::uintx_t;
-		using inh = HandlerWriteAddress<dWidth, aShift>;
 
 		HandlerWriteMemory(AddressSpace *space, void *base)
 		: HandlerWriteAddress<dWidth, aShift>(space, 0),
@@ -69,20 +69,20 @@ namespace aspace
 		void write(offs_t offset, uintx_t data, cpuDevice *cpu) const override
 		{
 			assert(baseData != nullptr);
-			baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)] = data;
+			baseData[((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift)] = data;
 		}
 
 		void write(offs_t offset, uintx_t data, uintx_t mask, cpuDevice *cpu) const override
 		{
 			assert(baseData != nullptr);
-			offs_t off = ((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift);
+			offs_t off = ((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift);
 			baseData[off] = (baseData[off] & ~mask) | (data & mask);
 		}
 
 		void *getAccess(offs_t offset) const override
 		{
 			assert(baseData != nullptr);
-			return &baseData[((offset - inh::baseAddress) & inh::maskAddress) >> (dWidth + aShift)];
+			return &baseData[((offset - this->baseAddress) & this->maskAddress) >> (dWidth + aShift)];
 		}
 
 	private:

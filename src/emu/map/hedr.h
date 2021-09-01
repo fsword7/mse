@@ -45,6 +45,7 @@ namespace aspace
 		uintx_t read(offs_t offset, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
+			printf("Dispatch 2 Offset: %X >> %d & %X => %X\n", offset, lowBits, bitMask, off);
 			assert(dispatch[off] != nullptr);
 			return dispatch[off]->read(offset, cpu);
 		}
@@ -52,6 +53,7 @@ namespace aspace
 		uintx_t read(offs_t offset, uintx_t mask, cpuDevice *cpu) const override
 		{
 			offs_t off = (offset >> lowBits) & bitMask;
+			printf("Dispatch 2 Offset: %X >> %d & %X => %X\n", offset, lowBits, bitMask, off);
 			assert(dispatch[off] != nullptr);
 			return dispatch[off]->read(offset, mask, cpu);
 		}

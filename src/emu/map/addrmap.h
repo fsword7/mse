@@ -153,7 +153,10 @@ namespace aspace
 		AddressList(device_t &dev, int space);
 		~AddressList();
 
-		inline void setGlobalAddressMask(offs_t mask) { gaddrMask = mask; }
+		inline void setGlobalAddressMask(offs_t mask)	{ gaddrMask = mask; }
+		inline void setUnmap(uint8_t val)				{ unmapValue = val; }
+		inline void setUnmapHigh()						{ unmapValue = ~0; }
+		inline void setUnmapLow()						{ unmapValue = 0; }
 
 		inline int size() const { return list.size(); }
 

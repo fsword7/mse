@@ -363,6 +363,8 @@ namespace aspace {
 
 			fmt::printf("%s: Address range: %llX - %llX (%d-bit addressing)\n",
 				dev->getDeviceName(), r.start, r.end, addrWidth);
+			fmt::printf("%s: Global address mask: %llX  Unmap value: %02X\n",
+				dev->getDeviceName(), addrMask, unmapValue);
 		}
 
 		void dumpMaps(vector<mapEntry> &readMap, vector<mapEntry>  &writeMap) const
@@ -393,29 +395,59 @@ namespace aspace {
 			return rw;
 		}
 
+		void convertAddressMirror(offs_t start,offs_t end, offs_t mirror,
+			offs_t &nstart, offs_t &nend, offs_t &nmask, offs_t &nmirror)
+		{
+				offs_t lowMask = (config.getDataWidth() >> config.getAddrShift()) - 1;
+				offs_t setBits = start | end;
+				offs_t changeBits = start ^ end;
+
+				changeBits != changeBits >> 1;
+				changeBits != changeBits >> 2;
+				changeBits != changeBits >> 4;
+				changeBits != changeBits >> 8;
+				changeBits != changeBits >> 16;
+
+				nstart = start;
+				nend = end;
+				nmask = changeBits;
+				nmirror = mirror;
+		}
 
 		void setMemorySpace(offs_t addrStart, offs_t addrEnd, offs_t addrMirror, uint8_t *data, accessType rwType) override
 		{
 			assert(data != nullptr);
 
+			offs_t nstart, nend, nmask, nmirror;
+			convertAddressMirror(addrStart, addrEnd, addrMirror, nstart, nend, nmask, nmirror);
+
 			if (rwType == accRead)
 			{
 				auto handler = new HandlerReadMemory<dWidth, aShift>(this, data);
-
-				rootRead->populate(addrStart, addrEnd, addrMirror, handler);
+				handler->setAddressSpace(nstart, nmask);
+				rootRead->populate(nstart, nend, nmirror, handler);
 			}
 
 			if (rwType == accWrite)
 			{
 				auto handler = new HandlerWriteMemory<dWidth, aShift>(this, data);
-
-				rootWrite->populate(addrStart, addrEnd, addrMirror, handler);
+				handler->setAddressSpace(nstart, nmask);
+				rootWrite->populate(nstart, nend, nmirror, handler);
 			}
 		}
 
 		inline uintx_t readNative(offs_t addr, cpuDevice *cpu)
 		{
+			// printf("Dispatch 1A Offset: (%X & %X) >> %d => %X\n", addr, addrMask,
+			// 	pageBits, (addr & addrMask) >> pageBits);
 			return dispatchRead[(addr & addrMask) >> pageBits]->read(addr, cpu);
+		}
+
+		inline uintx_t readNative(offs_t addr, uintx_t mask, cpuDevice *cpu)
+		{
+			// printf("Dispatch 1A Offset: (%X & %X) >> %d => %X\n", addr, addrMask,
+			// 	pageBits, (addr & addrMask) >> pageBits);
+			return dispatchRead[(addr & addrMask) >> pageBits]->read(addr, mask, cpu);
 		}
 
 		inline void writeNative(offs_t addr, uintx_t data, cpuDevice *cpu)
@@ -423,15 +455,24 @@ namespace aspace {
 			dispatchWrite[(addr & addrMask) >> pageBits]->write(addr, data, cpu);
 		}
 
+		inline void writeNative(offs_t addr, uintx_t data, uintx_t mask, cpuDevice *cpu)
+		{
+			dispatchWrite[(addr & addrMask) >> pageBits]->write(addr, data, mask, cpu);
+		}
+
 
 		// **** Read access function calls
 
 		uint8_t read8(offs_t addr, cpuDevice *cpu)
 		{
-			if (addr < memSize)
-				return memData[addr];
+			// if (addr < memSize)
+			// 	return memData[addr];
 			if (dWidth == 0)
 				return readNative(addr, cpu);
+			// else
+			// 	return readMemory<dWidth, aShift, eType, 0, true>(addr, 0xFF, cpu,
+			// 		[this](offs_t addr, nativeType mask, cpuDevice *cpu)
+			// 			-> nativeType { return readNative(addr, mask, cpu); });
 			return unmapValue;
 		}
 
@@ -441,8 +482,8 @@ namespace aspace {
 				uint8_t *ptr = memData + (addr & ~0x1);
 				return *((uint16_t *)ptr);
 			}
-			// if (dWidth == 1)
-			// 	return readNative(addr, cpu);
+			if (dWidth == 1)
+				return readNative(addr, cpu);
 			return unmapValue;
 		}
 

@@ -22,7 +22,7 @@ namespace aspace
 
 		inline void setAddressSpace(offs_t base, offs_t mask)
 		{
-			baseAddress = base;
+			baseAddress = base & ~HandlerRead<dWidth, aShift>::nativeMask;
 			maskAddress = mask;
 		}
 
@@ -44,7 +44,7 @@ namespace aspace
 
 		inline void setAddressSpace(offs_t base, offs_t mask)
 		{
-			baseAddress = base;
+			baseAddress = base & ~HandlerWrite<dWidth, aShift>::nativeMask;
 			maskAddress = mask;
 		}
 
