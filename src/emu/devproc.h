@@ -10,12 +10,14 @@
 #include "emu/map/map.h"
 #include "emu/diexec.h"
 #include "emu/dibus.h"
+#include "emu/distate.h"
 #include "emu/didebug.h"
 
 class cpuDevice
 : public Device,
   public diExecute,
   public diExternalBus,
+  public diState,
   public diDebug
 {
 protected:

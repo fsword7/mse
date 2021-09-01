@@ -13,6 +13,7 @@ cpuDevice::cpuDevice(const SystemConfig &config, const DeviceType &type,
 : Device(config, type, tagName, owner, clock),
   diExecute(this),
   diExternalBus(this, "system"),
+  diState(this),
   diDebug(this)
 {
 
