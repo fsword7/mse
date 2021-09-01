@@ -65,6 +65,7 @@ set(MSE_CPP_SRCS
 	emu/dibus.cpp
 	emu/didebug.cpp
 	emu/diexec.cpp
+	emu/distate.cpp
 	emu/engine.cpp
 	emu/fileio.cpp
 	emu/machine.cpp
@@ -125,6 +126,7 @@ set(MSE_H_SRCS
 	emu/didebug.h
 	emu/dibus.h
 	emu/diexec.h
+	emu/distate.h
 	emu/driver.h
 	emu/engine.h
 	emu/list.h
