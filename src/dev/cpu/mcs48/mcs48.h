@@ -152,10 +152,6 @@ protected:
 	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapData;
 	aspace::MemoryAccess<8, 0, 0, LittleEndian>::specific mapPort;
 
-	mapAddressSpace *mapProgram1 = nullptr;
-	mapAddressSpace *mapData1 = nullptr;
-	mapAddressSpace *mapPort1 = nullptr;
-
 	mcs48op_t *opCodes[256];
 
 	static mcs48op_t opTable[];
