@@ -34,19 +34,40 @@ void vt100_vtDevice::vt100_init()
 
 }
 
+// DEC VT100 memory map
+//
+// 0000 - 1FFF  ROM space (4 x 2K ROM chips)
+// 2000 - 3FFF  RAM space (screen and scratch)
+// 4000 - 7FFF  (unassigned space)
+// 8000 - 9FFF  ROM space program expansion (4 x 2K ROM chips)
+// A000 - BFFF  ROM space program expension (1 x 8K ROM chips)
+// C000 - FFFF  (unassigned space)
+
 void vt100_vtDevice::vt100_mem(AddressList &map)
 {
-    map.setGlobalAddressMask(0xFFFF);
-    map(0x0000, 0x1FFF).rom().region("vt100fw"); // ROM space (4 x 2K ROM chips)
-    map(0x2000, 0x3FFF).ram(); // screen and scratch space
-    // 0x4000 - 0x7FFF - unassigned space
-    map(0x8000, 0x9FFF).rom(); // program expansion (4 x 2K ROM chips)
-    map(0xA000, 0xBFFF).rom(); // program expansion (1 x 8K ROM chips)
-    // 0xC000 - 0xFFFF - unassigned space
+    map.setUnmapHigh();
+    map(0x0000, 0x1FFF).rom().region("vt100fw");
+    map(0x2000, 0x3FFF).ram();
+    map(0x8000, 0x9FFF).rom();
+    map(0xA000, 0xBFFF).rom();
 }
+
+// DEC VT100 I/O port address map
+//
+// 00, 01   Intel 8250 PUSART
+// 02       Baud rate generator
+// 22       Modem buffer
+// 42       Flags buffer (R)
+// 42       Brightness D/A latch (W)
+// 62       NVR latch
+// 82       Keyboard UART data
+// A2       Video processor DC012
+// C2       Video processor DC011
+// E2       Graphics port
 
 void vt100_vtDevice::vt100_iomem(AddressList &map)
 {
+    map.setUnmapHigh();
 }
 
 static const romEntry_t ROM_NAME(vt100)[] =

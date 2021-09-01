@@ -11,8 +11,7 @@
 int i8080_cpuDevice::list(Console *cty, offs_t vAddr)
 {
     offs_t sAddr = vAddr;
-//    uint8_t opCode = mapProgram.read8(vAddr++, this);
-    uint8_t opCode = getAddressSpace(AS_PROGRAM)->read8(vAddr++, this);
+    uint8_t opCode = mapProgram.read8(vAddr++, this);
     string line;
 
     line = fmt::sprintf("%04X %02X ", sAddr, opCode);
