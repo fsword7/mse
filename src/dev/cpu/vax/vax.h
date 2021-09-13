@@ -75,6 +75,15 @@
 class vax_cpuDevice : public cpuDevice
 {
 public:
+	enum stateRegisters
+	{
+		VAX_R0, VAX_R1, VAX_R2, VAX_R3,
+		VAX_R4, VAX_R5, VAX_R6, VAX_R7,
+		VAX_R8, VAX_R9, VAX_R10, VAX_R11,
+		VAX_R12, VAX_R13, VAX_R14, VAX_R15,
+		VAX_AP, VAX_FP, VAX_SP, VAX_PC
+	};
+	
 	vax_cpuDevice(const SystemConfig &config, const DeviceType &type,
 		const string &tagName, Device *owner, uint64_t clock, int aWidth);
 	virtual ~vax_cpuDevice() = default;
@@ -84,7 +93,7 @@ public:
 protected:
 	struct
 	{
-		scale32_t  gpRegs[CPU_nGREGS]; // General registers
+		scale32_t  gpReg[CPU_nGREGS];  // General registers
 		uint32_t   ipReg[CPU_nPREGS];  // Processor registers
 		uint32_t   opReg[CPU_nOREGS];  // Operand registers
 		int32_t    rqReg[CPU_nOREGS];  // Recovery registers
