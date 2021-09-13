@@ -61,6 +61,7 @@ set(MSE_CPP_SRCS
 	emu/delegate.cpp
 	emu/device.cpp
 	emu/devproc.cpp
+	emu/devscr.cpp
 	emu/devsys.cpp
 	emu/dibus.cpp
 	emu/didebug.cpp
@@ -122,6 +123,7 @@ set(MSE_H_SRCS
 	emu/delegate.h
 	emu/device.h
 	emu/devproc.h
+	emu/devscr.h
 	emu/devsys.h
 	emu/didebug.h
 	emu/dibus.h
