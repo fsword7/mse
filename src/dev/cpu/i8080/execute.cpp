@@ -7,6 +7,8 @@
 
 #include "emu/core.h"
 #include "dev/cpu/i8080/i8080.h"
+#include "dev/cpu/i8080/i8080op.h"
+#include "dev/cpu/i8080/i8080dbg.h"
 
 uint8_t i8080_cpuCycles[256] =
 {
@@ -234,178 +236,12 @@ void i8080_cpuDevice::run()
 void i8080_cpuDevice::execute()
 {
     uint8_t opCode;
+    uint16_t tval;
+    int cFlag;
 
     switch (opCode)
     {
-        case 0x00: // NOP instruction
-            break;
-        case 0x01: // LXI B,nnnn instruction
-            bcReg = readArg16();
-            break;
-        case 0x02: // STAX B instruction 
-            writeMem(bcReg.uw, afReg.ub.h);
-            break;
-        case 0x03: // INX B instruction
-            bcReg.sw++;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x04: // INR B instruction
-            bcReg.ub.h = opINR(bcReg.ub.h);
-            break;
-        case 0x05: // DCR B instruction
-            bcReg.ub.h = opDCR(bcReg.ub.h);
-            break;
-        case 0x06: // MVI B,nn instruction
-            bcReg.ub.h = readArg8();
-            break;
-        case 0x07: // RLC instruction
-            afReg.ub.h = (afReg.ub.h << 1) | (afReg.ub.h >> 7);
-            afReg.ub.l = (afReg.ub.l & 0xFE) | (afReg.ub.h & SR_CF);
-            break;
-        case 0x08: // DSUB instruction (8085 only)
-            if (is8080())
-                break;
-            break;
-        case 0x09: // DAD B instruction
-            opDAD(bcReg.uw);
-            break;
-        case 0x0A: // LDAX B instruction
-            afReg.ub.h = readMem(bcReg.uw);
-            break;
-        case 0x0B: // DCX B instruction
-            bcReg.uw--;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x0C: // INR C instruction
-            bcReg.ub.l = opINR(bcReg.ub.l);
-            break;
-        case 0x0D: // DCR C instruction
-            bcReg.ub.l = opDCR(bcReg.ub.l);
-            break;
-        case 0x0E: // MVI C,nn instruction
-            bcReg.ub.l = readArg8();
-            break;
-        case 0x0F: // RRC instruction
-            afReg.ub.l = (afReg.ub.l & 0xFE) | (afReg.ub.h & SR_CF);
-            afReg.ub.h = (afReg.ub.h >> 1) | (afReg.ub.h << 7);
-            break;
-       
-        case 0x10: // ASRH instruction (8085 only)
-            if (is8080())
-                break;
-            afReg.ub.l = (afReg.ub.l & ~SR_CF) | (hlReg.ub.l & SR_CF);
-            hlReg.uw = (hlReg.uw >> 1);
-            break;
-        case 0x11: // LXI D,nnnn instruction
-            deReg = readArg16();
-            break;
-        case 0x12: // STAX D instruction
-            writeMem(deReg.uw, afReg.ub.h);
-            break;
-        case 0x13: // INX D instruction
-            deReg.uw++;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x14: // INR D instruction
-            deReg.ub.h = opINR(deReg.ub.h);
-            break;
-        case 0x15: // DCR D instruction
-            deReg.ub.h = opDCR(deReg.ub.h);
-            break;
-        case 0x16: // MVI D,nn
-            deReg.ub.h = readArg8();
-            break;
-        case 0x17: // RAL instruction
-        {
-            int c = afReg.ub.l & SR_CF;
-            afReg.ub.l = (afReg.ub.l & 0xFE) | (afReg.ub.h >> 7);
-            afReg.ub.h = (afReg.ub.h << 1) | c;
-            break;
-        }
-        case 0x18: // RLDE instruction (8085 only)
-            if (is8080())
-                break;
-            afReg.ub.l = (afReg.ub.l & ~(SR_CF | SR_VF)) | (deReg.ub.h >> 7);
-            deReg.uw = (deReg.uw << 1) | (deReg.uw >> 15);
-            if ((((deReg.uw >> 15) ^ afReg.ub.l) & SR_CF) != 0)
-                afReg.ub.l |= SR_VF;
-            break;
-        case 0x19: // DAD D instruction
-            opDAD(deReg.uw);
-            break;
-        case 0x1A: // LDAX D instruction
-            afReg.ub.h = readMem(deReg.uw);
-            break;
-        case 0x1B: // DCX D instruction
-            deReg.uw--;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x1C: // INR E instruction
-            deReg.ub.l = opINR(deReg.ub.l);
-            break;
-        case 0x1D: // DCR E instruction
-            deReg.ub.l = opDCR(deReg.ub.l);
-            break;
-        case 0x1E: // MVI E,nn instruction
-            deReg.ub.l = readArg8();
-            break;
-        case 0x1F: // RAR instruction
-        {
-            int c = (afReg.ub.l & 0x01) << 7;
-            afReg.ub.l = (afReg.ub.l & 0xFE) | (afReg.ub.h & SR_CF);
-            afReg.ub.h = (afReg.ub.h >> 1) | c;
-            break;
-        }
-        case 0x20: // RIM instruction (8085 only)
-            if (is8080())
-                break;
-            break;
-        case 0x21: // LXI H,nnnn instruction
-            hlReg = readArg16();
-            break;
-        case 0x22: // SHLD nnnn instruction
-            wzReg = readArg16();
-            writeMem(wzReg.uw,   hlReg.ub.l);
-            writeMem(wzReg.uw+1, hlReg.ub.h);
-            break;
-        case 0x23: // INX H instruction
-            hlReg.uw++;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x24: // INR H instruction
-            hlReg.ub.h = opINR(hlReg.ub.h);
-            break;
-        case 0x25: // DCR H instruction
-            hlReg.ub.h = opDCR(hlReg.ub.h);
-            break;
-        case 0x26: // MVI H,nn
-            hlReg.ub.h = readArg8();
-            break;
+
         case 0x27: // DAA instruction
             wzReg.ub.h = afReg.ub.h;
 
@@ -429,259 +265,301 @@ void i8080_cpuDevice::execute()
                 zspFlags[wzReg.ub.h];
             afReg.ub.h = wzReg.ub.h;
             break;
-        case 0x28: // LDEH nn instruction (8085 only)
-            if (is8080())
-                break;
-            wzReg.uw = readArg8();
-            deReg.uw = (hlReg.uw + wzReg.uw) & 0xFFFF;
+
+
+        case 0x00:
+            // NOP instruction
+            OP_EXEC(NOP, NOP, IMPL);
             break;
 
-        case 0x29: // DAD H instruction
-            opDAD(hlReg.uw);
-            break;
-        case 0x2A: // LHLD nnnn instruction
-            wzReg = readArg16();
-            hlReg.ub.l = readMem(wzReg.uw);
-            hlReg.ub.h = readMem(wzReg.uw+1);
-            break;
-        case 0x2B: // DCX H instruction
-            hlReg.uw--;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x2C: // INR L instruction
-            hlReg.ub.l = opINR(hlReg.ub.l);
-            break;
-        case 0x2D: // DCR L instruction
-            hlReg.ub.l = opDCR(hlReg.ub.l);
-            break;
-        case 0x2E: // MVI L,nn instruction
-            hlReg.ub.l = readArg8();
-            break;
-        case 0x2F: // CMA instruction
-            afReg.ub.h ^= 0xFF;
-            if (is8085())
-                afReg.ub.l |= SR_HF|SR_VF;
+        case 0x76:
+            // HLT instruction
+            OP_EXEC(HLT, HLT, IMPL);
             break;
 
-        case 0x30: // SIM instruction (8085 only)
-            if (is8080())
-                break;
-            break;
-        case 0x31: // LXI SP,nnnn instruction
-            spReg = readArg16();
-            break;
-        case 0x32: // STAX nnnn instruction
-            wzReg = readArg16();
-            writeMem(wzReg.uw, afReg.ub.h);
-            break;
-        case 0x33: // INX SP instruction
-            spReg.uw++;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        case 0x34: // INR M instruction
-            wzReg.ub.l = opINR(readMem(hlReg.uw));
-            writeMem(hlReg.uw, wzReg.ub.l);
-            break;
-        case 0x35: // DCR M instruction
-            wzReg.ub.l = opDCR(readMem(hlReg.uw));
-            writeMem(hlReg.uw, wzReg.ub.l);
-            break;
-        case 0x36: // MVI M,nn instruction
-            wzReg.ub.l = readArg8();
-            writeMem(hlReg.uw, wzReg.ub.l);
-            break;
-        case 0x37: // STC instruction
-            afReg.ub.l = (afReg.ub.l & 0xFE) | SR_CF;
-            break;
-        case 0x38: // LDES nn instruction (8085 only)
-            if (is8080())
-                break;
-            wzReg.uw = readArg8();
-            deReg.uw = (spReg.uw + wzReg.uw) & 0xFFFF;
-            break;
-        case 0x39: // DAD SP instruction
-            opDAD(spReg.uw);
-            break;
-        case 0x3A: // LDAX nnnn instruction
-            wzReg = readArg16();
-            afReg.ub.h = readMem(wzReg.uw);
-            break;
-        case 0x3B: // DCX SP instruction
-            spReg.uw--;
-            if (is8085())
-            {
-                afReg.sb.l &= ~SR_VF;
-                if (bcReg.sw == 0x0000)
-                    afReg.ub.l |= SR_VF;
-            }
-            break;
-        
-        case 0x3C: // INR A instruction
-            afReg.ub.h = opINR(afReg.ub.h);
-            break;
-        case 0x3D: // DCR A instruction
-            afReg.ub.h = opDCR(afReg.ub.h);
-            break;
-        case 0x3E: // MVI A,nn instruction
-            afReg.ub.h = readArg8();
-            break;
-        case 0x3F: // CMC instruction
-            afReg.ub.l = (afReg.ub.l & 0xFE) | (~afReg.ub.l & SR_CF);
+        case 0xF3:
+            // EI instruction
+            OP_EXEC(EI, EI, IMPL);
             break;
 
-        case 0x40: bcReg.ub.h = bcReg.ub.h; break;
-        case 0x41: bcReg.ub.h = bcReg.ub.l; break;
-        case 0x42: bcReg.ub.h = deReg.ub.h; break;
-        case 0x43: bcReg.ub.h = deReg.ub.l; break;
-        case 0x44: bcReg.ub.h = hlReg.ub.h; break;
-        case 0x45: bcReg.ub.h = hlReg.ub.l; break;
-        case 0x46: bcReg.ub.h = readMem(hlReg.uw); break;
-        case 0x47: bcReg.ub.h = afReg.ub.h; break;
+        case 0xFB:
+            // DI instruction
+            OP_EXEC(DI, DI, IMPL);
+            break;
 
-        case 0x48: bcReg.ub.l = bcReg.ub.h; break;
-        case 0x49: bcReg.ub.l = bcReg.ub.l; break;
-        case 0x4A: bcReg.ub.l = deReg.ub.h; break;
-        case 0x4B: bcReg.ub.l = deReg.ub.l; break;
-        case 0x4C: bcReg.ub.l = hlReg.ub.h; break;
-        case 0x4D: bcReg.ub.l = hlReg.ub.l; break;
-        case 0x4E: bcReg.ub.l = readMem(hlReg.uw); break;
-        case 0x4F: bcReg.ub.l = afReg.ub.h; break;
+        case 0x37:
+            // STC instruction
+            OP_EXEC(STC, STC, IMPL);
+            break;
 
-        case 0x50: deReg.ub.h = bcReg.ub.h; break;
-        case 0x51: deReg.ub.h = bcReg.ub.l; break;
-        case 0x52: deReg.ub.h = deReg.ub.h; break;
-        case 0x53: deReg.ub.h = deReg.ub.l; break;
-        case 0x54: deReg.ub.h = hlReg.ub.h; break;
-        case 0x55: deReg.ub.h = hlReg.ub.l; break;
-        case 0x56: deReg.ub.h = readMem(hlReg.uw); break;
-        case 0x57: deReg.ub.h = afReg.ub.h; break;
+        case 0x3F:
+            // CMC instruction
+            OP_EXEC(CMC, CMC, IMPL);
+            break;
 
-        case 0x58: deReg.ub.l = bcReg.ub.h; break;
-        case 0x59: deReg.ub.l = bcReg.ub.l; break;
-        case 0x5A: deReg.ub.l = deReg.ub.h; break;
-        case 0x5B: deReg.ub.l = deReg.ub.l; break;
-        case 0x5C: deReg.ub.l = hlReg.ub.h; break;
-        case 0x5D: deReg.ub.l = hlReg.ub.l; break;
-        case 0x5E: deReg.ub.l = readMem(hlReg.uw); break;
-        case 0x5F: deReg.ub.l = afReg.ub.h; break;
+        case 0x2F:
+            // CMA instruction
+            OP_EXEC(CMA, CMA, IMPL);
+            break;
 
-        case 0x60: hlReg.ub.h = bcReg.ub.h; break;
-        case 0x61: hlReg.ub.h = bcReg.ub.l; break;
-        case 0x62: hlReg.ub.h = deReg.ub.h; break;
-        case 0x63: hlReg.ub.h = deReg.ub.l; break;
-        case 0x64: hlReg.ub.h = hlReg.ub.h; break;
-        case 0x65: hlReg.ub.h = hlReg.ub.l; break;
-        case 0x66: hlReg.ub.h = readMem(hlReg.uw); break;
-        case 0x67: hlReg.ub.h = afReg.ub.h; break;
+        case 0xC7: case 0xCF: case 0xD7: case 0xDF:
+        case 0xE7: case 0xEF: case 0xF7: case 0xFF:
+            // RST n instruction
+            OP_EXEC(RST, RST, RESET);
+            break;
 
-        case 0x68: hlReg.ub.l = bcReg.ub.h; break;
-        case 0x69: hlReg.ub.l = bcReg.ub.l; break;
-        case 0x6A: hlReg.ub.l = deReg.ub.h; break;
-        case 0x6B: hlReg.ub.l = deReg.ub.l; break;
-        case 0x6C: hlReg.ub.l = hlReg.ub.h; break;
-        case 0x6D: hlReg.ub.l = hlReg.ub.l; break;
-        case 0x6E: hlReg.ub.l = readMem(hlReg.uw); break;
-        case 0x6F: hlReg.ub.l = afReg.ub.h; break;
 
-        case 0x70: writeMem(hlReg.uw, bcReg.ub.h); break;
-        case 0x71: writeMem(hlReg.uw, bcReg.ub.l); break;
-        case 0x72: writeMem(hlReg.uw, deReg.ub.h); break;
-        case 0x73: writeMem(hlReg.uw, deReg.ub.l); break;
-        case 0x74: writeMem(hlReg.uw, hlReg.ub.h); break;
-        case 0x75: writeMem(hlReg.uw, hlReg.ub.l); break;
-        case 0x76:                                 break; // HLT instruction
-        case 0x77: writeMem(hlReg.uw, afReg.ub.h); break;
 
-        case 0x78: afReg.ub.h = bcReg.ub.h; break;
-        case 0x79: afReg.ub.h = bcReg.ub.l; break;
-        case 0x7A: afReg.ub.h = deReg.ub.h; break;
-        case 0x7B: afReg.ub.h = deReg.ub.l; break;
-        case 0x7C: afReg.ub.h = hlReg.ub.h; break;
-        case 0x7D: afReg.ub.h = hlReg.ub.l; break;
-        case 0x7E: afReg.ub.h = readMem(hlReg.uw); break;
-        case 0x7F: afReg.ub.h = afReg.ub.h; break;
+        case 0x0A: case 0x1A:
+            // LDAX r instruction
+            OP_EXEC(LDAX, LDAX, REGWSP);
+            break;
+        case 0x2A:
+            // LHLD adr instruction
+            tval = readArg16().uw;
+            OP_EXEC(LHLD, LHLD, ADR);
+            break;
+        case 0x3A:
+            // LDA adr instruction
+            tval = readArg16().uw;
+            OP_EXEC(LDA, LDA, ADR);
+            break;
 
-        case 0x80: opADD(bcReg.ub.h); break;
-        case 0x81: opADD(bcReg.ub.l); break;
-        case 0x82: opADD(deReg.ub.h); break;
-        case 0x83: opADD(deReg.ub.l); break;
-        case 0x84: opADD(hlReg.ub.h); break;
-        case 0x85: opADD(hlReg.ub.l); break;
-        case 0x86: wzReg.ub.l = readMem(hlReg.uw); opADD(wzReg.ub.l); break;
-        case 0x87: opADD(afReg.ub.h); break;
-     
-        case 0x88: opADC(bcReg.ub.h); break;
-        case 0x89: opADC(bcReg.ub.l); break;
-        case 0x8A: opADC(deReg.ub.h); break;
-        case 0x8B: opADC(deReg.ub.l); break;
-        case 0x8C: opADC(hlReg.ub.h); break;
-        case 0x8D: opADC(hlReg.ub.l); break;
-        case 0x8E: wzReg.ub.l = readMem(hlReg.uw); opADC(wzReg.ub.l); break;
-        case 0x8F: opADC(afReg.ub.h); break;
-     
-        case 0x90: opSUB(bcReg.ub.h); break;
-        case 0x91: opSUB(bcReg.ub.l); break;
-        case 0x92: opSUB(deReg.ub.h); break;
-        case 0x93: opSUB(deReg.ub.l); break;
-        case 0x94: opSUB(hlReg.ub.h); break;
-        case 0x95: opSUB(hlReg.ub.l); break;
-        case 0x96: wzReg.ub.l = readMem(hlReg.uw); opSUB(wzReg.ub.l); break;
-        case 0x97: opSUB(afReg.ub.h); break;
-     
-        case 0x98: opSBB(bcReg.ub.h); break;
-        case 0x99: opSBB(bcReg.ub.l); break;
-        case 0x9A: opSBB(deReg.ub.h); break;
-        case 0x9B: opSBB(deReg.ub.l); break;
-        case 0x9C: opSBB(hlReg.ub.h); break;
-        case 0x9D: opSBB(hlReg.ub.l); break;
-        case 0x9E: wzReg.ub.l = readMem(hlReg.uw); opSBB(wzReg.ub.l); break;
-        case 0x9F: opSBB(afReg.ub.h); break;
-     
-        case 0xA0: opANA(bcReg.ub.h); break;
-        case 0xA1: opANA(bcReg.ub.l); break;
-        case 0xA2: opANA(deReg.ub.h); break;
-        case 0xA3: opANA(deReg.ub.l); break;
-        case 0xA4: opANA(hlReg.ub.h); break;
-        case 0xA5: opANA(hlReg.ub.l); break;
-        case 0xA6: wzReg.ub.l = readMem(hlReg.uw); opANA(wzReg.ub.l); break;
-        case 0xA7: opANA(afReg.ub.h); break;
-     
-        case 0xA8: opXRA(bcReg.ub.h); break;
-        case 0xA9: opXRA(bcReg.ub.l); break;
-        case 0xAA: opXRA(deReg.ub.h); break;
-        case 0xAB: opXRA(deReg.ub.l); break;
-        case 0xAC: opXRA(hlReg.ub.h); break;
-        case 0xAD: opXRA(hlReg.ub.l); break;
-        case 0xAE: wzReg.ub.l = readMem(hlReg.uw); opXRA(wzReg.ub.l); break;
-        case 0xAF: opXRA(afReg.ub.h); break;
-     
-        case 0xB0: opORA(bcReg.ub.h); break;
-        case 0xB1: opORA(bcReg.ub.l); break;
-        case 0xB2: opORA(deReg.ub.h); break;
-        case 0xB3: opORA(deReg.ub.l); break;
-        case 0xB4: opORA(hlReg.ub.h); break;
-        case 0xB5: opORA(hlReg.ub.l); break;
-        case 0xB6: wzReg.ub.l = readMem(hlReg.uw); opORA(wzReg.ub.l); break;
-        case 0xB7: opORA(afReg.ub.h); break;
-     
-        case 0xB8: opCMP(bcReg.ub.h); break;
-        case 0xB9: opCMP(bcReg.ub.l); break;
-        case 0xBA: opCMP(deReg.ub.h); break;
-        case 0xBB: opCMP(deReg.ub.l); break;
-        case 0xBC: opCMP(hlReg.ub.h); break;
-        case 0xBD: opCMP(hlReg.ub.l); break;
-        case 0xBE: wzReg.ub.l = readMem(hlReg.uw); opCMP(wzReg.ub.l); break;
-        case 0xBF: opCMP(afReg.ub.h); break;
+        case 0x01: case 0x11: case 0x21: case 0x31:
+            // LXI r,d16 instruction
+            tval = readArg16().uw;
+            OP_EXEC(LXI, LXI, REGWSPI);
+            break;
+
+        case 0x02: case 0x12:
+            // STAX r instruction
+            OP_EXEC(STAX, STAX, REGWSP);
+            break;
+        case 0x22:
+            // SHLD adr instruction
+            tval = readArg16().uw;
+            OP_EXEC(SHLD, SHLD, ADR);
+            break;
+        case 0x32:
+            // STA adr instruction
+            tval = readArg16().uw;
+            OP_EXEC(STA, STA, ADR);
+            break;
+
+        case 0x40: case 0x41: case 0x42: case 0x43:
+        case 0x44: case 0x45:            case 0x47:
+        case 0x48: case 0x49: case 0x4A: case 0x4B:
+        case 0x4C: case 0x4D:            case 0x4F:
+        case 0x50: case 0x51: case 0x52: case 0x53:
+        case 0x54: case 0x55:            case 0x57:
+        case 0x58: case 0x59: case 0x5A: case 0x5B:
+        case 0x5C: case 0x5D:            case 0x5F:
+        case 0x60: case 0x61: case 0x62: case 0x63:
+        case 0x64: case 0x65:            case 0x67:
+        case 0x68: case 0x69: case 0x6A: case 0x6B:
+        case 0x6C: case 0x6D:            case 0x6F:
+        case 0x78: case 0x79: case 0x7A: case 0x7B:
+        case 0x7C: case 0x7D:            case 0x7F:
+            // MOV r,r instruction
+            OP_EXEC(MOV, MOV, MOVE);
+            break;
+
+        case 0x46: case 0x4E: case 0x56: case 0x5E:
+        case 0x66: case 0x6E:            case 0x7E:
+            // MOV r,M instruction
+            OP_EXEC(MOV, MOVrM, MOVErM)
+            break;
+
+        case 0x70: case 0x71: case 0x72: case 0x73:
+        case 0x74: case 0x75:            case 0x77:
+            // MOV M,r instruction
+            OP_EXEC(MOV, MOVMr, MOVEMr);
+            break;
+
+        case 0x06: case 0x0E: case 0x16: case 0x1E:
+        case 0x26: case 0x2E:            case 0x3E:
+            // MVI r,d8 instruction
+            tval = readArg8();
+            OP_EXEC(MVI, MVI, REGI8);
+            break;
+        case 0x36:
+            // MVI M,d8, instruction
+            tval = readArg8();
+            OP_EXEC(MVI, MVIM, REGMI8);
+            break;
+
+        case 0x04: case 0x0C: case 0x14: case 0x1C:
+        case 0x24: case 0x2C:            case 0x3C:
+            // INR r instruction
+            OP_EXEC(INR, INR, REG);
+            break;
+        case 0x34:
+            OP_EXEC(INR, INRM, REGM);
+            break;
+
+        case 0x05: case 0x0D: case 0x15: case 0x1D:
+        case 0x25: case 0x2D:            case 0x3D:
+            // DCR r instruction
+            OP_EXEC(DCR, DCR, REG);
+            break;
+        case 0x35:
+            OP_EXEC(DCR, DCRM, REGM);
+            break;
+
+        case 0x03: case 0x13: case 0x23: case 0x33:
+            // INX r instruction
+            OP_EXEC(INX, INX, REGWSP);
+            break;
+
+        case 0x0B: case 0x1B: case 0x2B: case 0x3B:
+            // DCX r instruction
+            OP_EXEC(DCX, DCX, REGWSP);
+            break;
+
+        case 0x07:
+            // RLC instruction
+            OP_EXEC(RLC, RLC, IMPL);
+            break;
+        case 0x0F:
+            // RRC instruction
+            OP_EXEC(RRC, RRC, IMPL);
+            break;
+        case 0x17:
+            // RAL instruction
+            OP_EXEC(RAL, RAL, IMPL);
+            break;
+        case 0x1F:
+            // RAR instruction
+            OP_EXEC(RAR, RAR, IMPL);
+            break;
+
+        case 0x09: case 0x19: case 0x29: case 0x39:
+            // DAD r instruction
+            OP_EXEC(DAD, DAD, REGWSP);
+            break;
+
+        case 0x80: case 0x81: case 0x82: case 0x83:
+        case 0x84: case 0x85:            case 0x87:
+            // ADD r instruction
+            OP_EXEC(ADD, ADD, REG);
+            break;
+        case 0x86:
+            // ADD M instruction
+            OP_EXEC(ADD, ADDM, REG);
+            break;
+        case 0xC6:
+            // ADI d8 instruction
+            tval = readArg8();
+            OP_EXEC(ADI, ADI, IMM8);
+            break;
+
+        case 0x88: case 0x89: case 0x8A: case 0x8B:
+        case 0x8C: case 0x8D:            case 0x8F:
+            // ADC r instruction
+            OP_EXEC(ADC, ADC, REG);
+            break;
+        case 0x8E:
+            // ADC M instruction
+            OP_EXEC(ADC, ADCM, REG);
+            break;
+        case 0xCE:
+            // ACI d8 instruction
+            tval = readArg8();
+            OP_EXEC(ACI, ACI, IMM8);
+            break;
+
+        case 0x90: case 0x91: case 0x92: case 0x93:
+        case 0x94: case 0x95:            case 0x97:
+            // SUB r instruction
+            OP_EXEC(SUB, SUB, REG);
+            break;
+        case 0x96:
+            // SUB M instruction
+            OP_EXEC(SUB, SUBM, REG);
+            break;
+        case 0xD6:
+            // SUI d8 instruction
+            tval = readArg8();
+            OP_EXEC(SUI, SUI, IMM8);
+            break;
+
+        case 0x98: case 0x99: case 0x9A: case 0x9B:
+        case 0x9C: case 0x9D:            case 0x9F:
+            // SBB r instruction
+            OP_EXEC(SBB, SBB, REG);
+            break;
+        case 0x9E:
+            // SBB M instruction
+            OP_EXEC(SBB, SBBM, REG);
+            break;
+        case 0xDE:
+            // SBI d8 instruction
+            tval = readArg8();
+            OP_EXEC(SBI, SBI, IMM8);
+            break;
+
+        case 0xA0: case 0xA1: case 0xA2: case 0xA3:
+        case 0xA4: case 0xA5:            case 0xA7:
+            // ANA r instruction
+            OP_EXEC(ANA, ANA, REG);
+            break;
+        case 0xA6:
+            // ANA M instruction
+            OP_EXEC(ANA, ANAM, REG);
+            break;
+        case 0xE6:
+            // ANI d8 instruction
+            tval = readArg8();
+            OP_EXEC(ANI, ANI, IMM8);
+            break;
+
+        case 0xA8: case 0xA9: case 0xAA: case 0xAB:
+        case 0xAC: case 0xAD:            case 0xAF:
+            // XRA r instruction
+            OP_EXEC(XRA, XRA, REG);
+            break;
+        case 0xAE:
+            // XRA M instruction
+            OP_EXEC(XRA, XRAM, REG);
+            break;
+        case 0xEE:
+            // XRI d8 instruction
+            tval = readArg8();
+            OP_EXEC(XRI, XRI, IMM8);
+            break;
+            
+        case 0xB0: case 0xB1: case 0xB2: case 0xB3:
+        case 0xB4: case 0xB5:            case 0xB7:
+            // ORA r instruction
+            OP_EXEC(ORA, ORA, REG);
+            break;
+        case 0xB6:
+            // ORA M instruction
+            OP_EXEC(ORA, ORAM, REG);
+            break;
+        case 0xF6:
+            // ORI d8 instruction
+            tval = readArg8();
+            OP_EXEC(ORI, ORI, IMM8);
+            break;
+
+        case 0xB8: case 0xB9: case 0xBA: case 0xBB:
+        case 0xBC: case 0xBD:            case 0xBF:
+            // CMP r instruction
+            OP_EXEC(CMP, CMP, REG);
+            break;
+        case 0xBE:
+            // CMP M instruction
+            OP_EXEC(CMP, CMPM, REG);
+            break;
+        case 0xFE:
+            // CPI d8 instruction
+            tval = readArg8();
+            OP_EXEC(CPI, CPI, IMM8);
+            break;
+
+
+
 
         case 0xC0: // RNZ instruction
             opRET((afReg.ub.l & SR_ZF) == 0);
@@ -701,13 +579,6 @@ void i8080_cpuDevice::execute()
         case 0xC5: // PUSH B instruction
             opPUSH(bcReg);
             break;
-        case 0xC6: // ADI nn instruction
-            wzReg.ub.l = readArg8();
-            opADD(wzReg.ub.l);
-            break;
-        case 0xC7: // RST 0 instruction
-            opRST(0);
-            break;
 
         case 0xC8: // RZ instruction
             opRET(afReg.ub.l & SR_ZF);
@@ -718,27 +589,11 @@ void i8080_cpuDevice::execute()
         case 0xCA: // JZ instruction
             opJMP(afReg.ub.l & SR_ZF);
             break;
-        case 0xCB: // RST V instruction (8085 only)
-            if (is8085())
-            {
-                if (afReg.ub.l & SR_VF)
-                    opRST(8);
-            }
-            else
-                opJMP(true);
-            break;
         case 0xCC: // CZ nnnn instruction
             opCALL(afReg.ub.l & SR_ZF);
             break;
         case 0xCD: // CALL nnnn instruction
             opCALL(true);
-            break;
-        case 0xCE: // ACI nn instruction
-            wzReg.ub.l = readArg8();
-            opADC(wzReg.ub.l);
-            break;
-        case 0xCF: // RST 1 instruction
-            opRST(1);
             break;
 
         case 0xD0: // RNC instruction
@@ -759,13 +614,6 @@ void i8080_cpuDevice::execute()
             break;
         case 0xD5: // PUSH D
             opPUSH(deReg);
-            break;
-        case 0xD6: // SUI nn
-            wzReg.ub.l = readArg8();
-            opSUB(wzReg.ub.l);
-            break;
-        case 0xD7: // RST 2 instruction
-            opRST(2);
             break;
 
         case 0xD8: // RC instruction
@@ -797,13 +645,6 @@ void i8080_cpuDevice::execute()
             else
                 opCALL(true);
             break;
-        case 0xDE: // SBI nn
-            wzReg.ub.l = readArg8();
-            opSBB(wzReg.ub.l);
-            break;
-        case 0xDF: // RST 3
-            opRST(3);
-            break;
 
         case 0xE0: // RPO instruction
             opRET((afReg.ub.l & SR_PF) == 0);
@@ -824,13 +665,6 @@ void i8080_cpuDevice::execute()
             break;
         case 0xE5: // PUSH H instruction
             opPUSH(hlReg);
-            break;
-        case 0xE6: // ANI nn instruction
-            wzReg.ub.l = readArg8();
-            opANA(wzReg.ub.l);
-            break;
-        case 0xE7: // RST 4 instruction
-            opRST(4);
             break;
         
         case 0xE8: // RPE instruction
@@ -860,13 +694,6 @@ void i8080_cpuDevice::execute()
             else
                 opCALL(true);
             break;
-        case 0xEE: // XRI nn instruction
-            wzReg.ub.l = readArg8();
-            opXRA(wzReg.ub.l);
-            break;
-        case 0xEF: // RST 5 instruction
-            opRST(5);
-            break;
 
         case 0xF0: // RP instruction
             opRET(afReg.ub.l & SR_SF);
@@ -877,9 +704,6 @@ void i8080_cpuDevice::execute()
         case 0xF2: // JP nnnn instruction
             opJMP(afReg.ub.l & SR_SF);
             break;
-        case 0xF3: // DI instruction
-            enableInterrupts(false);
-            break;
         case 0xF4: // CP nnnn instruction
             opCALL(afReg.ub.l & SR_SF);
             break;
@@ -888,14 +712,7 @@ void i8080_cpuDevice::execute()
                 afReg.ub.l = (afReg.ub.l & ~(SR_X3F|SR_X5F)) | SR_VF;
             opPUSH(afReg);
             break;
-        case 0xF6: // ORI nn instruction
-            wzReg.ub.l = readArg8();
-            opORA(wzReg.ub.l);
-            break;
-        case 0xF7: // RST 6 instruction
-            opRST(6);
-            break;
-        
+          
         case 0xF8: // RM instruction
             opRET(afReg.ub.l & SR_SF);
             break;
@@ -904,9 +721,6 @@ void i8080_cpuDevice::execute()
             break;
         case 0xFA: // JM nnnn instruction
             opJMP(afReg.ub.l & SR_SF);
-            break;
-        case 0xFB: // EI instruction
-            enableInterrupts(true);
             break;
         case 0xFC: // CM nnnn instruction
             opCALL(afReg.ub.l & SR_SF);
@@ -917,12 +731,61 @@ void i8080_cpuDevice::execute()
             else
                 opCALL(true);
             break;
-        case 0xFE: // CPI nn instruction
-            wzReg.ub.l = readArg8();
-            opCMP(wzReg.ub.l);
-            break;
-        case 0xFF: // RST 7
-            opRST(7);
-            break;
+
+        // case 0x08: // DSUB instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     break;
+       
+        // case 0x10: // ASRH instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     afReg.ub.l = (afReg.ub.l & ~SR_CF) | (hlReg.ub.l & SR_CF);
+        //     hlReg.uw = (hlReg.uw >> 1);
+        //     break;
+        
+        // case 0x18: // RLDE instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     afReg.ub.l = (afReg.ub.l & ~(SR_CF | SR_VF)) | (deReg.ub.h >> 7);
+        //     deReg.uw = (deReg.uw << 1) | (deReg.uw >> 15);
+        //     if ((((deReg.uw >> 15) ^ afReg.ub.l) & SR_CF) != 0)
+        //         afReg.ub.l |= SR_VF;
+        //     break;
+
+        // case 0x20: // RIM instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     break;
+
+        // case 0x28: // LDEH nn instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     wzReg.uw = readArg8();
+        //     deReg.uw = (hlReg.uw + wzReg.uw) & 0xFFFF;
+        //     break;
+
+        // case 0x30: // SIM instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     break;
+
+        // case 0x38: // LDES nn instruction (8085 only)
+        //     if (is8080())
+        //         break;
+        //     wzReg.uw = readArg8();
+        //     deReg.uw = (spReg.uw + wzReg.uw) & 0xFFFF;
+        //     break;
+
+        // case 0xCB: // RST V instruction (8085 only)
+        //     if (is8085())
+        //     {
+        //         if (afReg.ub.l & SR_VF)
+        //             opRST(8);
+        //     }
+        //     else
+        //         opJMP(true);
+        //     break;
+           
    }
 }

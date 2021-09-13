@@ -20,6 +20,73 @@
 #define SR_VF   0x02
 #define SR_CF   0x01
 
+// 8/16-bit register defintions
+//
+// +-----+-----+
+// |  A  |  F  |
+// +-----+-----+
+// |  B  |  C  |
+// +-----+-----+
+// |  D  |  E  |
+// +-----+-----+
+// |  H  |  L  |
+// +-----+-----+
+// |     SP    |
+// +-----------+
+// |     PC    |
+// +-----------+
+
+#define REGn_A   0
+#define REGn_F   1 // F - flags, M - indirect HL register
+#define REGn_B   2
+#define REGn_C   3
+#define REGn_D   4
+#define REGn_E   5
+#define REGn_H   6
+#define REGn_L   7
+
+#define REGn_AF  0
+#define REGn_BC  1
+#define REGn_DE  2
+#define REGn_HL  3
+#define REGn_SP  4
+#define REGn_PC  5
+
+#define REGAn(opCode)   (opCode & 0x7)
+#define REGBn(opCode)   ((opCode >> 3) & 0x7)
+#define REGWn(opCode)   ((opCode >> 4) & 0x3)
+#define REGA(opCode)    state.bRegs[REGAn(opCode)+2]
+#define REGB(opCode)    state.bRegs[REGBn(opCode)+2]
+#define REGW(opCode)    state.wRegs[REGWn(opCode)+1]
+
+#define REG_A           state.bRegs[REGn_A]
+#define REG_F           state.bRegs[REGn_F]
+#define REG_HL          state.wRegs[REGn_HL]
+
+// #define REGn_A   0
+// #define REGn_F   1 // F - flags, M - indirect HL register
+// #define REGn_B   2
+// #define REGn_C   3
+// #define REGn_D   4
+// #define REGn_E   5
+// #define REGn_H   6
+// #define REGn_L   7
+
+// #define REG_A           state2.iRegs[REGn_AF].ub.h
+// #define REG_F           state2.iRegs[REGn_AF].ub.l
+// #define REG_B           state2.iRegs[REGn_BC].ub.h
+// #define REG_C           state2.iRegs[REGn_BC].ub.l
+// #define REG_D           state2.iRegs[REGn_DE].ub.h
+// #define REG_E           state2.iRegs[REGn_DE].ub.l
+// #define REG_H           state2.iRegs[REGn_DE].ub.h
+// #define REG_L           state2.iRegs[REGn_DE].ub.l
+
+// #define REG_BC          state2.iRegs[REGn_BC].uw;
+// #define REG_DE          state2.iRegs[REGn_DE].uw;
+// #define REG_HL          state2.iRegs[REGn_HL].uw;
+// #define REG_SP          state2.iRegs[REGn_SP].uw;
+// #define REG_PC          state2.iRegs[REGn_PC].uw;
+
 // Intel 8080/8085 series processor
 class i8080_cpuDevice : public cpuDevice
 {
@@ -99,6 +166,15 @@ class i8080_cpuDevice : public cpuDevice
         pair16_t pcReg; // PC register
         pair16_t spReg; // SP register
         pair16_t wzReg; 
+
+        union {
+            uint8_t  bRegs[8];
+            uint16_t wRegs[4];
+        } state;
+
+        // struct {
+        //     pair16_t iRegs[6];
+        // } state2;
 
         uint8_t zspFlags[256]; // Z/P flags settting
 
