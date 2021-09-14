@@ -46,3 +46,5 @@ private:
 };
 
 DECLARE_DEVICE_TYPE(SCREEN, scrDevice);
+
+using screen_t = scrDevice;

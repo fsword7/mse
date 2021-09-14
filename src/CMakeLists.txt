@@ -33,6 +33,8 @@ set(MSE_CPP_SRCS
 	dev/cpu/upd7810/upd7810.cpp
 #	dev/cpu/upd7810/opcodes.cpp
 	dev/cpu/vax/vax.cpp
+	dev/video/dec/vt100.cpp
+	emu/debug/debug.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/hedr0.cpp
@@ -67,6 +69,7 @@ set(MSE_CPP_SRCS
 	emu/didebug.cpp
 	emu/diexec.cpp
 	emu/distate.cpp
+	emu/divideo.cpp
 	emu/engine.cpp
 	emu/fileio.cpp
 	emu/machine.cpp
@@ -109,6 +112,8 @@ set(MSE_H_SRCS
 	dev/cpu/pdp11/pdp11.h
 	dev/cpu/upd7810/upd7810.h
 	dev/cpu/vax/vax.h
+	dev/video/dec/vt100.h
+	emu/debug/debug.h
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/hea.h
@@ -129,6 +134,7 @@ set(MSE_H_SRCS
 	emu/dibus.h
 	emu/diexec.h
 	emu/distate.h
+	emu/divideo.h
 	emu/driver.h
 	emu/engine.h
 	emu/list.h
