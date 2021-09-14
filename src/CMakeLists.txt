@@ -78,6 +78,7 @@ set(MSE_CPP_SRCS
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
+	lib/util/bitmap.cpp
 	main/main.cpp
 	printers/epson/mx.cpp
 	system/dec/axp/alphapc.cpp
@@ -145,6 +146,7 @@ set(MSE_H_SRCS
 	emu/templates.h
 	emu/sysconfig.h
 	emu/syslist.h
+	lib/util/bitmap.h
 	printers/epson/externs.h
 	printers/epson/mx.h
 	system/dec/axp/externs.h
