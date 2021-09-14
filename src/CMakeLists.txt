@@ -88,6 +88,10 @@ set(MSE_CPP_SRCS
 	terminals/dec/vt100.cpp
 )
 
+set(MSE_SDL_CPP_SRCS
+	osd/sdl/sdlmain.cpp
+)
+
 set(MSE_H_SRCS
 	dev/bus/axp/21174.h
 	dev/bus/axp/21272.h
@@ -158,8 +162,14 @@ set(MSE_H_SRCS
 	terminals/dec/vt100.h
 )
 
+set(MSE_SDL_H_SRCS
+	osd/sdl/sdlmain.h
+	osd/osdcore.h
+)
+
 add_definitions(-DDEBUG)
-add_executable(mse ${MSE_CPP_SRCS} ${MSE_H_SRCS})
+add_executable(mse ${MSE_CPP_SRCS} ${MSE_SDL_CPP_SRC} ${MSE_H_SRCS} ${MSE_SDL_H_SRCS})
 target_link_libraries(mse
 	fmt::fmt
+	SDL2::SDL2
 )
