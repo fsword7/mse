@@ -34,7 +34,8 @@ set(MSE_CPP_SRCS
 #	dev/cpu/upd7810/opcodes.cpp
 	dev/cpu/vax/vax.cpp
 	dev/video/dec/vt100.cpp
-	emu/debug/debug.cpp
+	emu/debugger/debugger.cpp
+	emu/debugger/device.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/hedr0.cpp
@@ -113,7 +114,8 @@ set(MSE_H_SRCS
 	dev/cpu/upd7810/upd7810.h
 	dev/cpu/vax/vax.h
 	dev/video/dec/vt100.h
-	emu/debug/debug.h
+	emu/debugger/debugger.h
+	emu/debugger/device.h
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/hea.h

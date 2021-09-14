@@ -9,6 +9,7 @@
 
 #include <type_traits>
 
+#include "emu/debugger/device.h"
 #include "emu/delegate.h"
 #include "emu/list.h"
 
@@ -236,6 +237,8 @@ private:
 
 	cstag_t devName;
 
+	debug_t *debugger = nullptr;
+	
 	const romEntry_t *firmwareEntries = nullptr;
 
 	// device interface section
