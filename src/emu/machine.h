@@ -13,10 +13,15 @@
 
 class romLoader;
 
+// Debug flags definition
+constexpr uint32_t DBGFLG_ENABLED =	0x00000001;
+
+class SystemEngine;
+
 class Machine
 {
 public:
-	Machine(const SystemConfig &config, cstag_t &tagName);
+	Machine(const SystemEngine &engine, const SystemConfig &config, cstag_t &tagName);
 	~Machine();
 
 	inline cstag_t  &getDeviceName() const   { return devName; }
@@ -29,7 +34,9 @@ public:
 
 	inline aspace::BusManager &getExternalBusManager() { return busManager; }
 
-	static Machine *create(ostream &out, const SystemDriver *driver, cstag_t &devName);
+	inline bool isDebuggerEnabled() { return debugFlags & DBGFLG_ENABLED; }
+
+	static Machine *create(ostream &out, const SystemEngine &engine, const SystemDriver *driver, cstag_t &devName);
 
 	void startAllDevices(Console *cty);
 
@@ -41,6 +48,9 @@ public:
 private:
 	const SystemConfig &config;
 	sysDevice *system = nullptr;
+
+	uint32_t debugFlags = 0;
+
 	mutable Device *dialedDevice = nullptr;
 
 	cstag_t devName;

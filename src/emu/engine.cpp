@@ -142,7 +142,7 @@ CommandStatus SystemEngine::cmdCreate(Console *user, args_t &args)
 		return CommandStatus::cmdOk;
 	}
 
-	sys = Machine::create(cout, driver, devName);
+	sys = Machine::create(cout, *this, driver, devName);
 	if (sys == nullptr)
 	{
 		user->printf("%s: system creation failure for %s - aborted.\n", devName, sysName);

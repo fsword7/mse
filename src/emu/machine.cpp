@@ -9,9 +9,11 @@
 #include "emu/dibus.h"
 #include "emu/map/map.h"
 #include "emu/romloader.h"
+#include "emu/debugger/debugger.h"
+#include "emu/engine.h"
 #include "emu/machine.h"
 
-Machine::Machine(const SystemConfig &config, cstag_t &tagName)
+Machine::Machine(const SystemEngine &engine, const SystemConfig &config, cstag_t &tagName)
 : config(config), devName(tagName), busManager(this)
 {
 	system = dynamic_cast<sysDevice *>(config.getSystemDevice());
@@ -30,13 +32,13 @@ Machine::~Machine()
 	logFile.close(-1);
 }
 
-Machine *Machine::create(ostream &out, const SystemDriver *driver, cstag_t &tagName)
+Machine *Machine::create(ostream &out, const SystemEngine &engine, const SystemDriver *driver, cstag_t &tagName)
 {
 	SystemConfig *config = nullptr;
 	Machine *machine = nullptr;
 
 	config  = new SystemConfig(*driver, tagName);
-	machine = new Machine(*config, tagName);
+	machine = new Machine(engine, *config, tagName);
 
 	return machine;
 }
@@ -69,6 +71,9 @@ void Machine::start(Console *cty)
 	loader = new romLoader(this, *cty);
 
 	busManager.init(cty);
+
+	// if (debugFlags & DBGFLG_ENABLED)
+	// 	initDebugger();
 
 	// Now start all devices
 	startAllDevices(cty);
