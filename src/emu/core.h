@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 #include <cassert>
 
@@ -60,7 +61,7 @@ typedef const string cstag_t;
 #include "emu/device.h"
 #include "emu/map/map.h"
 
-//#include "emu/machine.h"
+#include "emu/machine.h"
 
 #include "emu/templates.h"
 

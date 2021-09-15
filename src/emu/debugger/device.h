@@ -7,13 +7,19 @@
 
 #pragma once
 
+#include "emu/debugger/symbols.h"
+
 namespace emu::debug
 {
     class DeviceDebugger
     {
         public:
-            DeviceDebugger(const Device &device);
+            DeviceDebugger(Device *device);
             ~DeviceDebugger();
+
+
+        private:
+            SymbolTable symTable;
     };
 }
 

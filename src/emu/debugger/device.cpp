@@ -6,11 +6,13 @@
  */
 
 #include "emu/core.h"
+#include "emu/debugger/symbols.h"
 #include "emu/debugger/device.h"
 
 using namespace emu::debug;
 
-DeviceDebugger::DeviceDebugger(const Device &device)
+DeviceDebugger::DeviceDebugger(Device *device)
+: symTable(device->getMachine(), device)
 {
 
 }

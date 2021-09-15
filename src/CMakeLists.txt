@@ -36,6 +36,7 @@ set(MSE_CPP_SRCS
 	dev/video/dec/vt100.cpp
 	emu/debugger/debugger.cpp
 	emu/debugger/device.cpp
+	emu/debugger/symbols.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
 	emu/map/hedr0.cpp
@@ -121,6 +122,7 @@ set(MSE_H_SRCS
 	dev/video/dec/vt100.h
 	emu/debugger/debugger.h
 	emu/debugger/device.h
+	emu/debugger/symbols.h
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/hea.h
