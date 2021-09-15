@@ -9,6 +9,11 @@
 
 #include "emu/debugger/symbols.h"
 
+class diExternalBus;
+class diExecute;
+class diState;
+class diDebug;
+
 namespace emu::debug
 {
     class DeviceDebugger
@@ -20,6 +25,11 @@ namespace emu::debug
 
         private:
             SymbolTable symTable;
+
+            diExternalBus *devMemory = nullptr;
+            diExecute *devExecute = nullptr;
+            diState *devState = nullptr;
+            diDebug *devDebug = nullptr;
     };
 }
 
