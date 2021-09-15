@@ -12,6 +12,7 @@
 #include <filesystem>
 #include <typeinfo>
 #include <thread>
+#include <functional>
 
 #include <vector>
 #include <map>

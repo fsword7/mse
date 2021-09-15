@@ -12,22 +12,39 @@ namespace emu::debug
 {
     class SymbolTable;
 
+    typedef std::function<uint64_t()>     getFunc;
+    typedef std::function<void(uint64_t)> setFunc;
+
     class SymbolEntry
     {
         public:
-            SymbolEntry(SymbolTable &table, ctag_t *name);
+            SymbolEntry(SymbolTable &table, ctag_t *name, cstag_t &format);
+            virtual ~SymbolEntry() = default;
+
+        protected:
+            SymbolTable &table;
+            cstag_t name;
+            cstag_t format;
+    };
+
+    class IntegerSymbolEntry : public SymbolEntry
+    {
+        public:
+            IntegerSymbolEntry(SymbolTable &table, ctag_t *name, getFunc getter, setFunc setter, cstag_t &format);
+            IntegerSymbolEntry(SymbolTable &table, ctag_t *name, uint64_t cval);
+
+            uint64_t getValue() const { return getter(); }
+            void setValue(uint64_t val) { if (setter != nullptr) setter(val); }
 
         private:
-            SymbolTable &table;
-            ctag_t *name;
+            getFunc  getter = nullptr;
+            setFunc  setter = nullptr;
+            uint64_t value = 0;
     };
 
     class SymbolTable
     {
         public:
-            typedef std::function<uint64_t()>     getFunc;
-            typedef std::function<void(uint64_t)> setFunc;
-
             SymbolTable(const Machine *system, Device *device = nullptr);
             ~SymbolTable() = default;
 
