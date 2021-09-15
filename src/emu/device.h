@@ -187,9 +187,17 @@ public:
 //	inline void setMachine(Machine *sys) { ownMachine = sys; }
 	inline void setCommands(devCommand_t *cmds) { devCommands = cmds; }
 
-	inline bool hasInterface(diExternalBus *&iface) { return (iface = ifBus) != nullptr; }
-	inline bool hasInterface(diExecute *&iface)     { return (iface = ifExecute) != nullptr; }
-	inline bool hasInterface(diDebug *&iface)       { return (iface = ifDebug) != nullptr; }
+	template <class DeviceClass>
+	inline bool hasInterface(DeviceClass *&iface)
+	{
+		return (iface = dynamic_cast<DeviceClass *>(this)) != nullptr;
+	}
+
+	template <class DeviceClass>
+	inline bool hasInterface(DeviceClass *&iface) const
+	{
+		return (iface = dynamic_cast<const DeviceClass *>(this)) != nullptr;
+	}
 
 	void addInterface(DeviceInterface *iface);
 	void setMachine(Machine *sys);
