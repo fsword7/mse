@@ -9,6 +9,7 @@
 #include "emu/dibus.h"
 #include "emu/didebug.h"
 #include "emu/diexec.h"
+#include "emu/distate.h"
 #include "emu/machine.h"
 #include "emu/engine.h"
 #include "emu/syslist.h"
@@ -598,6 +599,30 @@ CommandStatus SystemEngine::cmdLog(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// Usage: registers <device>
+CommandStatus SystemEngine::cmdRegisters(Console *user, args_t &args)
+{
+	Device *dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		user->printf("%s: unknown device\n", args.current());
+		return cmdOk;
+	}
+
+	diState *devState = nullptr;
+	if (!dev->hasInterface(devState))
+	{
+		user->printf("%s: No registers available\n", dev->getDeviceName());
+		return cmdOk;
+	}
+
+	for (const auto *entry : devState->getStateEntries())
+	{
+		user->printf("%-10s %08X %08X\n", entry->getSymbol(), entry->getValue(), entry->getMask());
+	}
+
+	return cmdOk;
+}
+
 CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
@@ -648,6 +673,17 @@ CommandStatus SystemEngine::cmdShow(Console *user, args_t &args)
 		user->printf("%s: unknown device\n", args.current());
 		return cmdOk;
 	}
+
+	// Machine *sys = dialedMachine;
+	// gdevCommand_t *cmdList = mseShowDeviceCommands;
+	// args.next();
+	// for (int idx = 0; cmdList[idx].name; idx++) {
+	// 	if (cmdList[idx].name == args.current()) {
+	// 		args.next();
+	// 		if (cmdList[idx].func != nullptr)
+	// 			return cmdList[idx].*func(user, sys, dev, args);
+	// 	}
+	// }
 
 	return cmdOk;
 }
@@ -742,6 +778,25 @@ CommandStatus SystemEngine::cmdSetFolder(Console *user, Machine *sys, Device *de
 	return cmdOk;
 }
 
+// Usage: show <device> registers
+CommandStatus SystemEngine::cmdShowRegisters(Console *user, Machine *sys, Device *dev, args_t &args)
+{
+	diState *devState = nullptr;
+
+	if (!dev->hasInterface(devState))
+	{
+		user->printf("$s: No registers available\n", dev->getDeviceName());
+		return cmdOk;
+	}
+
+	for (const auto *entry : devState->getStateEntries())
+	{
+		user->printf("%-10s %08X\n", entry->getSymbol(), entry->getValue());
+	}
+
+	return cmdOk;
+}
+
 // General command list
 SystemEngine::command_t SystemEngine::mseCommands[] =
 {
@@ -756,6 +811,7 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		{ "list",		SystemEngine::cmdList,		nullptr },
 		{ "load",		SystemEngine::cmdLoad,		nullptr },
 		{ "log",		SystemEngine::cmdLog,		nullptr },
+		{ "registers",	SystemEngine::cmdRegisters, nullptr },
 		{ "reset",		SystemEngine::cmdReset,		nullptr },
 		{ "run",		SystemEngine::cmdExecute,	nullptr },
 		{ "set",		SystemEngine::cmdSet,		nullptr },
@@ -772,6 +828,14 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 SystemEngine::gdevCommand_t SystemEngine::mseSetDeviceCommands[] =
 {
 		{ "folder",		SystemEngine::cmdSetFolder },
+		// Terminator
+		nullptr
+};
+
+// General device command list
+SystemEngine::gdevCommand_t SystemEngine::mseShowDeviceCommands[] =
+{
+		{ "registers",		SystemEngine::cmdShowRegisters },
 		// Terminator
 		nullptr
 };

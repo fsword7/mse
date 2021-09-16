@@ -58,6 +58,7 @@ public:
 	CommandStatus cmdList(Console *user, args_t &args);
 	CommandStatus cmdLoad(Console *user, args_t &args);
 	CommandStatus cmdLog(Console *user, args_t &args);
+	CommandStatus cmdRegisters(Console *user, args_t &args);
 	CommandStatus cmdReset(Console *user, args_t &args);
 	CommandStatus cmdSet(Console *user, args_t &args);
 	CommandStatus cmdShow(Console *user, args_t &args);
@@ -68,6 +69,8 @@ public:
 	CommandStatus cmdStop(Console *user, args_t &args);
 
 	CommandStatus cmdSetFolder(Console *user, Machine *sys, Device *dev, args_t &args);
+
+	CommandStatus cmdShowRegisters(Console *user, Machine *sys, Device *dev, args_t &args);
 
 private:
 	Console *user = nullptr;
@@ -83,8 +86,9 @@ private:
 	// Machines
 	static vector<Machine *> machines;
 
-	static command_t    mseCommands[];
+	static command_t     mseCommands[];
 	static gdevCommand_t mseSetDeviceCommands[];
+	static gdevCommand_t mseShowDeviceCommands[];
 //	static command_t mseShowCommands[];
 //	static command_t mseSetCommands[];
 };

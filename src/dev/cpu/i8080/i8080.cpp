@@ -29,7 +29,10 @@ mapConfigList i8080_cpuDevice::getAddressConfigList() const
 
 void i8080_cpuDevice::startDevice()
 {
-	
+	// Test state registers (to be removed later)
+	bcReg.uw = 0x1234;
+	deReg.uw = 0x5678;
+
 	// Register CPU registers for debugging purposes
 	{
 		addState(i8080_AF, "AF",  afReg.uw);

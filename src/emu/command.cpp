@@ -85,6 +85,13 @@ CommandStatus cmdLog(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// registers <device>
+CommandStatus cmdRegisters(Console *user, args_t &args)
+{
+	user->engine.cmdRegisters(user, args);
+	return cmdOk;
+}
+
 // reset <device>
 CommandStatus cmdReset(Console *user, args_t &args)
 {
@@ -155,6 +162,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "list",		cmdList,	nullptr },
 		{ "load",		cmdLoad,	nullptr },
 		{ "log",		cmdLog,		nullptr },
+		{ "registers",  cmdRegisters, nullptr },
 		{ "reset",		cmdReset,	nullptr },
 		{ "set",		cmdSet,		nullptr },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },

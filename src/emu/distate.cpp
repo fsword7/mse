@@ -49,3 +49,50 @@ void DeviceStateEntry::setValue(uint64_t val) const
 
     setEntryValue(val);
 }
+
+string DeviceStateEntry::getValuef() const
+{
+    uint64_t val = getEntryValue() & dataMask;
+    string out;
+
+    bool percent = false;
+    bool leadzero = false;
+    int width = 0;
+
+    for (cchar_t *fmt = strFormat.c_str(); *fmt != 0; fmt++)
+    {
+        if (!percent && *fmt != '%')
+        {
+            out.append(*fmt, 1);
+            continue;
+        }
+
+        switch (*fmt)
+        {
+            case '%':
+                if (!percent)
+                    percent = true;
+                else 
+                {
+                    out.append(*fmt, 1);
+                    percent = false;
+                }
+                break;
+
+            case 0:
+                if (width == 0)
+                    leadzero = true;
+                else
+                    width = width * 10;
+                break;
+
+            case 1: case 2: case 3: case 4: case 5:
+            case 6: case 7: case 8: case 9:
+                width = (width * 10) + (*fmt - '0');
+                break;
+
+        }
+    }
+
+    return out;
+}
