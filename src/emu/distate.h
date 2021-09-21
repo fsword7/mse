@@ -17,6 +17,7 @@ class DeviceStateEntry
         static constexpr int DSF_IMPORT   = 0x00000002; // Import function call
         static constexpr int DSF_EXPORT   = 0x00000004; // Export function call
         static constexpr int DSF_SEXT     = 0x00000008; // Signed-extension
+        static constexpr int DSF_STRING   = 0x00000010; // User-defined custom format
         static constexpr int DSF_READONLY = 0x00000020; // Read-only access
 
         DeviceStateEntry(int index, ctag_t *symbol, int size, uint64_t mask, uint32_t flags, diState *dev);
@@ -27,7 +28,7 @@ class DeviceStateEntry
         DeviceStateEntry &cbImport()             { flags |= DSF_IMPORT; return *this; };
         DeviceStateEntry &cbExport()             { flags |= DSF_EXPORT; return *this; };
         DeviceStateEntry &mask(uint64_t mask)    { dataMask = mask; return *this; }
-        DeviceStateEntry &format(string &fmt)    { strFormat = fmt; return *this; }
+        DeviceStateEntry &setFormat(const string &fmt);
 
         inline bool isVisible() const   { return (flags & DSF_NOSHOW) == 0; }
         inline bool isWritable() const  { return (flags & DSF_READONLY) == 0; }
@@ -38,11 +39,12 @@ class DeviceStateEntry
 
         uint64_t getValue() const;
         void setValue(uint64_t val) const;
-        string getValuef() const;
+        string getValueFormat() const;
         
     protected:
 
-        
+        void setFormatFromMask();
+
         // Virtual entry function calls (overrides)
         virtual void *getEntryBase() const { return nullptr; };
         virtual uint64_t getEntryValue() const { return 0; };

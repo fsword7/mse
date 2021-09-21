@@ -617,7 +617,7 @@ CommandStatus SystemEngine::cmdRegisters(Console *user, args_t &args)
 
 	for (const auto *entry : devState->getStateEntries())
 	{
-		user->printf("%-10s %08X %08X\n", entry->getSymbol(), entry->getValue(), entry->getMask());
+		user->printf("%-10s %s\n", entry->getSymbol(), entry->getValueFormat());
 	}
 
 	return cmdOk;
