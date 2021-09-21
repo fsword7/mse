@@ -24,6 +24,12 @@ CommandStatus cmdDebug(Console *user, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus cmdDeposit(Console *user, args_t &args)
+{
+	user->engine.cmdDeposit(user, args);
+	return cmdOk;
+}
+
 CommandStatus cmdDial(Console *user, args_t &args)
 {
 	user->engine.cmdDial(user, args);
@@ -154,6 +160,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "create",		cmdCreate,	nullptr },
 		{ "debug",		cmdDebug,	nullptr },
 		{ "dial",		cmdDial,	nullptr },
+		{ "deposit",	cmdDeposit, nullptr },
 		{ "dump",		cmdDump,	nullptr },
 		{ "dumpr",		cmdDumpr,	nullptr },
 		{ "execute",	cmdExecute, nullptr },

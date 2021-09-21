@@ -272,6 +272,49 @@ CommandStatus SystemEngine::cmdDebug(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// Usage: registers <device>
+CommandStatus SystemEngine::cmdDeposit(Console *user, args_t &args)
+{
+	Device *dev = findDevice(user, args.current());
+	if (dev == nullptr) {
+		user->printf("%s: unknown device\n", args.current());
+		return cmdOk;
+	}
+	args.next();
+
+	diState *devState = nullptr;
+	if (!dev->getInterface(devState))
+	{
+		user->printf("%s: No state registers available\n", dev->getDeviceName());
+		return cmdOk;
+	}
+
+	string name = args.getNext();
+	string strValue = args.getNext();
+	transform(name.begin(), name.end(), name.begin(),
+		[](unsigned char ch) { return toupper(ch); });
+	DeviceStateEntry *state = nullptr;
+	for (auto *entry : devState->getStateEntries())
+	{
+		if (entry->getSymbol() == name)
+		{
+			state = entry;
+			break;
+		}
+	}
+	if (state == nullptr)
+	{
+		user->printf("%s: Unknown state register\n", name);
+		return cmdOk;
+	}
+
+	uint64_t val = 0;
+	sscanf(strValue.c_str(), "%llx", &val);
+	state->setValue(val);
+
+	return cmdOk;
+}
+
 CommandStatus SystemEngine::cmdDump(Console *user, args_t &args)
 {
 	using namespace aspace;
@@ -617,8 +660,10 @@ CommandStatus SystemEngine::cmdRegisters(Console *user, args_t &args)
 
 	for (const auto *entry : devState->getStateEntries())
 	{
-		user->printf("%-10s %s\n", entry->getSymbol(), entry->getValueFormat());
+		if (entry->isVisible())
+			user->printf("%-10s %s\n", entry->getSymbol(), entry->getValueFormat());
 	}
+	user->printf("Flags      %s\n", devState->getStatusFlags());
 
 	return cmdOk;
 }
@@ -803,6 +848,7 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		{ "create",		SystemEngine::cmdCreate,	nullptr },
 		{ "debug",		SystemEngine::cmdDebug,		nullptr },
 		{ "dial",		SystemEngine::cmdDial,		nullptr },
+		{ "deposit",	SystemEngine::cmdDeposit,	nullptr },
 		{ "dump",		SystemEngine::cmdDump,		nullptr },
 		{ "dumpr",		SystemEngine::cmdDumpr,		nullptr },
 		{ "execute",	SystemEngine::cmdExecute,	nullptr },

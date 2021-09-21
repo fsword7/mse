@@ -50,6 +50,7 @@ public:
 	CommandStatus cmdCreate(Console *user, args_t &args);
 	CommandStatus cmdDial(Console *user, args_t &args);
 	CommandStatus cmdDebug(Console *user, args_t &args);
+	CommandStatus cmdDeposit(Console *user, args_t &args);
 	CommandStatus cmdDump(Console *user, args_t &args);
 	CommandStatus cmdDumpr(Console *user, args_t &args);
 	CommandStatus cmdExecute(Console *user, args_t &args);
