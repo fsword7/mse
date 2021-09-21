@@ -187,6 +187,22 @@ public:
 //	inline void setMachine(Machine *sys) { ownMachine = sys; }
 	inline void setCommands(devCommand_t *cmds) { devCommands = cmds; }
 
+	// Dynamic_cast safely converts references and pointers to up, down and sideways. 
+	// If cast fails, return null pointer. For more information, check
+	// https://en.cppreference.com/w/cpp/language/dynamic_cast.
+
+	template <class DeviceClass>
+	inline bool getInterface(DeviceClass *&iface)
+	{
+		return (iface = dynamic_cast<DeviceClass *>(this)) != nullptr;
+	}
+
+	template <class DeviceClass>
+	inline bool getInterface(DeviceClass *&iface) const
+	{
+		return (iface = dynamic_cast<const DeviceClass *>(this)) != nullptr;
+	}
+
 	template <class DeviceClass>
 	inline bool hasInterface(DeviceClass *&iface)
 	{
