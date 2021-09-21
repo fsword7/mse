@@ -21,10 +21,41 @@ diState::~diState()
     stateList.clear();
 }
 
-void diState::addState(DeviceStateEntry *entry)
+DeviceStateEntry &diState::addState(DeviceStateEntry *entry)
 {
     stateList.push_back(entry);
+    return *entry;
 }
+
+DeviceStateEntry *diState::findStateEntry(int index)
+{
+    for (auto *entry : stateList)
+        if (entry->getIndex() == index)
+            return entry;
+    return nullptr;
+}
+
+void diState::exportString(const DeviceStateEntry &entry, string &value) const
+{
+    // Do nothing
+}
+
+void diState::importString(const DeviceStateEntry &entry, string &value)
+{
+    // Do nothing
+}
+
+void diState::exportValue(const DeviceStateEntry &entry)
+{
+    // Do nothing
+}
+
+void diState::importValue(const DeviceStateEntry &entry)
+{
+    // Do nothing
+}
+
+// *************************************************************
 
 DeviceStateEntry::DeviceStateEntry(int index, ctag_t *symbol, int size, uint64_t mask, uint32_t flags, diState *dev)
 : device(dev), index(index), strSymbol(symbol), dataSize(size), dataMask(mask), flags(flags)
@@ -74,6 +105,16 @@ void DeviceStateEntry::setValue(uint64_t val) const
 uint64_t DeviceStateEntry::getValue() const
 {
     return getEntryValue() & dataMask;
+}
+
+string DeviceStateEntry::getString() const
+{
+    string strValue;
+    if (flags & DSF_STRING)
+        device->exportString(*this, strValue);
+    else
+        strValue = fmt::sprintf("%-12G", getValue());
+    return strValue;
 }
 
 string DeviceStateEntry::getValueFormat() const

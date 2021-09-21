@@ -9,6 +9,12 @@
 
 class diState; // class forward
 
+enum {
+    STATE_GENPC = -1,
+    STATE_GENPCBASE = -2,
+    STATE_GENFLAGS = -3,
+};
+
 class DeviceStateEntry
 {
     public:
@@ -32,6 +38,7 @@ class DeviceStateEntry
 
         inline bool isVisible() const   { return (flags & DSF_NOSHOW) == 0; }
         inline bool isWritable() const  { return (flags & DSF_READONLY) == 0; }
+        inline int getIndex() const     { return index; }
         inline string getSymbol() const { return strSymbol; }
         inline string getFormat() const { return strFormat; }
         inline uint64_t getMask() const { return dataMask; }
@@ -40,6 +47,7 @@ class DeviceStateEntry
         uint64_t getValue() const;
         void setValue(uint64_t val) const;
         string getValueFormat() const;
+        string getString() const;
         
     protected:
 
@@ -102,20 +110,55 @@ class DeviceStateRegister<bool> : public DeviceStateEntry
 
 class diState : public DeviceInterface
 {
+    friend class DeviceStateEntry;
+
 public:
 	diState(device_t *owner);
 	virtual ~diState();
 
     template <class itemType>
-    void addState(int index, ctag_t *symbol, itemType &data)
+    DeviceStateEntry &addState(int index, ctag_t *symbol, itemType &data)
     {
         assert(symbol != nullptr);
-        addState(new DeviceStateRegister<itemType>(index, symbol, data, this));
+        return addState(new DeviceStateRegister<itemType>(index, symbol, data, this));
     }
 
     const std::vector<DeviceStateEntry *> &getStateEntries() const { return stateList; }
 
-    void addState(DeviceStateEntry *entry);
+    DeviceStateEntry &addState(DeviceStateEntry *entry);
+
+    DeviceStateEntry *findStateEntry(int index);
+
+    inline void setStateValue(int index, uint64_t val)
+    {
+        DeviceStateEntry *entry = findStateEntry(index);
+        if (entry != nullptr)
+            entry->setValue(val);
+    }
+
+    inline uint64_t getStateValue(int index)
+    { 
+        DeviceStateEntry *entry = findStateEntry(index);
+        return entry != nullptr ? entry->getValue() : 0;
+    }
+
+    inline string getStateString(int index)
+    {
+        DeviceStateEntry *entry = findStateEntry(index);
+        return entry != nullptr ? entry->getString() : "???";
+    }
+
+    inline void setPCAddress(offs_t addr) { setStateValue(STATE_GENPC, addr); }
+    inline offs_t getPCAddress() { return getStateValue(STATE_GENPC); }
+    inline offs_t getPCBaseAddress() { return getStateValue(STATE_GENPCBASE); }
+    inline string getStatusFlags() { return getStateString(STATE_GENFLAGS); }
+
+protected:
+    // Virtual import/export function calls
+    virtual void exportString(const DeviceStateEntry &entry, string &value) const;
+    virtual void importString(const DeviceStateEntry &entry, string &value);
+    virtual void exportValue(const DeviceStateEntry &entry);
+    virtual void importValue(const DeviceStateEntry &entry);
 
 private:
     std::vector<DeviceStateEntry *> stateList;
