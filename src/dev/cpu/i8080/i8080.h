@@ -122,6 +122,9 @@ class i8080_cpuDevice : public cpuDevice
         void execute();
 
         void startDevice() override;
+
+        // Device state register function calls
+        void exportString(const DeviceStateEntry &entry, string &out) const override;
         
     protected:
         void init();
@@ -166,6 +169,7 @@ class i8080_cpuDevice : public cpuDevice
         pair16_t pcReg; // PC register
         pair16_t spReg; // SP register
         pair16_t wzReg; 
+        uint16_t pcBase; // base PC address (current instruction)
 
         union {
             uint8_t  bRegs[8];

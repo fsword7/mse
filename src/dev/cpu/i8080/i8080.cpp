@@ -30,8 +30,9 @@ mapConfigList i8080_cpuDevice::getAddressConfigList() const
 void i8080_cpuDevice::startDevice()
 {
 	// Test state registers (to be removed later)
-	bcReg.uw = 0x1234;
-	deReg.uw = 0x5678;
+	// bcReg.uw = 0x1234;
+	// deReg.uw = 0x5678;
+	// afReg.ub.l = 0xA5;
 
 	// Register CPU registers for debugging purposes
 	{
@@ -51,6 +52,11 @@ void i8080_cpuDevice::startDevice()
 		addState(i8080_A,  "A",   afReg.ub.h);
 		addState(i8080_F,  "F",   afReg.ub.l);
 
+		// add current PC and status registers
+		addState(STATE_GENFLAGS, "CURFLAGS", afReg.ub.l).noshow().setFormat("%8s");
+		addState(STATE_GENPC, "CURPC", pcReg.uw).noshow();
+		addState(STATE_GENPCBASE, "CURPCBASE", pcBase).noshow();
+
 		// addState(i8080_B,  "B",   iRegs[REG_B]);
 		// addState(i8080_C,  "C",   iRegs[REG_C]);
 		// addState(i8080_D,  "D",   iRegs[REG_D]);
@@ -65,6 +71,24 @@ void i8080_cpuDevice::startDevice()
 	// Assigns system bus access spaces
 	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
 	getAddressSpace(AS_IOPORT)->setMemorySpecific(mapIOPort);
+}
+
+void i8080_cpuDevice::exportString(const DeviceStateEntry &entry, string &out) const
+{
+	switch (entry.getIndex())
+	{
+		case STATE_GENFLAGS:
+			out = fmt::sprintf("%c%c%c%c%c%c%c%c",
+				afReg.ub.l & 0x80 ? 'S' : '-',
+				afReg.ub.l & 0x40 ? 'Z' : '-',
+				afReg.ub.l & 0x20 ? 'X' : '-',
+				afReg.ub.l & 0x10 ? 'H' : '-',
+				afReg.ub.l & 0x08 ? '?' : '-',
+				afReg.ub.l & 0x04 ? 'P' : '-',
+				afReg.ub.l & 0x02 ? 'V' : '-',
+				afReg.ub.l & 0x01 ? 'C' : '-');
+			break;
+	}
 }
 
 void i8080_cpuDevice::enableInterrupts(bool sw)

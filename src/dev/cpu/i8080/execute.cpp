@@ -239,6 +239,9 @@ void i8080_cpuDevice::execute()
     uint16_t tval;
     int cFlag;
 
+    pcBase = pcReg.uw;
+    opCode = readArg8();
+ 
     switch (opCode)
     {
 
