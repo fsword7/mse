@@ -1,5 +1,5 @@
 /*
- *  scheduler.cpp - Device scheduler
+ *  scheduler.cpp - per-machine device scheduler package
  *
  *  Created on: Sep 22, 2021
  *      Author: Tim Stark
