@@ -9,6 +9,7 @@
 
 #include "emu/map/map.h"
 #include "emu/sysconfig.h"
+#include "emu/scheduler.h"
 #include "emu/devsys.h"
 
 class romLoader;
@@ -44,6 +45,7 @@ public:
 	void reset(Console *cty);
 	void start(Console *cty);
 	void stop(Console *cty);
+	void run(Console *cty);
 
 private:
 	const SystemConfig &config;
@@ -62,4 +64,5 @@ private:
 
 	// External bus manager
 	aspace::BusManager busManager;
+	DeviceScheduler scheduler;
 };

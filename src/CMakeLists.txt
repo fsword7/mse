@@ -76,6 +76,7 @@ set(MSE_CPP_SRCS
 	emu/fileio.cpp
 	emu/machine.cpp
 	emu/romloader.cpp
+	emu/scheduler.cpp
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
@@ -150,6 +151,7 @@ set(MSE_H_SRCS
 	emu/machine.h
 	emu/romloader.h
 	emu/templates.h
+	emu/scheduler.h
 	emu/sysconfig.h
 	emu/syslist.h
 	lib/util/bitmap.h

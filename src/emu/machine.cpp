@@ -14,7 +14,7 @@
 #include "emu/machine.h"
 
 Machine::Machine(const SystemEngine &engine, const SystemConfig &config, cstag_t &tagName)
-: config(config), devName(tagName), busManager(this)
+: config(config), devName(tagName), busManager(this), scheduler(*this)
 {
 	system = dynamic_cast<sysDevice *>(config.getSystemDevice());
 
@@ -86,4 +86,9 @@ void Machine::stop(Console *cty)
 		cty->printf("%s: stopping %s device\n", dev.getDeviceName(), dev.getShortName());
 		dev.stop();
 	}
+}
+
+void Machine::run(Console *cty)
+{
+	
 }
