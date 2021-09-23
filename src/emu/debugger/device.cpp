@@ -44,3 +44,8 @@ DeviceDebugger::~DeviceDebugger()
 {
 
 }
+
+void DeviceDebugger::hookInstruction(offs_t pcAddr)
+{
+    
+}

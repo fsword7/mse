@@ -22,6 +22,8 @@ namespace emu::debug
             DeviceDebugger(Device *device);
             ~DeviceDebugger();
 
+            // hook function calls from device
+            void hookInstruction(offs_t pcAddr);
 
         private:
             SymbolTable symTable;
