@@ -7,6 +7,23 @@
 
 #pragma once
 
+enum irqLine
+{
+	MAX_IRQ_LINES = 64,
+	IRQ_LINE0 = 0,
+	IRQ_LINE1 = 1,
+	IRQ_LINE2 = 2,
+	IRQ_LINE3 = 3,
+	IRQ_LINE4 = 4,
+	IRQ_LINE5 = 5,
+	IRQ_LINE6 = 6,
+	IRQ_LINE7 = 7,
+
+	IRQ_NMI   = MAX_IRQ_LINES+0,
+	IRQ_RESET = MAX_IRQ_LINES+1,
+	IRQ_HALT  = MAX_IRQ_LINES+2
+};
+
 class diExecute : public DeviceInterface
 {
 public:
@@ -23,6 +40,8 @@ public:
 		execWait
 	};
 
+	inline bool isExecuting() { return pState == execRunning; }
+
 	// Abstract function calls
 	virtual void run() = 0;
 	virtual void step(Console *user); // single step function call
@@ -36,6 +55,27 @@ public:
 	void execute();
 	void halt();
 
+	void eatCycles(int64_t cycles);
+	void abortTimeslice();
+	void runTimeslice(); // handle time slice period
+
+protected:
+	inline void setCycleCounter(int64_t *counter) { cycleCounter = counter; }
+
+	// debugging hook funtion calls
+	inline void debugInstructionHook(offs_t pcAddr)
+	{
+
+	}
+
+	// Virtual execute function calls for scheduler
+	virtual void executeRun();
+
 protected:
 	execState pState = execStopped;
+
+private:
+	int64_t  cycleRunning = 0;
+	int64_t  cycleStolen = 0;
+	int64_t *cycleCounter = nullptr; // opcode/cycle counter
 };

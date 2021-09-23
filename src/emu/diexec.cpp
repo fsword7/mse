@@ -42,3 +42,35 @@ void diExecute::halt()
 //	sendSignal(CPU_HALT);
 //	myThis.join();
 }
+
+void diExecute::eatCycles(int64_t cycles)
+{
+	if (!isExecuting() || cycleCounter == nullptr)
+		return;
+
+	if (cycles < 0 || cycles > *cycleCounter)
+		*cycleCounter = 0;
+	else
+		*cycleCounter -= cycles;
+}
+
+void diExecute::abortTimeslice()
+{
+	if (!isExecuting() || cycleCounter == nullptr)
+		return;
+
+	int64_t delta = *cycleCounter;
+
+	cycleStolen += delta;
+	cycleRunning -= delta;
+	*cycleCounter -= delta;
+}
+
+void diExecute::runTimeslice()
+{
+
+}
+
+void diExecute::executeRun()
+{
+}
