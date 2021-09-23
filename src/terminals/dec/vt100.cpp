@@ -16,6 +16,7 @@
 #include "dev/cpu/i8080/i8080.h"
 #include "dev/video/dec/vt100.h"
 #include "terminals/dec/vt100.h"
+#include "emu/xtal.h"
 
 
 using namespace aspace;
@@ -23,7 +24,7 @@ using namespace aspace;
 void vt100_vtDevice::vt100(SystemConfig &config)
 {
 
-    cpu = i8080(config, "cpu", 0);
+    cpu = i8080(config, "cpu", XTAL(24'883'200) / 9);
     cpu->setAddressMap(AS_PROGRAM, &vt100_vtDevice::vt100_mem);
     cpu->setAddressMap(AS_IOPORT, &vt100_vtDevice::vt100_iomem);
     
