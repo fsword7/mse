@@ -60,6 +60,8 @@ public:
 	void eatCycles(int64_t cycles);
 	void abortTimeslice();
 	void runTimeslice(); // handle time slice period
+	
+	attoseconds_t getMinQuantum() const { return cycleAttoseconds * executeGetMinCycles(); }
 
 	// Virtual interface function calls
 	void ifUpdateClock() override;
@@ -76,6 +78,9 @@ protected:
 	// Virtual execute function calls for scheduler
 	virtual uint64_t executeClockToCycle(uint64_t clock) const { return clock; }
 	virtual uint64_t executeCycleToClock(uint64_t cycle) const { return cycle; }
+	virtual int executeGetMinCycles() const { return 1; }
+	virtual int executeGetMaxCycles() const { return 1; }
+	virtual int executeGetInputLines() const { return 0; }
 	virtual void executeRun() {}
 
 protected:

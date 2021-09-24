@@ -132,8 +132,12 @@ class i8080_cpuDevice : public cpuDevice
         inline bool is8080() { return idProcessorType == cpuid_8080 || idProcessorType == cpuid_8080A; }
         inline bool is8085() { return idProcessorType == cpuid_8085A; }
 
+        // Interface execute function calls
         uint64_t executeClockToCycle(uint64_t clock) const override { return (clock + 2 - 1) / 2; }
         uint64_t executeCycleToClock(uint64_t cycle) const override { return cycle * 2; }
+        int executeGetMinCycles() const override { return 4; }
+        int executeGetMaxCycles() const override { return 16; }
+        int executeGetInputLines() const override { return 4; }
 
         void enableInterrupts(bool sw);
 
