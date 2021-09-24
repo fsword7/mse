@@ -178,6 +178,7 @@ public:
 	inline ctag_t  *getFullName() const     { return type.getFullName(); }
 	inline ctag_t  *getShortName() const    { return type.getShortName(); }
 	inline ctag_t  *getSourceName() const   { return type.getSourceName(); }
+	inline uint64_t getClock() const		{ return clock; }
 
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
 
@@ -218,6 +219,8 @@ public:
 	void addInterface(DeviceInterface *iface);
 	void setMachine(Machine *sys);
 
+	void updateClock();
+
 	inline ifList_t getInterfaces() { return ifList; }
 
 	inline bool isStarted() const { return flagStarted; }
@@ -238,12 +241,14 @@ public:
 	virtual void devStart() {}
 	virtual void devStop() {}
 	virtual void devReset() {}
+	virtual void devUpdateClock() {}
 	virtual cromEntry_t *devGetROMEntries() { return nullptr; }
 
 	virtual void configureDevice(SystemConfig &config) {}
 	virtual void startDevice() {}
 	virtual void stopDevice() {}
 	virtual void resetDevice() {}
+	virtual void updateDeviceClock() {}
 	virtual cromEntry_t *getDeviceFirmwareEntries() { return nullptr; }
 
 	void completeConfig(); // complete final configuration
@@ -260,6 +265,7 @@ private:
 	bool flagStarted = false;
 
 	cstag_t devName;
+	uint64_t clock = 0; // clock frequency
 
 	debug_t *debugger = nullptr;
 	
@@ -299,6 +305,7 @@ public:
 	virtual void completeConfig() {}
 
 	virtual void ifStart() {}
+	virtual void ifUpdateClock() {}
 
 private:
 	DeviceInterface *next = nullptr;

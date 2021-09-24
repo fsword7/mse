@@ -9,7 +9,8 @@
 #include "emu/diexec.h"
 
 diExecute::diExecute(device_t *owner)
-: DeviceInterface(owner, "execute")
+: DeviceInterface(owner, "execute"),
+  ownerDevice(*owner)
 {
 	owner->ifExecute = this;
 }
@@ -43,6 +44,15 @@ void diExecute::halt()
 //	myThis.join();
 }
 
+void diExecute::ifUpdateClock()
+{
+	cyclePerSecond = executeClockToCycle(ownerDevice.getClock());
+	cycleAttoseconds = HZ_TO_ATTOSECONDS(cyclePerSecond);
+
+	printf("Clock: %lld Cycle/Second: %lld Time: %lld\n", ownerDevice.getClock(),
+		cyclePerSecond, uint64_t(cycleAttoseconds / ATTOSECONDS_PER_NANOSECOND));
+}
+
 void diExecute::eatCycles(int64_t cycles)
 {
 	if (!isExecuting() || cycleCounter == nullptr)
@@ -69,8 +79,4 @@ void diExecute::abortTimeslice()
 void diExecute::runTimeslice()
 {
 
-}
-
-void diExecute::executeRun()
-{
 }

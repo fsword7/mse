@@ -26,6 +26,8 @@ enum irqLine
 
 class diExecute : public DeviceInterface
 {
+	friend class DeviceScheduler;
+	
 public:
 	diExecute(device_t *owner);
 	virtual ~diExecute() = default;
@@ -59,6 +61,9 @@ public:
 	void abortTimeslice();
 	void runTimeslice(); // handle time slice period
 
+	// Virtual interface function calls
+	void ifUpdateClock() override;
+
 protected:
 	inline void setCycleCounter(int64_t *counter) { cycleCounter = counter; }
 
@@ -69,12 +74,24 @@ protected:
 	}
 
 	// Virtual execute function calls for scheduler
-	virtual void executeRun();
+	virtual uint64_t executeClockToCycle(uint64_t clock) const { return clock; }
+	virtual uint64_t executeCycleToClock(uint64_t cycle) const { return cycle; }
+	virtual void executeRun() {}
 
 protected:
 	execState pState = execStopped;
 
 private:
+	Device &ownerDevice;
+
+	// Scheduler parameters
+	DeviceScheduler *scheduler = nullptr;
+
+	diExecute *nextExec = nullptr;
+
+	uint64_t cyclePerSecond = 0; // cycles per second (clock rate)
+	attoseconds_t cycleAttoseconds = 0; // Attoseconds per cycle
+
 	int64_t  cycleRunning = 0;
 	int64_t  cycleStolen = 0;
 	int64_t *cycleCounter = nullptr; // opcode/cycle counter

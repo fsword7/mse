@@ -11,7 +11,7 @@
 #include "emu/map/romentry.h"
 
 Device::Device(const SystemConfig &config, const DeviceType &type, cstag_t &name, Device *owner, uint64_t clock)
-: sysConfig(config), type(type), devName(name), ownDevice(owner)
+: sysConfig(config), type(type), devName(name), ownDevice(owner), clock(clock)
 {
 	ifList.clear();
 }
@@ -31,6 +31,9 @@ void Device::start()
 {
 	devStart();
 	startDevice();
+
+	updateClock();
+
 	flagStarted = true;
 }
 
@@ -90,6 +93,13 @@ cromEntry_t *Device::mapGetROMEntries()
 	}
 
 	return firmwareEntries;
+}
+
+void Device::updateClock()
+{
+	for (auto &iface : ifList)
+		iface->ifUpdateClock();
+	updateDeviceClock();
 }
 
 // ************************************************
