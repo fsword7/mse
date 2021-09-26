@@ -47,10 +47,10 @@ void diExecute::halt()
 void diExecute::ifUpdateClock()
 {
 	cyclePerSecond = executeClockToCycle(ownerDevice.getClock());
-	cycleAttoseconds = HZ_TO_ATTOSECONDS(cyclePerSecond);
+	cycleDuration = HZ_TO_ATTOSECONDS(cyclePerSecond);
 
-	printf("Clock: %lld Cycle/Second: %lld Time: %lld\n", ownerDevice.getClock(),
-		cyclePerSecond, uint64_t(cycleAttoseconds / ATTOSECONDS_PER_NANOSECOND));
+	// printf("Clock: %lld Cycle/Second: %lld Time: %lld\n", ownerDevice.getClock(),
+	// 	cyclePerSecond, uint64_t(cycleDuration / ATTOSECONDS_PER_NANOSECOND));
 }
 
 void diExecute::eatCycles(int64_t cycles)

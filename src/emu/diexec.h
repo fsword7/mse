@@ -61,7 +61,7 @@ public:
 	void abortTimeslice();
 	void runTimeslice(); // handle time slice period
 	
-	attoseconds_t getMinQuantum() const { return cycleAttoseconds * executeGetMinCycles(); }
+	attoseconds_t getMinQuantum() const { return cycleDuration * executeGetMinCycles(); }
 
 	// Virtual interface function calls
 	void ifUpdateClock() override;
@@ -92,12 +92,22 @@ private:
 	// Scheduler parameters
 	DeviceScheduler *scheduler = nullptr;
 
-	diExecute *nextExec = nullptr;
+	diExecute *execNext = nullptr;
 
-	uint64_t cyclePerSecond = 0; // cycles per second (clock rate)
-	attoseconds_t cycleAttoseconds = 0; // Attoseconds per cycle
+	uint64_t      cyclePerSecond = 0; // cycles per second (clock rate)
+	attoseconds_t cycleDuration = 0;  // cycle duration (in attoseconds)
 
+	attotime_t localTime;
+
+	// Cycle countdown definitions for scheduler
+	int64_t  cycleTotal = 0;
 	int64_t  cycleRunning = 0;
 	int64_t  cycleStolen = 0;
 	int64_t *cycleCounter = nullptr; // opcode/cycle counter
+
+	// Suspend state definitions
+	uint32_t suspend = 0;
+	uint32_t nextSuspend = 0;
+	uint32_t eatingCycles = 0;
+	uint32_t nextEatingCycles = 0;
 };
