@@ -28,6 +28,7 @@ public:
 	inline cstag_t  &getDeviceName() const   { return devName; }
 	inline device_t *getSystemDevice() const { return system; }
 	inline LogFile  *getLogFile() const      { return &logFile; }
+	inline DeviceScheduler &getScheduler()   { return scheduler; }
 
 	inline void setConsole(Console *user)	 { logFile.setConsole(user); }
 	inline void setDialedDevice(Device *dev) { dialedDevice = dev; }
