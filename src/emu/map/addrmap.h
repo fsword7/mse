@@ -7,7 +7,7 @@
 
 #pragma once
 
-#define FUNC(fnc) &fnc, #fnc
+// #define FUNC(fnc) &fnc, #fnc
 
 namespace aspace
 {

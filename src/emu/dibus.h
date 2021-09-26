@@ -86,7 +86,7 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (related device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, aspace::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, aspace::Constructor(func, dev->getDeviceName().c_str(), &dynamic_cast<T &>(*dev)));
 	}
 
 	template <typename T, typename Return, typename... Args>
@@ -97,7 +97,7 @@ public:
 		Device *dev = config.getConfigDevice();
 
 		fmt::printf("%s: (unrelated device) Set address list map\n", dev->getDeviceName());
-		setAddressMap(space, aspace::Constructor(dev->getDeviceName().c_str(), func, &dynamic_cast<T &>(*dev)));
+		setAddressMap(space, aspace::Constructor(func, dev->getDeviceName().c_str(), &dynamic_cast<T &>(*dev)));
 	}
 
 	void setAddressMap(int space, aspace::Constructor map);

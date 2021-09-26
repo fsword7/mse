@@ -54,6 +54,9 @@ typedef const char cchar_t;
 typedef string stag_t;
 typedef const string cstag_t;
 
+// FUNC definition for named delegate 
+#define FUNC(func) &func, #func
+
 // Common include packages
 #include "emu/debug.h"
 #include "emu/console.h"

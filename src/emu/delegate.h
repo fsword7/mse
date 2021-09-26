@@ -21,7 +21,7 @@ template <typename Class, typename Return, typename... Args>
 struct DelegateTraits
 {
 	using static_ptr_func  = Return (*)(Class *, Args...);
-	using static_ref_func  = Return (&)(Class *, Args...);
+	using static_ref_func  = Return (*)(Class &, Args...);
 	using member_ptr_func  = Return (Class::*)(Args...);
 	using member_ptr_cfunc = Return (Class::*)(Args...) const;
 };
@@ -200,15 +200,15 @@ public:
 	NamedDelegate(const NamedDelegate &src) = default;
 
 	template <class FunctionClass>
-	NamedDelegate(ctag_t *name, member_ptr_func<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(member_ptr_func<FunctionClass> func, ctag_t *name, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
 	template <class FunctionClass>
-	NamedDelegate(ctag_t *name, member_ptr_cfunc<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(member_ptr_cfunc<FunctionClass> func, ctag_t *name, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
 	template <class FunctionClass>
-	NamedDelegate(ctag_t *name, static_ref_func<FunctionClass> func, FunctionClass *obj)
+	NamedDelegate(static_ref_func<FunctionClass> func, ctag_t *name, FunctionClass *obj)
 	: base(func, obj), name(name) {}
 
 	inline ctag_t *getName() const { return name; }
