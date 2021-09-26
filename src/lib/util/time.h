@@ -12,6 +12,7 @@
 
 // GCC and Clang support __int128_t for 64-bit x86 processors
 typedef __int128_t attoseconds_t;
+typedef int64_t seconds_t;
 
 // Time is attosecond-accurate timing system by using 128-bit integer word.
 //
@@ -30,6 +31,10 @@ constexpr attoseconds_t ATTOSECONDS_PER_MILLISECOND = ATTOSECONDS_PER_SECOND / 1
 constexpr attoseconds_t ATTOSECONDS_PER_MICROSECOND = ATTOSECONDS_PER_SECOND / 1'000'000;
 constexpr attoseconds_t ATTOSECONDS_PER_NANOSECOND = ATTOSECONDS_PER_SECOND / 1'000'000'000;
 
+constexpr attoseconds_t ATTOTIME_MAX_SECONDS = ATTOSECONDS_PER_SECOND * 1'000'000'000;
+constexpr attoseconds_t ATTOTIME_ZERO = 0;
+constexpr attoseconds_t ATTOTIME_NEVER = ATTOTIME_MAX_SECONDS;
+
 template <typename T>
 inline constexpr attoseconds_t HZ_TO_ATTOSECONDS(T &&val) { return ATTOSECONDS_PER_SECOND / (val); }
 // inline constexpr attoseconds_t HZ_TO_ATTOSECONDS(double &&val) { return double(ATTOSECONDS_PER_SECOND) / double(val); }
@@ -40,13 +45,17 @@ namespace emu::lib::util
     {
     public:
         Attotime() = default;
-        Attotime(int64_t attoseconds) : attoseconds(attoseconds) {}
+        Attotime(attoseconds_t attoseconds) : attoseconds(attoseconds) {}
+        // Attotime(int64_t attoseconds) : attoseconds(attoseconds) {}
         Attotime(int64_t seconds, int64_t attoseconds)
         : attoseconds(seconds * ATTOSECONDS_PER_SECOND + attoseconds)
         { }
 
+        static Attotime zero;
+        static Attotime never;
+
         inline bool isZero() { return attoseconds == 0; }
-        inline bool isNever() { return attoseconds == -1; }
+        inline bool isNever() { return attoseconds == ATTOTIME_NEVER; }
 
         inline int64_t getSeconds() const { return attoseconds / ATTOSECONDS_PER_SECOND; }
         inline int64_t getAttoseconds() const { return attoseconds % ATTOSECONDS_PER_SECOND; }
@@ -55,11 +64,148 @@ namespace emu::lib::util
         static Attotime fromHz(uint32_t freq)
         {
             return (freq > 1) ? Attotime(1, HZ_TO_ATTOSECONDS(freq))
-                : (freq == 1) ? Attotime(1, 0) : Attotime(-1);
+                : (freq == 1) ? Attotime(1, 0) : never;
         }
 
-        attoseconds_t attoseconds = 0;   
+        // attotime_t &operator += (const attotime_t &right) noexcept;
+        // attotime_t &operator -= (const attotime_t &right) noexcept;
+        // attotime_t &operator *= (uint64_t factor);
+        // attotime_t &operator /= (uint64_t factor);
+
+        inline Attotime &operator += (const Attotime &right) noexcept
+        {
+            // Return as never result.
+            if (this->attoseconds >= ATTOTIME_MAX_SECONDS || right.attoseconds >= ATTOTIME_MAX_SECONDS)
+                return *this = never;
+
+            this->attoseconds = this->attoseconds + right.attoseconds;
+            if (this->attoseconds >= ATTOTIME_MAX_SECONDS)
+                return *this = never;
+            return *this;  
+        }
+
+        inline Attotime &operator -= (const Attotime &right) noexcept
+        {
+            // Return as never result.
+            if (this->attoseconds >= ATTOTIME_MAX_SECONDS)
+                return *this = never;
+
+            this->attoseconds = this->attoseconds - right.attoseconds;
+            return *this;   
+        }
+
+        inline Attotime &operator *= (uint64_t factor) noexcept
+        {
+            if (this->attoseconds >= ATTOTIME_MAX_SECONDS)
+                return *this = never;
+
+            this->attoseconds = this->attoseconds * factor;
+            return *this;
+        }
+
+        inline Attotime &operator /= (uint64_t factor) noexcept
+        {
+            if (this->attoseconds >= ATTOTIME_MAX_SECONDS)
+                return *this = never;
+            if (factor == 0)
+                return *this;
+            this->attoseconds = this->attoseconds / factor;
+            return *this;
+        }
+        
+        attoseconds_t attoseconds = 0;
+
     };
 }
 
 using attotime_t = emu::lib::util::Attotime;
+
+
+inline attotime_t operator + (const attotime_t &left, const attotime_t &right) noexcept
+{
+    attotime_t result;
+
+    // Return as never result.
+    if (left.attoseconds >= ATTOTIME_MAX_SECONDS || right.attoseconds >= ATTOTIME_MAX_SECONDS)
+        return attotime_t::never;
+
+    result.attoseconds = left.attoseconds + right.attoseconds;
+    if (result.attoseconds >= ATTOTIME_NEVER)
+        return attotime_t::never;
+    return result;   
+}
+
+inline attotime_t operator - (const attotime_t &left, const attotime_t &right) noexcept
+{
+    attotime_t result;
+
+    // Return as never result.
+    if (left.attoseconds >= ATTOTIME_MAX_SECONDS)
+        return attotime_t::never;
+
+    result.attoseconds = left.attoseconds - right.attoseconds;
+    return result;   
+}
+
+inline attotime_t operator * (const attotime_t &left, uint64_t factor)
+{
+    attotime_t result;
+
+    if (left.attoseconds >= ATTOTIME_MAX_SECONDS)
+        return attotime_t::never;
+    result.attoseconds = left.attoseconds * factor;
+    return result;
+}
+
+inline attotime_t operator * (uint64_t factor, const attotime_t &right)
+{
+    attotime_t result;
+
+    if (right.attoseconds >= ATTOTIME_MAX_SECONDS)
+        return attotime_t::never;
+    result.attoseconds = right.attoseconds * factor;
+    return result;
+}
+
+inline attotime_t operator / (const attotime_t &left, uint64_t factor)
+{
+    attotime_t result;
+
+    if (left.attoseconds >= ATTOTIME_MAX_SECONDS)
+        return attotime_t::never;
+    if (factor == 0)
+        return left;
+    result.attoseconds = left.attoseconds * factor;
+    return result;
+}
+
+
+inline constexpr bool operator == (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds == right.attoseconds);
+}
+
+inline constexpr bool operator != (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds != right.attoseconds);
+}
+
+inline constexpr bool operator < (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds < right.attoseconds);
+}
+
+inline constexpr bool operator <= (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds <= right.attoseconds);
+}
+
+inline constexpr bool operator > (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds > right.attoseconds);
+}
+
+inline constexpr bool operator >= (const attotime_t &left, const attotime_t &right) noexcept
+{
+    return (left.attoseconds >= right.attoseconds);
+}

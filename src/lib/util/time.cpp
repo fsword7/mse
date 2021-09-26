@@ -7,3 +7,8 @@
 
 #include "emu/core.h"
 #include "lib/util/time.h"
+
+using namespace emu::lib::util;
+
+Attotime Attotime::zero  = Attotime(0);
+Attotime Attotime::never = Attotime(ATTOTIME_MAX_SECONDS);
