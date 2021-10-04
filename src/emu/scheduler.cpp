@@ -9,22 +9,25 @@
 #include "emu/diexec.h"
 #include "emu/scheduler.h"
 
-
-Timer &Timer::init(Machine &sys)
+Timer::Timer(Device &dev, int32_t id, void *data, bool flag)
+: system(dev.getMachine()),
+  device(&dev), ptr(data), param(8),
+  enabled(false), temporary(flag),
+//   start(system.getLocalTime()),
+  period(attotime_t::never),
+  expire(attotime_t::never)
 {
-    system = &sys;
-
-    system->getScheduler().insertTimer(this);
-    return *this;
+    callback = TimerDelegate(FUNC(Timer::executeDevice), this);
 }
 
-Timer &Timer::init(Device &dev)
+Timer::Timer(Machine &sys, TimerDelegate cb, void *data, bool flag)
+: system(&sys), device(nullptr),
+  callback(cb), ptr(data), param(8),
+  enabled(false), temporary(flag),
+//   start(system.getLocalTime()),
+  period(attotime_t::never),
+  expire(attotime_t::never)
 {
-    system = dev.getMachine();
-    device = &dev;
-
-    system->getScheduler().insertTimer(this);
-    return *this;
 }
 
 Timer &Timer::release()
@@ -34,11 +37,83 @@ Timer &Timer::release()
     return *this;
 }
 
+void Timer::executeDevice(Timer &timer, void *ptr, int64_t param)
+{
+    timer.device->executeDeviceTimer(timer, ptr, param);
+}
+
+bool Timer::enable(bool enable)
+{
+    const bool oldEnabled = enabled;
+    if (oldEnabled != enable)
+    {
+        enabled = enable;
+   
+        // Re-schedule that timer.
+        DeviceScheduler &scheduler = system->getScheduler();
+        scheduler.removeTimer(this);
+        scheduler.insertTimer(this);
+    }
+    return oldEnabled;
+}
+
+void Timer::adjust(const attotime_t &duration, int64_t param, const attotime_t &periodic)
+{
+    DeviceScheduler &scheduler = system->getScheduler();
+    if (scheduler.cbTimer == this)
+        scheduler.cbTimerModified = true;
+    
+    this->param = param;
+    enabled = true;
+
+    start = scheduler.getCurrentTime();
+    expire = start + duration;
+    period = periodic;
+
+    // Re-schedule that timer device.
+    scheduler.removeTimer(this);
+    scheduler.insertTimer(this);
+
+    // If timer device is in head of queue,
+    // abort current timeslice.
+    if (scheduler.getFirstTimer() == this)
+        scheduler.abortTimeslice();
+}
+
+void Timer::scheduleNextPeriod()
+{
+    // Advance for next period
+    start = expire;
+    expire += period;
+
+    // Re-schedule that timer.
+    DeviceScheduler &scheduler = system->getScheduler();
+    scheduler.removeTimer(this);
+    scheduler.insertTimer(this);
+}
+
 // *************************************************************
+
+DeviceScheduler::DeviceScheduler(Machine &system)
+: system(system)
+{
+    // Create a single never-expiring timer device as always one on that timer list.
+    // So system will not crash with empty timer list/queue.
+    timerList = new Timer(system, TimerDelegate(), nullptr, true);
+    timerList->adjust(attotime_t::never);
+}
 
 void DeviceScheduler::init()
 {
     rebuildExecuteList();
+}
+
+attotime_t DeviceScheduler::getCurrentTime() const
+{
+    if (cbTimer != nullptr)
+        return cbTimerExpire;
+    // return (execDevice != nullptr) ? execDevice->getLocalTime() : baseTime;
+    return baseTime;
 }
 
 void DeviceScheduler::addSchedulingQuantum(const attotime_t &quantum, const attotime_t &duration)
@@ -47,10 +122,6 @@ void DeviceScheduler::addSchedulingQuantum(const attotime_t &quantum, const atto
 
     // attotime_t curTime = baseTime;
     // attotime_t expire = curTime + duration;
-
-    // QuantumEntry entry;
-    // entry.actual = minQuantuam;
-    // entry.requested = 
 }
 
 void DeviceScheduler::rebuildExecuteList()
@@ -87,6 +158,7 @@ void DeviceScheduler::timeslice()
             break;
         }
 
+    // Execute CPU processors with timer device concurrently first
     while (baseTime < timerList->expire)
     {
         attotime_t target(baseTime + attotime_t(quantum->actual));
@@ -138,12 +210,70 @@ void DeviceScheduler::timeslice()
         baseTime = target;
     }
 
+    // Now execute timer devices
     executeTimers();
+}
+
+void DeviceScheduler::abortTimeslice()
+{
+
 }
 
 void DeviceScheduler::executeTimers()
 {
+    while (timerList->expire <= baseTime)
+    {
+        Timer &timer = *timerList;
+        bool wasEnabled = timer.enabled;
+        // Disable timer if period is zero or never.
+        if (timer.period.isZero() || timer.period.isNever())
+            timer.enabled = false;
+
+        cbTimer = &timer;
+        cbTimerExpire = timer.expire;
+        cbTimerModified = false;
+
+        // Now executing timer device
+        if (wasEnabled)
+        {
+            if (!timer.callback.isNull())
+                timer.callback(timer.ptr, timer.param);
+        }
+
+        if (!cbTimerModified)
+        {
+            if (timer.temporary)
+                timer.release();
+            else
+                timer.scheduleNextPeriod();
+        }
+    }
+
+    cbTimer = nullptr;
 }
+
+
+Timer *DeviceScheduler::allocateTimer(Device &device, int32_t id, void *data)
+{
+    Timer *timer = new Timer(device, id, data, false);
+    insertTimer(timer);
+    return timer;
+}
+
+Timer *DeviceScheduler::allocateTimer(TimerDelegate cb, void *data)
+{
+    Timer *timer = new Timer(system, cb, data, false);
+    insertTimer(timer);
+    return timer;  
+}
+
+void DeviceScheduler::setTimer(Device &device, const attotime_t &duration, int32_t id, void *data, uint64_t param)
+{
+    Timer *timer = new Timer(device, id, data, false);
+    timer->adjust(duration, param);
+    insertTimer(timer);
+}
+
 
 void DeviceScheduler::insertTimer(Timer *timer)
 {
