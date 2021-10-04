@@ -53,7 +53,6 @@ uint8_t i8085_cpuCycles[256] =
 void i8080_cpuDevice::init()
 {
 
-
     for (int val = 0; val < 256; val++)
     {
         int p = 0;
@@ -71,6 +70,8 @@ void i8080_cpuDevice::init()
         if (p & 1)
             zspFlags[val] |= SR_PF;
     }
+
+	opCycleTable = is8080() ? i8080_cpuCycles : i8085_cpuCycles;
 }
 
 uint8_t i8080_cpuDevice::readArg8()
@@ -233,6 +234,15 @@ void i8080_cpuDevice::run()
 {
 }
 
+void i8080_cpuDevice::executeRun()
+{
+    do
+    {
+
+        execute();
+    } while (opCounter > 0);
+}
+
 void i8080_cpuDevice::execute()
 {
     uint8_t opCode;
@@ -241,7 +251,10 @@ void i8080_cpuDevice::execute()
 
     pcBase = pcReg.uw;
     opCode = readArg8();
- 
+
+    // Take CPU cycles each instruction
+    opCounter -= opCycleTable[opCode];
+    
     switch (opCode)
     {
 

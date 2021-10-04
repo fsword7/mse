@@ -138,6 +138,7 @@ class i8080_cpuDevice : public cpuDevice
         int executeGetMinCycles() const override { return 4; }
         int executeGetMaxCycles() const override { return 16; }
         int executeGetInputLines() const override { return 4; }
+        void executeRun();
 
         void enableInterrupts(bool sw);
 
@@ -177,6 +178,9 @@ class i8080_cpuDevice : public cpuDevice
         pair16_t spReg; // SP register
         pair16_t wzReg; 
         uint16_t pcBase; // base PC address (current instruction)
+
+        uint8_t *opCycleTable;
+        int64_t opCounter;
 
         union {
             uint8_t  bRegs[8];

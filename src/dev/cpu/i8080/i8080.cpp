@@ -66,11 +66,15 @@ void i8080_cpuDevice::startDevice()
 		// addState(i8080_A,  "A",   iRegs[REG_A]);
 		// addState(i8080_F,  "F",   iRegs[REG_F]);
 
+		// Initialize executable parameters
+		init();
 	}
 
 	// Assigns system bus access spaces
 	getAddressSpace(AS_PROGRAM)->setMemorySpecific(mapProgram);
 	getAddressSpace(AS_IOPORT)->setMemorySpecific(mapIOPort);
+
+	setCycleCounter(&opCounter);
 }
 
 void i8080_cpuDevice::exportString(const DeviceStateEntry &entry, string &out) const
