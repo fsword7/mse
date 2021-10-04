@@ -80,9 +80,11 @@ set(MSE_CPP_SRCS
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
+	emu/video.cpp
 	lib/util/bitmap.cpp
 	lib/util/time.cpp
 	main/main.cpp
+	osd/osdcore.cpp
 	printers/epson/mx.cpp
 	system/dec/axp/alphapc.cpp
 	system/dec/axp/tsunami.cpp
@@ -155,6 +157,7 @@ set(MSE_H_SRCS
 	emu/scheduler.h
 	emu/sysconfig.h
 	emu/syslist.h
+	emu/video.h
 	lib/util/bitmap.h
 	lib/util/time.h
 	printers/epson/externs.h

@@ -5,6 +5,14 @@
  *      Author: Tim Stark
  */
 
+#pragma once
+
+typedef uint64_t osdTicks_t;
+
+osdTicks_t osdGetTicks();
+osdTicks_t osdGetTicksPerSecond();
+void osdSleep(osdTicks_t ticks);
+
 namespace mse::osd
 {
     class osdInteface
