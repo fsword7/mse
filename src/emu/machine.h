@@ -11,6 +11,7 @@
 #include "emu/sysconfig.h"
 #include "emu/scheduler.h"
 #include "emu/devsys.h"
+#include "emu/video.h"
 
 class romLoader;
 
@@ -66,4 +67,5 @@ private:
 	// External bus manager
 	aspace::BusManager busManager;
 	DeviceScheduler scheduler;
+	VideoManager video;
 };

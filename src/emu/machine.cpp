@@ -11,10 +11,11 @@
 #include "emu/romloader.h"
 #include "emu/debugger/debugger.h"
 #include "emu/engine.h"
+#include "emu/video.h"
 #include "emu/machine.h"
 
 Machine::Machine(const SystemEngine &engine, const SystemConfig &config, cstag_t &tagName)
-: config(config), devName(tagName), busManager(this), scheduler(*this)
+: config(config), devName(tagName), busManager(this), scheduler(*this), video(*this)
 {
 	system = dynamic_cast<sysDevice *>(config.getSystemDevice());
 
@@ -88,7 +89,22 @@ void Machine::stop(Console *cty)
 	}
 }
 
-void Machine::run(Console *cty)
+// main loop routine at separating thread.
+void Machine::run(Console *user)
 {
-	
+	try
+	{
+		while (1)
+		{
+			// execute CPU processors intervally.
+			scheduler.timeslice();
+		}
+	}
+
+	catch (...)
+	{
+		user->printf("Caught unhandled exception");
+	}
+
+	// stopping system	
 }
