@@ -10,14 +10,14 @@
 
 
 
-scrDevice::scrDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
+ScreenDevice::ScreenDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
 : Device(config, type, tagName, nullptr, clock),
   driver(config.getSystemDriver())
 {
 
 }
 
-void scrDevice::devConfigure(SystemConfig &config)
+void ScreenDevice::devConfigure(SystemConfig &config)
 {
 	assert(&config == &getSystemConfig());
 

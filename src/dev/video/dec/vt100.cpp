@@ -6,7 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "emu/screen.h"
+#include "emu/devscr.h"
 #include "dev/video/dec/vt100.h"
 
 using namespace emu::video;

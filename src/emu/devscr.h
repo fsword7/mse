@@ -28,11 +28,11 @@ enum scrFormat
 #define SCRFLG_LANDSCAPE  0
 #define SCRFLG_PORTRAIT   0
 
-class scrDevice : public Device
+class ScreenDevice : public Device
 {
 public:
-	scrDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
-	~scrDevice() = default;
+	ScreenDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock);
+	~ScreenDevice() = default;
 
 	// Virtual device function calls
 	void devConfigure(SystemConfig &config);
@@ -45,6 +45,6 @@ private:
 	uint64_t flags   = 0;
 };
 
-DECLARE_DEVICE_TYPE(SCREEN, scrDevice);
+DECLARE_DEVICE_TYPE(SCREEN, ScreenDevice);
 
-using screen_t = scrDevice;
+using screen_t = ScreenDevice;

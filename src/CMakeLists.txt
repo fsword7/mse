@@ -77,7 +77,6 @@ set(MSE_CPP_SRCS
 	emu/machine.cpp
 	emu/romloader.cpp
 	emu/scheduler.cpp
-	emu/screen.cpp
 	emu/sysconfig.cpp
 	emu/syslist.cpp
 	emu/systems.cpp
@@ -156,7 +155,6 @@ set(MSE_H_SRCS
 	emu/romloader.h
 	emu/templates.h
 	emu/scheduler.h
-	emu/screen.h
 	emu/sysconfig.h
 	emu/syslist.h
 	emu/video.h
