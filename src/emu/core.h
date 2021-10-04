@@ -57,7 +57,11 @@ typedef const string cstag_t;
 // FUNC definition for named delegate 
 #define FUNC(func) &func, #func
 
+// OSD core package
+#include "osd/osdcore.h"
+
 // Common include packages
+#include "lib/util/time.h"
 #include "emu/debug.h"
 #include "emu/console.h"
 #include "emu/map/romentry.h"
