@@ -163,6 +163,7 @@ class DeviceInterface;
 class diExternalBus;
 class diExecute;
 class diDebug;
+class Timer;
 
 class Device
 : public BindedDelegate,
@@ -221,6 +222,10 @@ public:
 
 	void updateClock();
 
+	// Timer function calls
+	Timer *allocateTimer(void *data);
+	void setTimer(const attotime_t &duration, void *data, int32_t param);
+
 	inline ifList_t getInterfaces() { return ifList; }
 
 	inline bool isStarted() const { return flagStarted; }
@@ -242,6 +247,7 @@ public:
 	virtual void devStop() {}
 	virtual void devReset() {}
 	virtual void devUpdateClock() {}
+	virtual void devExecuteTimer(Timer &timer, void *data, int32_t param) {}
 	virtual cromEntry_t *devGetROMEntries() { return nullptr; }
 
 	virtual void configureDevice(SystemConfig &config) {}
@@ -249,6 +255,7 @@ public:
 	virtual void stopDevice() {}
 	virtual void resetDevice() {}
 	virtual void updateDeviceClock() {}
+	virtual void executeDeviceTimer(Timer &timer, void *data, int32_t param) {}
 	virtual cromEntry_t *getDeviceFirmwareEntries() { return nullptr; }
 
 	void completeConfig(); // complete final configuration

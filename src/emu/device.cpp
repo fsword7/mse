@@ -7,6 +7,7 @@
 
 #include "emu/core.h"
 #include "emu/didebug.h"
+#include "emu/scheduler.h"
 #include "emu/machine.h"
 #include "emu/map/romentry.h"
 
@@ -100,6 +101,16 @@ void Device::updateClock()
 	for (auto &iface : ifList)
 		iface->ifUpdateClock();
 	updateDeviceClock();
+}
+
+Timer *Device::allocateTimer(void *data)
+{
+	return ownMachine->getScheduler().allocateTimer(*this, 0, data);
+}
+
+void Device::setTimer(const attotime_t &duration, void *data, int32_t param)
+{
+	ownMachine->getScheduler().setTimer(*this, duration, 0, data, param);
 }
 
 // ************************************************
