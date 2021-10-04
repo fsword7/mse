@@ -42,7 +42,7 @@ public:
 		execWait
 	};
 
-	inline bool isExecuting() { return pState == execRunning; }
+	inline bool isExecuting() const { return pState == execRunning; }
 
 	// Abstract function calls
 	virtual void run() = 0;
@@ -60,7 +60,9 @@ public:
 	void eatCycles(int64_t cycles);
 	void abortTimeslice();
 	void runTimeslice(); // handle time slice period
-	
+
+	attotime_t getLocalTime() const;
+
 	attoseconds_t getMinQuantum() const { return cycleDuration * executeGetMinCycles(); }
 
 	// Virtual interface function calls
@@ -82,7 +84,7 @@ protected:
 	virtual int executeGetMaxCycles() const { return 1; }
 	virtual int executeGetInputLines() const { return 0; }
 	virtual void executeRun() {}
-
+	
 protected:
 	execState pState = execStopped;
 

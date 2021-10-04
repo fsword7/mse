@@ -53,6 +53,17 @@ void diExecute::ifUpdateClock()
 	// 	cyclePerSecond, uint64_t(cycleDuration / ATTOSECONDS_PER_NANOSECOND));
 }
 
+attotime_t diExecute::getLocalTime() const
+{
+	if (isExecuting())
+	{
+		assert(cycleRunning >= *cycleCounter);
+		int cycles = cycleRunning - *cycleCounter;
+		return localTime + (cycles * cycleDuration);
+	}
+	return localTime;
+}
+
 void diExecute::eatCycles(int64_t cycles)
 {
 	if (!isExecuting() || cycleCounter == nullptr)
