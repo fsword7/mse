@@ -31,7 +31,7 @@ public:
 	inline device_t *getSystemDevice() const { return system; }
 	inline LogFile  *getLogFile() const      { return &logFile; }
 	inline DeviceScheduler &getScheduler()   { return scheduler; }
-
+	inline attotime_t getTime() const		 { return scheduler.getCurrentTime(); }
 	inline void setConsole(Console *user)	 { logFile.setConsole(user); }
 	inline void setDialedDevice(Device *dev) { dialedDevice = dev; }
 	inline Device *getDialedDevice() const   { return dialedDevice; }

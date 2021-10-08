@@ -13,7 +13,7 @@ Timer::Timer(Device &dev, int32_t id, void *data, bool flag)
 : system(dev.getMachine()),
   device(&dev), ptr(data), param(8),
   enabled(false), temporary(flag),
-//   start(system.getLocalTime()),
+  start(system->getTime()),
   period(attotime_t::never),
   expire(attotime_t::never)
 {
@@ -24,7 +24,7 @@ Timer::Timer(Machine &sys, TimerDelegate cb, void *data, bool flag)
 : system(&sys), device(nullptr),
   callback(cb), ptr(data), param(8),
   enabled(false), temporary(flag),
-//   start(system.getLocalTime()),
+  start(system->getTime()),
   period(attotime_t::never),
   expire(attotime_t::never)
 {
@@ -118,10 +118,36 @@ attotime_t DeviceScheduler::getCurrentTime() const
 
 void DeviceScheduler::addSchedulingQuantum(const attotime_t &quantum, const attotime_t &duration)
 {
-    assert(quantum.getTime() == 0);
+    assert(quantum.getTime() != 0);
 
-    // attotime_t curTime = baseTime;
-    // attotime_t expire = curTime + duration;
+    attotime_t curTime = baseTime;
+    attotime_t expire = curTime + duration;
+    
+    const attoseconds_t attos = quantum.getAttoseconds();
+
+    vector<QuantumEntry>::iterator insertAfter = quantumList.end();
+
+    for (auto entry = quantumList.begin(); entry != quantumList.end(); entry++)
+    {
+        // Search for position to being inserted.
+        // If quantum scheduler expired, remove it.
+        if ((*entry).expire <= expire)
+            entry = quantumList.erase(entry);
+        else if ((*entry).requested <= attos)
+            insertAfter = entry;
+    }
+
+    if (insertAfter != quantumList.end() && (*insertAfter).requested == attos)
+        (*insertAfter).expire = expire < (*insertAfter).expire ? (*insertAfter).expire : expire;
+    else
+    {
+        QuantumEntry entry;
+
+        entry.actual = attos < minQuantuam ? minQuantuam : attos;
+        entry.requested = attos;
+        entry.expire = expire;
+        quantumList.insert(insertAfter, entry);
+    }
 }
 
 void DeviceScheduler::rebuildExecuteList()
@@ -131,7 +157,7 @@ void DeviceScheduler::rebuildExecuteList()
     {
         // Default 60hz interval scheduling quantum
         attotime_t minQuantuam = attotime_t::fromHz(60);
-
+ 
         addSchedulingQuantum(minQuantuam, attotime_t::never);
     }
 
@@ -149,7 +175,7 @@ void DeviceScheduler::rebuildExecuteList()
 
 void DeviceScheduler::timeslice()
 {
-    logFile->log(0, "**** Start of quantum scheduler ****\n");
+    logFile->log(LOG_CONSOLE, "**** Start of quantum scheduler ****\n");
 
     // Get unexpired quantum scheduler. If quantum
     // scheduler expired, remove it from quantum list.
@@ -158,7 +184,7 @@ void DeviceScheduler::timeslice()
         quantumList.erase(quantumList.begin());
     QuantumEntry &quantum = *quantumList.begin();
 
-    logFile->log(0, "Quantum interval: %lldns (%llf Hz)\n",
+    logFile->log(LOG_CONSOLE, "Quantum interval: %lldns (%llf Hz)\n",
         quantum.actual / ATTOSECONDS_PER_NANOSECOND,
         ATTOSECCONDS_TO_HZ(quantum.actual));
 
@@ -217,7 +243,7 @@ void DeviceScheduler::timeslice()
     // Now execute timer devices
     executeTimers();
 
-    logFile->log(0, "**** End of quantum scheduler ****\n");
+    logFile->log(LOG_CONSOLE, "**** End of quantum scheduler ****\n");
 }
 
 void DeviceScheduler::abortTimeslice()

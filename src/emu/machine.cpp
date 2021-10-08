@@ -100,10 +100,12 @@ void Machine::launch()
 
 	try
 	{
+		scheduler.init();
+		
 		while (running)
 		{
 			// execute CPU processors intervally.
-			// scheduler.timeslice();
+			scheduler.timeslice();
 		}
 	}
 
