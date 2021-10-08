@@ -478,6 +478,14 @@ CommandStatus SystemEngine::cmdExit(Console *user, args_t &args)
 
 CommandStatus SystemEngine::cmdHalt(Console *user, args_t &args)
 {
+	Machine *sys = findSystem(args.current());
+	if (sys == nullptr) {
+		user->printf("%s: unknown system\n", args.current());
+		return cmdOk;
+	}
+
+	sys->halt(user);
+
 	return cmdOk;
 }
 
@@ -682,6 +690,19 @@ CommandStatus SystemEngine::cmdReset(Console *user, args_t &args)
 	return cmdOk;
 }
 
+CommandStatus SystemEngine::cmdRun(Console *user, args_t &args)
+{
+	Machine *sys = findSystem(args.current());
+	if (sys == nullptr) {
+		user->printf("%s: unknown system\n", args.current());
+		return cmdOk;
+	}
+
+	sys->run(user);
+
+	return cmdOk;
+}
+
 CommandStatus SystemEngine::cmdSet(Console *user, args_t &args)
 {
 	Device *dev = findDevice(user, args.current());
@@ -859,7 +880,7 @@ SystemEngine::command_t SystemEngine::mseCommands[] =
 		{ "log",		SystemEngine::cmdLog,		nullptr },
 		{ "registers",	SystemEngine::cmdRegisters, nullptr },
 		{ "reset",		SystemEngine::cmdReset,		nullptr },
-		{ "run",		SystemEngine::cmdExecute,	nullptr },
+		{ "run",		SystemEngine::cmdRun,		nullptr },
 		{ "set",		SystemEngine::cmdSet,		nullptr },
 		{ "show",		SystemEngine::cmdShow,		nullptr },
 		{ "start",		SystemEngine::cmdStart,		nullptr },

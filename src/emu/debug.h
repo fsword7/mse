@@ -48,6 +48,13 @@ public:
 	void out(uint32_t flags, cstag_t &message);
 	void flushAll();
 
+	template <typename... Args>
+	void log(uint32_t flags, string format, Args... args)
+	{
+		string msg = fmt::sprintf(format, args...);
+		out(flags, msg);
+	}
+
 	bool open(fs::path fname, int slot);
 	void close(int slot);
 

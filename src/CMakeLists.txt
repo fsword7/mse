@@ -176,7 +176,7 @@ set(MSE_SDL_H_SRCS
 	osd/osdcore.h
 )
 
-add_definitions(-DDEBUG)
+add_definitions(-pthread -DDEBUG -DENABLE_DEBUG)
 add_executable(mse ${MSE_CPP_SRCS} ${MSE_SDL_CPP_SRC} ${MSE_H_SRCS} ${MSE_SDL_H_SRCS})
 target_link_libraries(mse
 	fmt::fmt

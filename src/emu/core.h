@@ -61,6 +61,7 @@ typedef const string cstag_t;
 #include "osd/osdcore.h"
 
 // Common include packages
+#include "lib/util/list.h"
 #include "lib/util/time.h"
 #include "emu/debug.h"
 #include "emu/console.h"

@@ -89,22 +89,55 @@ void Machine::stop(Console *cty)
 	}
 }
 
-// main loop routine at separating thread.
-void Machine::run(Console *user)
+// Launching system in separated threading process
+void Machine::launch()
 {
+	logFile.log(LOG_CONSOLE, "Started system at thread ID %X\n",
+		std::this_thread::get_id());
+	logFile.flushAll();
+
+	running = true;
+
 	try
 	{
-		while (1)
+		while (running)
 		{
 			// execute CPU processors intervally.
-			scheduler.timeslice();
+			// scheduler.timeslice();
 		}
 	}
 
 	catch (...)
 	{
-		user->printf("Caught unhandled exception");
+		logFile.log(LOG_CONSOLE, "Caught unhandled exception\n");
 	}
 
-	// stopping system	
+	// stopping system
+
+	logFile.log(LOG_CONSOLE, "Halted system at thread ID %X\n",
+		std::this_thread::get_id());
+}
+
+void Machine::halt(Console *user)
+{
+	user->printf("Halting thread process ID %X\n", thisThread.get_id());
+
+	flags |= SYSTEM_HALT;
+	running = false;
+
+	if (thisThread.joinable())
+		thisThread.join();
+}
+
+// main loop routine at separating thread.
+void Machine::run(Console *user)
+{
+	
+	logFile.setConsole(user);
+
+	// Starting separating process
+	thisThread = thread(&Machine::launch, this);
+	user->printf("Started thread process ID %X\n", thisThread.get_id());
+
+	// thisThread.detach();
 }

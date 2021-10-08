@@ -77,11 +77,12 @@ void LogFile::flushAll()
 	for (int idx = 0; idx < LOG_NFILES; idx++)
 		if (logFlags & (1u << idx))
 			fout[idx] << flush;
+	// if (logFlags & LOG_CONSOLE && cty != nullptr)
 }
 
 void LogFile::out(const uint32_t flags, cstag_t &message)
 {
-	if ((logFlags & (flags & LOG_ALLFILES)) == 0)
+	if ((logFlags & (flags & (LOG_ALLFILES|LOG_CONSOLE))) == 0)
 		return;
 
 	// Record message into some logging files

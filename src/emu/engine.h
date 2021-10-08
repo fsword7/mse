@@ -61,6 +61,7 @@ public:
 	CommandStatus cmdLog(Console *user, args_t &args);
 	CommandStatus cmdRegisters(Console *user, args_t &args);
 	CommandStatus cmdReset(Console *user, args_t &args);
+	CommandStatus cmdRun(Console *user, args_t &args);
 	CommandStatus cmdSet(Console *user, args_t &args);
 	CommandStatus cmdShow(Console *user, args_t &args);
 	CommandStatus cmdShowDevice(Console *user, args_t &args);

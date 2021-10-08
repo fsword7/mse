@@ -17,6 +17,7 @@ class romLoader;
 
 // Debug flags definition
 constexpr uint32_t DBGFLG_ENABLED =	0x00000001;
+constexpr uint32_t SYSTEM_HALT = 0x80000000;
 
 class SystemEngine;
 
@@ -47,8 +48,12 @@ public:
 	void reset(Console *cty);
 	void start(Console *cty);
 	void stop(Console *cty);
+	void halt(Console *cty);
 	void run(Console *cty);
 
+private:
+	void launch();
+	
 private:
 	const SystemConfig &config;
 	sysDevice *system = nullptr;
@@ -63,6 +68,10 @@ private:
 	mutable LogFile  logFile;
 
 	romLoader *loader = nullptr;
+
+	thread thisThread;
+	bool running = false;
+	uint32_t flags = 0;
 
 	// External bus manager
 	aspace::BusManager busManager;

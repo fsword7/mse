@@ -105,6 +105,13 @@ CommandStatus cmdReset(Console *user, args_t &args)
 	return cmdOk;
 }
 
+// run <system>
+CommandStatus cmdRun(Console *user, args_t &args)
+{
+	user->engine.cmdRun(user, args);
+	return cmdOk;
+}
+
 // set <device> <suboptions ...>
 CommandStatus cmdSet(Console *user, args_t &args)
 {
@@ -171,6 +178,7 @@ command_t CommandHandler::mseCommands[] =
 		{ "log",		cmdLog,		nullptr },
 		{ "registers",  cmdRegisters, nullptr },
 		{ "reset",		cmdReset,	nullptr },
+		{ "run",		cmdRun,		nullptr },
 		{ "set",		cmdSet,		nullptr },
 		{ "show",		cmdShow,	CommandHandler::mseShowCommands },
 		{ "start",		cmdStart,	nullptr },
