@@ -9,6 +9,7 @@
 
 #include "lib/util/time.h"
 
+class LogFile;
 class Machine;
 class DeviceScheduler;
 
@@ -55,12 +56,12 @@ class Timer
         int32_t param = 0;
 };
 
-class QuantumEntry
+struct QuantumEntry
 {
-    public:
-        attoseconds_t actual;
-        attoseconds_t requested;
-        attotime_t expire;
+    QuantumEntry *next = nullptr;
+    attoseconds_t actual;
+    attoseconds_t requested;
+    attotime_t expire;
 };
 
 class DeviceScheduler
@@ -96,12 +97,16 @@ class DeviceScheduler
         Machine &system;
         diExecute *execDevice = nullptr;
         diExecute *execList = nullptr;
+        LogFile *logFile = nullptr;
 
         attotime_t baseTime = attotime_t();
 
         // Periodic interval list
         vector<QuantumEntry> quantumList;
         attoseconds_t minQuantuam = 0;
+
+        // SimpleList<QuantumEntry> quantumList2;
+        // FixedAllocator<QuantumEntry> quantumAllocator;
 
         // Timer list for each scheduling quantum
         Timer *timerList = nullptr;

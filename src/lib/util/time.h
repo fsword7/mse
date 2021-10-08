@@ -39,6 +39,9 @@ template <typename T>
 inline constexpr attoseconds_t HZ_TO_ATTOSECONDS(T &&val) { return ATTOSECONDS_PER_SECOND / (val); }
 // inline constexpr attoseconds_t HZ_TO_ATTOSECONDS(double &&val) { return double(ATTOSECONDS_PER_SECOND) / double(val); }
 
+template <typename T>
+inline constexpr double ATTOSECCONDS_TO_HZ(T &&val) { return double(ATTOSECONDS_PER_SECOND) / double(val); }
+
 namespace emu::lib::util
 {
     class Attotime
@@ -60,6 +63,10 @@ namespace emu::lib::util
         inline int64_t getSeconds() const { return attoseconds / ATTOSECONDS_PER_SECOND; }
         inline int64_t getAttoseconds() const { return attoseconds % ATTOSECONDS_PER_SECOND; }
         inline attoseconds_t getTime() const { return attoseconds; }
+
+        inline attoseconds_t getAsNanoseconds() const { return attoseconds / ATTOSECONDS_PER_NANOSECOND; }
+
+        inline double getAsHertz() const { return double(ATTOSECONDS_PER_SECOND) / double (attoseconds); }
 
         static Attotime fromHz(uint32_t freq)
         {

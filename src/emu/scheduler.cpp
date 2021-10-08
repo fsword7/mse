@@ -95,7 +95,7 @@ void Timer::scheduleNextPeriod()
 // *************************************************************
 
 DeviceScheduler::DeviceScheduler(Machine &system)
-: system(system)
+: system(system), logFile(system.getLogFile())
 {
     // Create a single never-expiring timer device as always one on that timer list.
     // So system will not crash with empty timer list/queue.
@@ -149,19 +149,23 @@ void DeviceScheduler::rebuildExecuteList()
 
 void DeviceScheduler::timeslice()
 {
+    logFile->log(0, "**** Start of quantum scheduler ****\n");
 
-    QuantumEntry *quantum = nullptr;
-    for (auto &entry : quantumList)
-        if (baseTime < entry.expire)
-        {
-            quantum = &entry;
-            break;
-        }
+    // Get unexpired quantum scheduler. If quantum
+    // scheduler expired, remove it from quantum list.
+    assert(!quantumList.empty());
+    while ((*quantumList.begin()).expire <= baseTime)
+        quantumList.erase(quantumList.begin());
+    QuantumEntry &quantum = *quantumList.begin();
+
+    logFile->log(0, "Quantum interval: %lldns (%llf Hz)\n",
+        quantum.actual / ATTOSECONDS_PER_NANOSECOND,
+        ATTOSECCONDS_TO_HZ(quantum.actual));
 
     // Execute CPU processors with timer device concurrently first
     while (baseTime < timerList->expire)
     {
-        attotime_t target(baseTime + attotime_t(quantum->actual));
+        attotime_t target(baseTime + attotime_t(quantum.actual));
         if (timerList->expire < target)
             target = timerList->expire;
         
@@ -212,6 +216,8 @@ void DeviceScheduler::timeslice()
 
     // Now execute timer devices
     executeTimers();
+
+    logFile->log(0, "**** End of quantum scheduler ****\n");
 }
 
 void DeviceScheduler::abortTimeslice()
