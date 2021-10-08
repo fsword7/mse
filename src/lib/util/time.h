@@ -70,7 +70,7 @@ namespace emu::lib::util
 
         static Attotime fromHz(uint32_t freq)
         {
-            return (freq > 1) ? Attotime(1, HZ_TO_ATTOSECONDS(freq))
+            return (freq > 1) ? Attotime(0, HZ_TO_ATTOSECONDS(freq))
                 : (freq == 1) ? Attotime(1, 0) : never;
         }
 
