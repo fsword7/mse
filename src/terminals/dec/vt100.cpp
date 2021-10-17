@@ -27,7 +27,10 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     cpu = i8080(config, "cpu", XTAL(24'883'200) / 9);
     cpu->setAddressMap(AS_PROGRAM, &vt100_vtDevice::vt100_mem);
     cpu->setAddressMap(AS_IOPORT, &vt100_vtDevice::vt100_iomem);
-    
+
+    screen_t *screen = Screen(config, "screen", scrRaster);
+    screen->configureScreen(XTAL(24'073'400) * 2/3, 102*10, 0, 80*10, 262, 0, 25*10);
+
 }
 
 void vt100_vtDevice::vt100_init()
