@@ -17,6 +17,11 @@ class SystemConfig;
 class Device;
 class DeviceInterface;
 
+constexpr uint64_t CLK_NOEXECUTE = 0;
+constexpr uint64_t CLK_FULLSPEED = ~0ull;
+
+typedef uint32_t TimerDeviceID_t;
+
 template <typename T> struct is_device
 {
 	static constexpr bool value = std::is_base_of<Device, T>::value;
@@ -247,7 +252,7 @@ public:
 	virtual void devStop() {}
 	virtual void devReset() {}
 	virtual void devUpdateClock() {}
-	virtual void devExecuteTimer(Timer &timer, void *data, int32_t param) {}
+	virtual void devExecuteTimer(Timer &timer, TimerDeviceID_t id, void *data, int32_t param) {}
 	virtual cromEntry_t *devGetROMEntries() { return nullptr; }
 
 	virtual void configureDevice(SystemConfig &config) {}
@@ -255,7 +260,7 @@ public:
 	virtual void stopDevice() {}
 	virtual void resetDevice() {}
 	virtual void updateDeviceClock() {}
-	virtual void executeDeviceTimer(Timer &timer, void *data, int32_t param) {}
+	virtual void executeTimerDevice(Timer &timer, TimerDeviceID_t id, void *data, int32_t param) {}
 	virtual cromEntry_t *getDeviceFirmwareEntries() { return nullptr; }
 
 	void completeConfig(); // complete final configuration

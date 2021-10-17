@@ -19,6 +19,28 @@ namespace emu::lib::util
         BitmapFormatRGBA32
     };
 
+    class Rectangle
+    {
+        public:
+            constexpr Rectangle() = default;
+            constexpr Rectangle(int xmin, int xmax, int ymin, int ymax)
+            : yMin(ymin), yMax(ymax), xMin(xmin), xMax(xmax)
+            { }
+
+            inline constexpr int getLeft() const { return xMin; }
+            inline constexpr int getRight() const { return xMax; }
+            inline constexpr int getTop() const { return yMin; }
+            inline constexpr int getBottom() const { return yMax; }
+
+            constexpr void set(int xmin, int xmax, int ymin, int ymax)
+            { xMin = xmin; xMax = xmax; yMin = ymin; yMax = ymax; }
+
+            int xMin = 0; // left coordinate    (minimum X)
+            int xMax = 0; // right coordinate   (maximum X)
+            int yMin = 0; // top coordinate     (minimum Y)
+            int yMax = 0; // bottom coordinate  (maximum Y)
+    };
+
     class Bitmap
     {
         public:
@@ -63,6 +85,8 @@ namespace emu::lib::util
     // extern template class BitmapSpecific<uint32_t>;
     // extern template class BitmapSpecific<uint64_t>;
 }
+
+using rect_t = emu::lib::util::Rectangle;
 
 // Generic data type definitions
 using bitmap_t   = emu::lib::util::Bitmap;

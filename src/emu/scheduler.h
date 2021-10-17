@@ -23,7 +23,7 @@ class Timer
 
     public:
         Timer() = default;
-        Timer(Device &device, int32_t id, void *ptr, bool flag);
+        Timer(Device &device, TimerDeviceID_t id, void *ptr, bool flag);
         Timer(Machine &system, TimerDelegate cb, void *ptr, bool flag);
         ~Timer() = default;
 
@@ -40,6 +40,7 @@ class Timer
         Timer *next = nullptr;
         Timer *prev = nullptr;
 
+        cstag_t  name;
         Machine *system = nullptr;
         Device  *device = nullptr;
 
@@ -54,6 +55,7 @@ class Timer
         TimerDelegate callback;
         void *ptr = nullptr;
         int32_t param = 0;
+        TimerDeviceID_t id = 0;
 };
 
 struct QuantumEntry

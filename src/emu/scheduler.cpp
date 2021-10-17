@@ -9,9 +9,9 @@
 #include "emu/diexec.h"
 #include "emu/scheduler.h"
 
-Timer::Timer(Device &dev, int32_t id, void *data, bool flag)
+Timer::Timer(Device &dev, TimerDeviceID_t id, void *data, bool flag)
 : system(dev.getMachine()),
-  device(&dev), ptr(data), param(8),
+  device(&dev), id(id), ptr(data), param(0),
   enabled(false), temporary(flag),
   start(system->getTime()),
   period(attotime_t::never),
@@ -39,7 +39,7 @@ Timer &Timer::release()
 
 void Timer::executeDevice(Timer &timer, void *ptr, int64_t param)
 {
-    timer.device->executeDeviceTimer(timer, ptr, param);
+    timer.device->executeTimerDevice(timer, timer.id, ptr, param);
 }
 
 bool Timer::enable(bool enable)
@@ -175,7 +175,7 @@ void DeviceScheduler::rebuildExecuteList()
 
 void DeviceScheduler::timeslice()
 {
-    logFile->log(LOG_CONSOLE, "**** Start of quantum scheduler ****\n");
+    // logFile->log(LOG_CONSOLE, "**** Start of quantum scheduler ****\n");
 
     // Get unexpired quantum scheduler. If quantum
     // scheduler expired, remove it from quantum list.
@@ -184,9 +184,9 @@ void DeviceScheduler::timeslice()
         quantumList.erase(quantumList.begin());
     QuantumEntry &quantum = *quantumList.begin();
 
-    logFile->log(LOG_CONSOLE, "Quantum interval: %lldns (%llf Hz)\n",
-        quantum.actual / ATTOSECONDS_PER_NANOSECOND,
-        ATTOSECCONDS_TO_HZ(quantum.actual));
+    // logFile->log(LOG_CONSOLE, "Quantum interval: %lldns (%llf Hz)\n",
+    //     quantum.actual / ATTOSECONDS_PER_NANOSECOND,
+    //     ATTOSECCONDS_TO_HZ(quantum.actual));
 
     // Execute CPU processors with timer device concurrently first
     while (baseTime < timerList->expire)
@@ -207,6 +207,10 @@ void DeviceScheduler::timeslice()
                 // Set cycle countdown request (cycle per attoseconds)
                 exec->cycleRunning = delta / exec->cycleDuration;
                 int64_t ranCycles = exec->cycleRunning;
+
+                // logFile->log(LOG_CONSOLE, "%s(%s): Executing for %lld (%lld cycles)\n",
+                //     exec->getDevice()->getDeviceName(), exec->getDevice()->getShortName(),
+                //     delta, exec->cycleRunning);
 
                 // if (exec->suspend == 0)
                 {
@@ -231,6 +235,11 @@ void DeviceScheduler::timeslice()
 
                 assert(exec->localTime >= attotime_t::zero);
                 exec->localTime += deltaTime;
+
+                // logFile->log(LOG_CONSOLE, "%s(%s): Executed at %lld (%lld total cycles)\n",
+                //     exec->getDevice()->getDeviceName(), exec->getDevice()->getShortName(),
+                //     ranCycles, exec->cycleTotal);
+
                 if (exec->localTime < target)
                     target = (exec->localTime < baseTime) ? baseTime : exec->localTime;
             }
@@ -239,11 +248,12 @@ void DeviceScheduler::timeslice()
         execDevice = nullptr;
         baseTime = target;
     }
-
+    // logFile->log(LOG_CONSOLE, "Executed all CPU processors, now executing time devices...\n");
+    
     // Now execute timer devices
     executeTimers();
 
-    logFile->log(LOG_CONSOLE, "**** End of quantum scheduler ****\n");
+    // logFile->log(LOG_CONSOLE, "**** End of quantum scheduler ****\n");
 }
 
 void DeviceScheduler::abortTimeslice()
@@ -253,9 +263,13 @@ void DeviceScheduler::abortTimeslice()
 
 void DeviceScheduler::executeTimers()
 {
+    // logFile->log(LOG_CONSOLE, "Timer: %s  Expire: %s\n",
+    //     baseTime.getAsString(), timerList->expire.getAsString());
+
     while (timerList->expire <= baseTime)
     {
         Timer &timer = *timerList;
+
         bool wasEnabled = timer.enabled;
         // Disable timer if period is zero or never.
         if (timer.period.isZero() || timer.period.isNever())
@@ -269,9 +283,19 @@ void DeviceScheduler::executeTimers()
         if (wasEnabled)
         {
             if (!timer.callback.isNull())
+            {
+                // if (timer.device != nullptr)
+                //     logFile->log(LOG_CONSOLE, "Timer: Executing %s(%s) ID %d\n",
+                //         timer.device->getDeviceName(), timer.device->getShortName(), 0);
+                // else
+                //     logFile->log(LOG_CONSOLE, "Timer: Executing callback %s\n",
+                //         timer.callback.getName());
                 timer.callback(timer.ptr, timer.param);
+            }
         }
 
+        // logFile->log(LOG_CONSOLE, "Timer: Execution done\n");
+        
         if (!cbTimerModified)
         {
             if (timer.temporary)

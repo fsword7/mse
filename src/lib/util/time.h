@@ -68,6 +68,8 @@ namespace emu::lib::util
 
         inline double getAsHertz() const { return double(ATTOSECONDS_PER_SECOND) / double (attoseconds); }
 
+        cstag_t getAsString(int precision = 9) const;
+
         static Attotime fromHz(uint32_t freq)
         {
             return (freq > 1) ? Attotime(0, HZ_TO_ATTOSECONDS(freq))

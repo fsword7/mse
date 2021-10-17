@@ -19,12 +19,20 @@ class VideoManager
     private:
         Machine &system;
         DeviceScheduler &scheduler;
+        LogFile *logFile = nullptr;
 
         // Timer device callback function calls
         void cbUpdateScreenless(void *data, int64_t param);
-        
+
+        inline void resetTime(attotime_t time) { emuTime = time; realTime = time; };
+
         // Screenless systems (mainframe, etc)
         Timer *frameTimer = nullptr;
 
+        double throttleRate = 1.0;
         osdTicks_t avgOversleep = 0;
+        osdTicks_t lastTicks = 0;
+
+        attotime_t realTime = attotime_t::zero;
+        attotime_t emuTime = attotime_t::zero;
 };
