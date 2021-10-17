@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "emu/devscr.h"
+#include "emu/screen.h"
 
 class diVideo : public DeviceInterface
 {
