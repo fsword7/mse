@@ -82,6 +82,7 @@ set(MSE_CPP_SRCS
 	emu/systems.cpp
 	emu/video.cpp
 	lib/util/bitmap.cpp
+	lib/util/color.cpp
 	lib/util/time.cpp
 	main/main.cpp
 	osd/osdcore.cpp
@@ -159,6 +160,7 @@ set(MSE_H_SRCS
 	emu/syslist.h
 	emu/video.h
 	lib/util/bitmap.h
+	lib/util/color.h
 	lib/util/time.h
 	printers/epson/externs.h
 	printers/epson/mx.h

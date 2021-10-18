@@ -27,10 +27,22 @@ namespace emu::lib::util
             : yMin(ymin), yMax(ymax), xMin(xmin), xMax(xmax)
             { }
 
-            inline constexpr int getLeft() const { return xMin; }
-            inline constexpr int getRight() const { return xMax; }
-            inline constexpr int getTop() const { return yMin; }
-            inline constexpr int getBottom() const { return yMax; }
+            inline constexpr int getLeft() const    { return xMin; }
+            inline constexpr int getRight() const   { return xMax; }
+            inline constexpr int getTop() const     { return yMin; }
+            inline constexpr int getBottom() const  { return yMax; }
+
+            inline constexpr int getWidth() const   { return xMax + 1 - xMin; }
+            inline constexpr int getHeight() const  { return yMax + 1 - yMin; }
+            inline constexpr int getXCenter() const { return (xMin + xMax + 1) / 2; }
+            inline constexpr int getYCenter() const { return (yMin + yMax + 1) / 2; }
+
+            inline constexpr bool isEmpty() const   { return (yMin > yMax) || (xMin > xMax); }
+            inline constexpr bool contains(int x, int y)
+                { return (yMin >= y) && (y <= yMax) && (x >= xMin) && (x <= xMax); }
+            inline constexpr bool contains(const Rectangle &rect)
+                { return (yMin <= rect.yMin) && (yMax >= rect.yMax) &&
+                         (xMin <= rect.xMin) && (xMax >= rect.xMax); }
 
             constexpr void set(int xmin, int xmax, int ymin, int ymax)
             { xMin = xmin; xMax = xmax; yMin = ymin; yMax = ymax; }
