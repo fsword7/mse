@@ -35,11 +35,28 @@ constexpr uint64_t SCRFLAG_PORTRAIT = 0;
 class ScreenDevice : public Device
 {
 public:
+
+	// Timer Device ID definitions
+	enum {
+		TID_VBLANK_START,
+		TID_VBLANK_END,
+		TID_SCANLINE0,
+		TID_SCANLINE
+	};
+
 	ScreenDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
+	
 	ScreenDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, scrType type)
 	: ScreenDevice(config, tagName, owner, 0)
 	{ 
 		setScreenType(type);
+	}
+
+	ScreenDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, scrType type, Color color)
+	: ScreenDevice(config, tagName, owner, 0)
+	{ 
+		setScreenType(type);
+		setColor(color);
 	}
 
 	~ScreenDevice() = default;
@@ -85,9 +102,16 @@ public:
 		 return *this;
 	}
 
+	ScreenDevice &setColor(Color newColor)
+	{
+		color = newColor;
+		return *this;
+	}
+
 	ScreenDevice &setVBlankTime(attoseconds_t time)
 	{
 		vblank = time;
+		vblankSupplied = true;
 		return *this;
 	}
 
@@ -121,6 +145,12 @@ public:
 		yScale = yscale;
 	}
 
+	void configure(int width, int height, rect_t area, attoseconds_t framePeriod);
+
+	// Timer device function calls
+	void startVBlank();
+	void endVBlank();
+
 private:
 	const SystemDriver &driver;
 
@@ -138,9 +168,20 @@ private:
 	int height = 100;
 	rect_t visualArea = { 0, width-1, 0, height-1 };
 
+	uint8_t brightness = 0xFF;
+	Color color = Color::white();
+
 	// Timing parameter definitions
+	bool          vblankSupplied = false;
 	attoseconds_t refresh = 0;
 	attoseconds_t vblank = 0;
+
+	attoseconds_t framePeriod = 0;
+	attoseconds_t scanTime = 0;
+	attoseconds_t pixelTime = 0;
+	attoseconds_t vblankPeriod = 0;
+	attotime_t    vblankStarTime = attotime_t::zero;
+	attotime_t    vblankEndTime = attotime_t::zero;
 };
 
 DECLARE_DEVICE_TYPE(Screen, ScreenDevice);
