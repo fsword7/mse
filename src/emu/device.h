@@ -143,6 +143,12 @@ public:
 	using DeviceType::create;
 
 	template <typename... Args>
+	DeviceClass *create(SystemConfig &config, cstag_t &devName, Device *owner, Args &&... args) const
+	{
+		return new DeviceClass(config, devName, owner, std::forward<Args>(args)...);
+	}
+
+	template <typename... Args>
 	DeviceClass *operator ()(SystemConfig &config, cstag_t &devName, Args&&... args) const;
 };
 
@@ -228,8 +234,9 @@ public:
 	void updateClock();
 
 	// Timer function calls
-	Timer *allocateTimer(void *data);
-	void setTimer(const attotime_t &duration, void *data, int32_t param);
+	Timer *allocateTimer(TimerDeviceID_t id = 0, void *data = nullptr);
+	void setTimer(const attotime_t &duration, TimerDeviceID_t id = 0,
+		int32_t param = 0, void *data = nullptr);
 
 	inline ifList_t getInterfaces() { return ifList; }
 

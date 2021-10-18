@@ -103,14 +103,14 @@ void Device::updateClock()
 	updateDeviceClock();
 }
 
-Timer *Device::allocateTimer(void *data)
+Timer *Device::allocateTimer(TimerDeviceID_t id, void *data)
 {
-	return ownMachine->getScheduler().allocateTimer(*this, 0, data);
+	return ownMachine->getScheduler().allocateTimer(*this, id, data);
 }
 
-void Device::setTimer(const attotime_t &duration, void *data, int32_t param)
+void Device::setTimer(const attotime_t &duration, TimerDeviceID_t id, int32_t param, void *data)
 {
-	ownMachine->getScheduler().setTimer(*this, duration, 0, data, param);
+	ownMachine->getScheduler().setTimer(*this, duration, id, data, param);
 }
 
 // ************************************************
