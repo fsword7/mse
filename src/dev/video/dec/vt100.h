@@ -25,6 +25,8 @@ namespace emu::video
             vt100_videoDevice(const SystemConfig &config, const DeviceType &type,
 			    const string &tagName, Device *owner, uint64_t clock);
 
+            void updateVideo();
+            void displayCharacter();
     };
 }
 

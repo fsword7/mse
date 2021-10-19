@@ -24,6 +24,8 @@ class vt100_vtDevice : public sysDevice
         void vt100_mem(aspace::AddressList &map);
         void vt100_iomem(aspace::AddressList &map);
 
+        uint32_t vt100_updateScreen(ScreenDevice &screen, bitmap16_t &bitmap, const rect_t &clip);
+
     private:
         i8080_cpuDevice *cpu = nullptr;
 };

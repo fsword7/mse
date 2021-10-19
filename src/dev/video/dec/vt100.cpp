@@ -41,3 +41,13 @@ void vt100_videoDevice::write8_brightness(offs_t off, uint8_t data)
 {
 
 }
+
+void vt100_videoDevice::displayCharacter()
+{
+
+}
+
+void vt100_videoDevice::updateVideo()
+{
+
+}

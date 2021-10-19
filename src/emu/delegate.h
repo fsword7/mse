@@ -182,10 +182,12 @@ public:
 };
 
 template <typename Signature>
+// template <typename ReturnType, typename... Args>
 class NamedDelegate : public Delegate<Signature>
 {
 private:
 	using base = Delegate<Signature>;
+	// using base = Delegate<ReturnType (Args...)>;
 
 protected:
 	template <class FunctionClass> using member_ptr_func =
@@ -220,42 +222,61 @@ private:
 	ctag_t *name = nullptr;
 };
 
-template <typename Signature>
-class DeviceDelegate : public NamedDelegate<Signature>
+class DeviceDelegateHelper
+{
+public:
+	DeviceDelegateHelper(Device *owner = nullptr, ctag_t *name = nullptr)
+	: base(owner), devName(name)
+	{ }
+
+	void setName(ctag_t *name) { devName = name; }
+
+private:
+	// std::reference_wrapper<Device> base;
+	Device *base;
+	ctag_t *devName;
+};
+
+template <typename Signature> class DeviceDelegate;
+
+template <typename ReturnType, typename... Args>
+class DeviceDelegate<ReturnType (Args...)>
+: public NamedDelegate<ReturnType (Args ...)>,
+  public DeviceDelegateHelper
 {
 private:
-	using dbase = DeviceDelegate<Signature>;
-	using nbase = NamedDelegate<Signature>;
-
-protected:
-	template<class FunctionClass> using member_ptr_func =
-			typename nbase::template member_ptr_func<FunctionClass>;
-	template<class FunctionClass> using member_ptr_cfunc =
-			typename nbase::template member_ptr_cfunc<FunctionClass>;
-	template<class FunctionClass> using static_ref_func =
-			typename nbase::template static_ref_func<FunctionClass>;
+	using nbase = NamedDelegate<ReturnType (Args ...)>;
 
 public:
-	DeviceDelegate() : nbase() {}
+	template <typename T>
+	using supportCallback = std::bool_constant<std::is_constructible_v<DeviceDelegate, Device &, ctag_t *, T, ctag_t *>>;
+
+	DeviceDelegate() : nbase(), DeviceDelegateHelper() {}
+	DeviceDelegate(Device &owner) : nbase(), DeviceDelegateHelper(&owner) {}
 	DeviceDelegate(const nbase &src)
-	: nbase(src), devName(src.devName) {}
+	: nbase(src) {}
 
-	template <class FunctionClass>
-	DeviceDelegate(ctag_t *name, ctag_t *devName, member_ptr_func<FunctionClass> func)
-	: nbase(name, func), devName(devName) {}
+	template <class D>
+	DeviceDelegate(Device &dev, ctag_t *devName, ReturnType (D::*func)(Args...), ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(nullptr)), DeviceDelegateHelper(&dev, devName)
+	{ }
 
-	template <class FunctionClass>
-	DeviceDelegate(ctag_t *name, ctag_t *devName, member_ptr_cfunc<FunctionClass> func)
-	: nbase(name, func), devName(devName) {}
+	template <class D>
+	DeviceDelegate(Device &dev, ctag_t *devName, ReturnType (D::*func)(Args...) const, ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(nullptr)), DeviceDelegateHelper(&dev, devName)
+	{ }
 
-	template <class FunctionClass>
-	DeviceDelegate(ctag_t *name, ctag_t *devName, static_ref_func<FunctionClass> func)
-	: nbase(name, func), devName(devName) {}
+	template <class D>
+	DeviceDelegate(Device &dev, ctag_t *devName, ReturnType (*func)(D &, Args...), ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(nullptr)), DeviceDelegateHelper(&dev, devName)
+	{ }
 
-	ctag_t *getName() const { return devName; }
-
-private:
-	ctag_t *devName = nullptr;
+	template <class D> void set(ReturnType (D::*func)(Args ...), ctag_t *name)
+		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
+	template <class D> void set(ReturnType (D::*func)(Args ...) const, ctag_t *name)
+		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
+	template <class D> void set(ReturnType (*func)(D &, Args ...), ctag_t *name)
+		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
 };
 
 typedef DeviceDelegate<int ()> readDelegate;

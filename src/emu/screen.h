@@ -32,6 +32,12 @@ enum scrFormat
 constexpr uint64_t SCRFLAG_LANDSCAPE = 0;
 constexpr uint64_t SCRFLAG_PORTRAIT = 0;
 
+class ScreenDevice;
+
+// typedef Delegate<void (ScreenDevice &)> vblankUpdateDelegate;
+typedef DeviceDelegate<uint32_t (ScreenDevice &, bitmap16_t &, const rect_t &)> screenUpdateDelgate16;
+typedef DeviceDelegate<uint32_t (ScreenDevice &, bitmap32_t &, const rect_t &)> screenUpdateDelgate32;
+
 class ScreenDevice : public Device
 {
 public:
@@ -115,6 +121,20 @@ public:
 		return *this;
 	}
 
+	template <typename F> std::enable_if_t<screenUpdateDelgate16::supportCallback<F>::value>
+	setScreenUpdate(F &&callback, ctag_t *name)
+	{
+		updateScreen16.set(std::forward<F>(callback), name);
+		updateScreen32 = screenUpdateDelgate32(*this);
+	}
+
+	template <typename F> std::enable_if_t<screenUpdateDelgate32::supportCallback<F>::value>
+	setScreenUpdate(F &&callback, ctag_t *name)
+	{
+		updateScreen32.set(std::forward<F>(callback), name);
+		updateScreen16 = screenUpdateDelgate16(*this);
+	}
+
 	// Virtual device function calls
 	void startDevice() override;
 	void stopDevice() override;
@@ -151,12 +171,22 @@ public:
 	void startVBlank();
 	void endVBlank();
 
+	void updateScanline(int scanline);
+
+	attotime_t getTimeUntilVBlankStart() const;
+	attotime_t getTimeUntilVBlankEnd() const;
+	attotime_t getTimeUntilPos(int vpos, int hpos) const;
+
+	inline bool isInVBlanking() const { return getMachine()->getTime() < vblankEndTime; }
+	inline bool isInHBlanking() const { return false; }
+
 private:
 	const SystemDriver &driver;
 
 	scrType type     = scrInvalid;
 	scrFormat format = scrUndefined;
 	uint64_t flags   = 0;
+	uint64_t frameNumber = 0;
 
 	double xOffset = 0.0;
 	double yOffset = 0.0;
@@ -180,10 +210,18 @@ private:
 	attoseconds_t scanTime = 0;
 	attoseconds_t pixelTime = 0;
 	attoseconds_t vblankPeriod = 0;
-	attotime_t    vblankStarTime = attotime_t::zero;
+	attotime_t    vblankStartTime = attotime_t::zero;
 	attotime_t    vblankEndTime = attotime_t::zero;
-};
 
+	Timer *vblankBeginTimer = nullptr;
+	Timer *vblankEndTimer = nullptr;
+	Timer *scanline0Timer = nullptr;
+	Timer *scanlineTimer = nullptr;
+
+	screenUpdateDelgate16 updateScreen16;
+	screenUpdateDelgate32 updateScreen32;
+};
+ 
 DECLARE_DEVICE_TYPE(Screen, ScreenDevice);
 
 using screen_t = ScreenDevice;

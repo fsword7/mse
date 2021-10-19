@@ -194,8 +194,8 @@ public:
 
 	inline const SystemConfig &getSystemConfig() const { return sysConfig; }
 
-	inline Machine *getMachine() { return ownMachine; }
-	inline devCommand_t *getCommands() { return devCommands; }
+	inline Machine *getMachine() const { return ownMachine; }
+	inline devCommand_t *getCommands() const { return devCommands; }
 
 //	inline void setMachine(Machine *sys) { ownMachine = sys; }
 	inline void setCommands(devCommand_t *cmds) { devCommands = cmds; }

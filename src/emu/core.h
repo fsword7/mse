@@ -13,6 +13,7 @@
 #include <typeinfo>
 #include <thread>
 #include <functional>
+#include <type_traits>
 
 #include <vector>
 #include <map>
