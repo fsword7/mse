@@ -15,6 +15,12 @@ public:
 	diVideo(device_t *owner);
 	virtual ~diVideo() = default;
 
+	void setScreenName(ctag_t *name) { screenName = name; }
+	
 protected:
+	bool    screenRequired = false;
+	Device *screenBase = nullptr;
+	ctag_t *screenName = nullptr;
+
     screen_t *screen = nullptr;
 };

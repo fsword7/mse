@@ -66,12 +66,14 @@ typedef const string cstag_t;
 #include "lib/util/color.h"
 // #include "lib/util/list.h"
 #include "lib/util/time.h"
+#include "emu/delegate.h"
 #include "emu/debug.h"
 #include "emu/console.h"
 #include "emu/map/romentry.h"
+#include "emu/map/map.h"
 #include "emu/sysconfig.h"
 #include "emu/device.h"
-#include "emu/map/map.h"
+#include "emu/devfinder.h"
 
 #include "emu/machine.h"
 

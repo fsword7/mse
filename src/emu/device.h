@@ -10,7 +10,7 @@
 #include <type_traits>
 
 #include "emu/debugger/device.h"
-#include "emu/delegate.h"
+// #include "emu/delegate.h"
 #include "emu/list.h"
 
 class SystemConfig;
@@ -175,6 +175,7 @@ class diExternalBus;
 class diExecute;
 class diDebug;
 class Timer;
+// class mapMemoryRegion;
 
 class Device
 : public BindedDelegate,
@@ -245,6 +246,8 @@ public:
 
 	// Memory management function calls
 	const romEntry_t *mapGetROMEntries();
+
+	mapMemoryRegion *findMemoryRegion(ctag_t *name);
 
 	// local device function calls
 	void configure(SystemConfig &config);

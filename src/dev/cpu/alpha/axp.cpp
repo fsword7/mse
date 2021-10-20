@@ -6,9 +6,7 @@
  */
 
 #include "emu/core.h"
-#include "emu/device.h"
 #include "emu/sysconfig.h"
-#include "emu/map/map.h"
 #include "dev/cpu/alpha/axp.h"
 
 alpha_cpuDevice::alpha_cpuDevice(const SystemConfig &config, const DeviceType &type,

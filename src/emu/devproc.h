@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "emu/map/map.h"
 #include "emu/diexec.h"
 #include "emu/dibus.h"
 #include "emu/distate.h"

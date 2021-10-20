@@ -7,6 +7,8 @@
 
 #pragma once
 
+class Device;
+
 using GenericFunc = void(*)();
 class GenericClass;
 

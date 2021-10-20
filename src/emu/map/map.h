@@ -34,6 +34,8 @@ namespace aspace
 class cpuDevice;
 class Machine;
 class Console;
+class Device;
+class diExternalBus;
 
 namespace aspace
 {

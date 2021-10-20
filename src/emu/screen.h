@@ -70,7 +70,7 @@ public:
 	// Post-constructor setting function calls
 
 	// Configure screen parameter settings for visible display
-	ScreenDevice &configureScreen(uint64_t pixClock,
+	ScreenDevice &setScreenArea(uint64_t pixClock,
 		uint16_t htotal, uint16_t hstart, uint16_t hend,
 		uint16_t vtotal, uint16_t vstart, uint16_t vend)
 	{
