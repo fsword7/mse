@@ -63,6 +63,7 @@ set(MSE_CPP_SRCS
 	emu/console.cpp
 	emu/debug.cpp
 	emu/delegate.cpp
+	emu/devfinder.cpp
 	emu/device.cpp
 	emu/devproc.cpp
 	emu/devsys.cpp
@@ -140,6 +141,7 @@ set(MSE_H_SRCS
 	emu/core.h
 	emu/debug.h
 	emu/delegate.h
+	emu/devfinder.h
 	emu/device.h
 	emu/devproc.h
 	emu/devsys.h
