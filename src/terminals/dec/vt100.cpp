@@ -27,6 +27,11 @@ uint32_t vt100_vtDevice::vt100_updateScreen(ScreenDevice &screen, bitmap16_t &bi
     return 0;
 }
 
+uint8_t vt100_vtDevice::readData(offs_t addr)
+{
+    return ramData[addr];
+}
+
 void vt100_vtDevice::vt100(SystemConfig &config)
 {
 
@@ -41,6 +46,7 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     crt = VT100_VIDEO(config, "crt", XTAL(24'073'400));
     crt->setScreenName("screen");
     crt->setCharData("chargen");
+    // crt->getReadRAMAccessCallback().set(FUNC(vt100_vtDevice::readData));
 }
 
 void vt100_vtDevice::vt100_init()
@@ -61,7 +67,7 @@ void vt100_vtDevice::vt100_mem(AddressList &map)
 {
     map.setUnmapHigh();
     map(0x0000, 0x1FFF).rom().region("vt100fw");
-    map(0x2000, 0x3FFF).ram();
+    map(0x2000, 0x3FFF).ram().share("ram");
     map(0x8000, 0x9FFF).rom();
     map(0xA000, 0xBFFF).rom();
 }

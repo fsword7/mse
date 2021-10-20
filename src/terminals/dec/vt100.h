@@ -11,10 +11,12 @@ class vt100_vtDevice : public sysDevice
 {
     public:
         vt100_vtDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
-        : sysDevice(config, type, tagName, clock)
+        : sysDevice(config, type, tagName, clock),
+          ramData(*this, "ram")
         {
 
         }
+
         ~vt100_vtDevice() = default;
 
         void vt100(SystemConfig &config);
@@ -25,8 +27,11 @@ class vt100_vtDevice : public sysDevice
         void vt100_iomem(aspace::AddressList &map);
 
         uint32_t vt100_updateScreen(ScreenDevice &screen, bitmap16_t &bitmap, const rect_t &clip);
-
+        uint8_t readData(offs_t addr);
+        
     private:
         i8080_cpuDevice *cpu = nullptr;
         vt100video_t *crt = nullptr;
+
+        RequiredSharedPointer<uint8_t> ramData;
 };
