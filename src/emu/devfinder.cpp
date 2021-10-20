@@ -43,6 +43,28 @@ void *ObjectFinder::findMemoryRegion(uint8_t width, size_t &size, bool required)
     return region->getBase();
 }
 
+void *ObjectFinder::findMemoryShared(uint8_t width, size_t &size, bool required) const
+{
+    mapMemoryShare *share = nullptr;
+
+    if (share == nullptr)
+    {
+        size = 0;
+        return nullptr;
+    }
+
+    if (share->getBitWidth() != width)
+    {
+        // if (required)
+        size = 0;
+        return nullptr;
+    }
+
+    // memory region had been found.. all done.
+    size = share->getBytes() / width;
+    return share->getData();
+}
+
 bool ObjectFinder::validate(bool found, bool required, ctag_t *objName)
 {
     if (required && objName == nullptr)
