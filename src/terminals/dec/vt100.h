@@ -28,4 +28,5 @@ class vt100_vtDevice : public sysDevice
 
     private:
         i8080_cpuDevice *cpu = nullptr;
+        vt100video_t *crt = nullptr;
 };

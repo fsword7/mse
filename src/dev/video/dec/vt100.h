@@ -16,6 +16,8 @@ namespace emu::video
         public:
             vt100_videoDevice(const SystemConfig &config, cstag_t &tagName, Device *owner, uint64_t clock);
 
+            void setCharData(ctag_t *name) { romCharData.setObjectName(name); }
+
             // I/O access function calls
             void write8_dc11(offs_t off, uint8_t data);
             void write8_dc12(offs_t off, uint8_t data);
@@ -27,7 +29,11 @@ namespace emu::video
 
             void updateVideo();
             void displayCharacter();
+
+            RequiredRegionPointer<uint8_t> romCharData;
     };
 }
 
 DECLARE_DEVICE_TYPE(VT100_VIDEO, emu::video::vt100_videoDevice);
+
+using vt100video_t = emu::video::vt100_videoDevice;

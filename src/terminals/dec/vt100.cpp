@@ -23,6 +23,7 @@ using namespace aspace;
 
 uint32_t vt100_vtDevice::vt100_updateScreen(ScreenDevice &screen, bitmap16_t &bitmap, const rect_t &clip)
 {
+    // crt->updateVideo();
     return 0;
 }
 
@@ -34,9 +35,12 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     cpu->setAddressMap(AS_IOPORT, &vt100_vtDevice::vt100_iomem);
 
     screen_t *screen = Screen(config, "screen", scrRaster, Color::amber());
-    screen->configureScreen(XTAL(24'073'400) * 2/3, 102*10, 0, 80*10, 262, 0, 25*10);
+    screen->setScreenArea(XTAL(24'073'400) * 2/3,  102*10, 0, 80*10,  262, 0, 25*10);
     screen->setScreenUpdate(FUNC(vt100_vtDevice::vt100_updateScreen));
 
+    crt = VT100_VIDEO(config, "crt", XTAL(24'073'400));
+    crt->setScreenName("screen");
+    crt->setCharData("chargen");
 }
 
 void vt100_vtDevice::vt100_init()

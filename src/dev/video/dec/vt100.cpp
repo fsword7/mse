@@ -16,6 +16,7 @@ DEFINE_DEVICE_TYPE(VT100_VIDEO, vt100_videoDevice, "Vt100_video", "VT100 video c
 vt100_videoDevice::vt100_videoDevice(const SystemConfig &config, const DeviceType &type,
 	const string &tagName, Device *owner, uint64_t clock)
 : Device(config, type, tagName, owner, clock),
+  romCharData(*this, nullptr),
   diVideo(this)
 {
 
