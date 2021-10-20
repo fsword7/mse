@@ -84,28 +84,28 @@ namespace aspace
 		inline int16_t  getAddrShift()  const { return addrShift; }
 		inline int16_t  getPageShift()  const { return pageShift; }
 
-		inline offs_t convertAddresstoByte(offs_t address) const
+		inline offs_t convertAddressToByte(offs_t address) const
 		{
 			return (addrShift < 0)
 				? (address << -addrShift)
 				: (address >> addrShift);
 		}
 
-		inline offs_t convertBytetoAddress(offs_t address) const
+		inline offs_t convertByteToAddress(offs_t address) const
 		{
 			return (addrShift > 0)
 				? (address << addrShift)
 				: (address >> -addrShift);
 		}
 
-		inline offs_t convertAddresstoByteEnd(offs_t address) const
+		inline offs_t convertAddressToByteEnd(offs_t address) const
 		{
 			return (addrShift < 0)
 				? ((address << -addrShift) | ((1 << -addrShift) - 1))
 				: (address >> addrShift);
 		}
 
-		inline offs_t convertBytetoAddressEnd(offs_t address) const
+		inline offs_t convertByteToAddressEnd(offs_t address) const
 		{
 			return (addrShift > 0)
 				? ((address << addrShift) | ((1 << addrShift) - 1))
@@ -931,11 +931,11 @@ namespace aspace
 		HandlerEntry *nopWrite = nullptr;
 	};
 
-	class MemoryBlock
+	class oldMemoryBlock
 	{
 	public:
-		MemoryBlock(AddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
-		~MemoryBlock() = default;
+		oldMemoryBlock(AddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
+		~oldMemoryBlock() = default;
 
 		inline offs_t getStartAddress() const { return addrStart; }
 		inline offs_t getEndAddress() const   { return addrEnd; }
@@ -956,13 +956,46 @@ namespace aspace
 		vector<uint8_t> allocated;
 	};
 
+	class MemoryBlock
+	{
+	public:
+		MemoryBlock(cstag_t &name, size_t bytes, int width, endian_t type)
+		: name(name), length(bytes), width(width), type(type)
+		{
+			assert(width == 8 || width == 16 || width == 32 || width == 64);
+
+			// Now allocating memory space
+			data.resize(bytes);
+		}
+
+		~MemoryBlock() = default;
+
+		inline uint8_t *getData() const   { return (data.size() > 0) ? data.data() : nullptr; }
+		inline size_t   getSize() const   { return data.size(); }
+		inline cstag_t  getName() const   { return name; }
+		inline int      getWidth() const  { return width; }
+
+	private:
+		// Device  &device;
+		// int      space;
+
+		mutable vector<uint8_t> data;
+
+		cstag_t         name;
+		size_t          length;
+		int             width;
+		endian_t        type;
+	};
+
 	class MemoryRegion
 	{
 	public:
-		MemoryRegion(Machine *sys, cstag_t &name, uint64_t size, int width, endian_t type)
-		: system(sys), name(name), data(size), width(width), type(type)
+		MemoryRegion(Machine *sys, cstag_t &name, uint64_t bytes, int width, endian_t type)
+		: system(sys), name(name), width(width), type(type)
 		{
 			assert(width == 8 || width == 16 || width == 32 || width == 64);
+
+			data.resize(bytes);
 		}
 
 		inline Machine  *getMachine() const  { return system; }
@@ -989,7 +1022,43 @@ namespace aspace
 		endian_t        type;
 	};
 
+	class MemoryShare
+	{
+	public:
+		MemoryShare(void *data, cstag_t name, uint8_t width, size_t bytes, endian_t type)
+		: data(data), size(bytes), name(name), type(type), bitWidth(width),
+		  byteWidth(width <= 8 ? 1 : width <= 16 ? 2 : width <= 32 ? 4 : 8)
+		{}
+
+		cstag_t  getName() const       { return name; }
+		void    *getData() const       { return data; }
+		size_t   getBytes() const      { return size; }
+		int      getBitWidth() const   { return bitWidth; }
+		int      getByteWidth() const  { return byteWidth; }
+		endian_t getEndianType() const { return type; }
+
+		cstag_t compare(size_t bytes, int width, endian_t type) const;
+
+	private:
+		void     *data;
+		size_t    size;
+		cstag_t   name;
+		endian_t  type;
+		int       bitWidth;
+		int       byteWidth;
+	};
+
+	class MemoryBank
+	{
+	private:
+		vector<uint8_t *> entries;
+		int               idxEntry;
+		cstag_t           name;
+	};
+
 	using BlockList =  vector<MemoryBlock *>;
+	using ShareList =  std::map<string, MemoryShare *>;
+	using BankList =   std::map<string, MemoryBank *>;
 	using RegionList = std::map<string, MemoryRegion *>;
 
 	class BusManager
@@ -1000,15 +1069,25 @@ namespace aspace
 
 		inline Machine *getMachine()       { return system; }
 		inline BlockList &getBlockList()   { return blocks; }
+		inline ShareList &getShareList()   { return shares; }
+		inline BankList &getBankList()     { return banks; }
 		inline RegionList &getRegionList() { return regions; }
 
 		inline uint8_t *getMemoryData() const { return memData; }
 		inline uint64_t getMemorySize() const { return memSize; }
 
+
+		uint8_t *allocateMemory(Device &device, int space, cstag_t &name, int bytes, int width, endian_t type);
+
 		void allocateMainMemory(uint64_t size, uint8_t value = 0);
 		MemoryRegion *allocateRegion(cstag_t &name, uint64_t size, int width, endian_t type);
-		void releaseRegion(cstag_t &name);
+		void releaseRegion(cstag_t &name);	
 		MemoryRegion *findRegion(cstag_t &name);
+
+		MemoryShare *allocateShare(Device &device, cstag_t &name, size_t bytes, int width, endian_t type);
+		MemoryShare *findShare(cstag_t &name);
+		
+		MemoryBank *findBank(cstag_t &name);
 
 		// Executed from start command
 		void init(Console *cty);
@@ -1016,8 +1095,10 @@ namespace aspace
 		uint8_t *allocateMemory(AddressSpace *space, offs_t start, offs_t end, offs_t size);
 
 	private:
-		Machine *system = nullptr;
-		BlockList blocks;
+		Machine   *system = nullptr;
+		BlockList  blocks;
+		ShareList  shares;
+		BankList   banks;
 		RegionList regions;
 
 		// Main memory space allocation
@@ -1063,5 +1144,7 @@ using mapAddressConfig = aspace::AddressConfig;
 using mapAddressSpace  = aspace::AddressSpace;
 using mapMemoryBlock   = aspace::MemoryBlock;
 using mapMemoryRegion  = aspace::MemoryRegion;
+using mapMemoryShare   = aspace::MemoryShare;
+using mapMemoryBank    = aspace::MemoryBank;
 using mapBusManager    = aspace::BusManager;
 

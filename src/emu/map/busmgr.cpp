@@ -107,6 +107,15 @@ uint8_t *BusManager::allocateMemory(AddressSpace *space, offs_t start, offs_t en
 	return new uint8_t[size];
 }
 
+uint8_t *BusManager::allocateMemory(Device &device, int space, cstag_t &name, int bytes, int width, endian_t type)
+{
+	// void *data = allocateMemory(device, 0, name, bytes, width, type);
+
+	MemoryBlock *block = new MemoryBlock(name, bytes, width, type);
+	blocks.push_back(block);
+	return block->getData();
+}
+
 MemoryRegion *BusManager::allocateRegion(cstag_t &name, uint64_t size, int width, endian_t type)
 {
 	MemoryRegion *region = new MemoryRegion(system, name, size, width, type);
@@ -124,6 +133,34 @@ MemoryRegion *BusManager::findRegion(cstag_t &name)
 {
 	auto entry = regions.find(name);
 	if (entry != regions.end())
+		return entry->second;
+	return nullptr;
+}
+
+MemoryBank *BusManager::findBank(cstag_t &name)
+{
+	auto entry = banks.find(name);
+	if (entry != banks.end())
+		return entry->second;
+	return nullptr;
+}
+
+MemoryShare *BusManager::allocateShare(Device &device, cstag_t &name, size_t bytes, int width, endian_t type)
+{
+	if (findShare(name) != nullptr)
+		return nullptr;
+
+	void *data = allocateMemory(device, 0, name, bytes, width, type);
+
+	MemoryShare *share = new MemoryShare(data, name, width, bytes, type);
+	shares.emplace(name, share);
+	return share;
+}
+
+MemoryShare *BusManager::findShare(cstag_t &name)
+{
+	auto entry = shares.find(name);
+	if (entry != shares.end())
 		return entry->second;
 	return nullptr;
 }

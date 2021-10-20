@@ -21,6 +21,7 @@ namespace aspace
 		mapROMSpace,	// ROM space
 		mapRAMSpace,	// RAM space
 		mapPort,		// I/O type access
+		mapBank,        // Bank space access
 		mapDelegate,	// Device delegate (callbacks)
 		mapNop,			// Non-operation - do nothing
 		mapVoid			// Non-existent - exception trap
@@ -62,6 +63,14 @@ namespace aspace
 		AddressEntry &ronly() { read.type = mapRAMSpace;  return *this; }
 		AddressEntry &wonly() { write.type = mapRAMSpace; return *this; }
 
+		AddressEntry &portr(ctag_t *name)    { read.type = mapPort; read.name = name; return *this; }
+		AddressEntry &portw(ctag_t *name)    { write.type = mapPort; write.name = name; return *this; }
+		AddressEntry &portrw(ctag_t *name)   { portr(name); portw(name); return *this; }
+	
+		AddressEntry &bankr(ctag_t *name)    { read.type = mapBank; read.name = name; return *this; }
+		AddressEntry &bankw(ctag_t *name)    { write.type = mapBank; write.name = name; return *this; }
+		AddressEntry &bankrw(ctag_t *name)   { bankr(name); bankw(name); return *this; }
+
 		// User-defined memory configuration management
 		AddressEntry &expandable()       { expFlag = true; return *this; }
 		AddressEntry &unexpandable()     { expFlag = false; return *this; }
@@ -70,6 +79,7 @@ namespace aspace
 		AddressEntry &mirror(offs_t bits) { addrMirror = bits; return *this; }
 
 		AddressEntry &region(ctag_t *name, offs_t off = 0);
+		AddressEntry &share(ctag_t *name) { shareName = name; return *this; }
 
 		AddressEntry &mask(offs_t mask);
 
@@ -126,6 +136,9 @@ namespace aspace
 		// Memory region parameters
 		ctag_t *regionName = nullptr;
 		offs_t  regionOffset = 0;
+
+		// Memory share parameters
+		ctag_t *shareName = nullptr;
 
 		// read/write access handler
 		mapHandler read, write;

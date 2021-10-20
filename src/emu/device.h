@@ -248,6 +248,8 @@ public:
 	const romEntry_t *mapGetROMEntries();
 
 	mapMemoryRegion *findMemoryRegion(ctag_t *name);
+	mapMemoryBank *findMemoryBank(ctag_t *name);
+	mapMemoryShare *findMemoryShare(ctag_t *name);
 
 	// local device function calls
 	void configure(SystemConfig &config);

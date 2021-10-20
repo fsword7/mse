@@ -58,6 +58,33 @@ void AddressSpace::prepare(Console *cty)
 		fmt::printf("%s(%s): Mapping %llX-%llX mask %llX mirror %llX\n", device.getDeviceName(), asInfo[space],
 			entry->addrStart, entry->addrEnd, entry->addrMask, entry->addrMirror);
 
+		if (entry->shareName != nullptr)
+		{
+			MemoryShare *share = manager.findShare(entry->shareName);
+
+			if (share == nullptr)
+			{
+				// Allocate sharing named memory space
+				size_t length = config.convertAddressToByte(entry->addrEnd+1 - entry->addrStart);
+
+				fmt::printf("%s(%s): Creating share '%s' of length %X\n", device.getDeviceName(),
+					asInfo[space], entry->shareName, length);
+				share = manager.allocateShare(device, entry->shareName, length,
+					config.getDataWidth(), config.getEndianType());
+				entry->memData = (uint8_t *)share->getData();
+			}
+			else
+			{
+				// Assign sharing memory space from memory share list
+				size_t length = config.convertAddressToByte(entry->addrEnd+1 - entry->addrStart);
+				cstag_t result = share->compare(length, config.getDataWidth(), config.getEndianType());
+				if (!result.empty())
+					fmt::printf("%s(%s): %s\n", device.getDeviceName(), asInfo[space], result);
+				else
+					entry->memData = (uint8_t *)share->getData();
+			}
+		}
+
 		// Validate addresses against named region space (expandable or non-expandable)
 		if (entry->regionName != nullptr)
 		{
@@ -87,8 +114,11 @@ void AddressSpace::prepare(Console *cty)
 		{
 			fmt::printf("%s(%s): %llX-%llX - allocating anonymous memory space\n", device.getDeviceName(), asInfo[space],
 				entry->addrStart, entry->addrEnd);
-			entry->memData = manager.allocateMemory(this, entry->addrStart, entry->addrEnd,
-				entry->addrEnd - entry->addrStart + 1);
+			// entry->memData = manager.allocateMemory(this, entry->addrStart, entry->addrEnd,
+			// 	entry->addrEnd - entry->addrStart + 1);
+			entry->memData = manager.allocateMemory(device, space, "(anonymous)",
+				config.convertAddressToByte(entry->addrEnd+1 - entry->addrStart),
+				config.getDataWidth(), config.getEndianType());
 		}
 	}
 }
@@ -149,11 +179,11 @@ void AddressSpace::allocate(Console *cty)
 
 // **********************************************************************
 
-MemoryBlock::MemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base)
+oldMemoryBlock::oldMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base)
 : config(config), addrStart(sAddr), addrEnd(eAddr),
   dataBase(reinterpret_cast<uint8_t *>(base))
 {
-	maxSize  = config.convertAddresstoByte(sAddr + 1 - eAddr);
+	maxSize  = config.convertAddressToByte(sAddr + 1 - eAddr);
 	dataSize = maxSize;
 
 	// allocate memory space as default
@@ -165,7 +195,7 @@ MemoryBlock::MemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, v
 	}
 }
 
-void MemoryBlock::reserve(offs_t size)
+void oldMemoryBlock::reserve(offs_t size)
 {
 	if (size > maxSize)
 		size = maxSize;
@@ -173,4 +203,19 @@ void MemoryBlock::reserve(offs_t size)
 	memset(&allocated[0], 0, size);
 	dataBase = &allocated[0];
 	dataSize = size;
+}
+
+cstag_t MemoryShare::compare(size_t bytes, int width, endian_t type) const
+{
+	if (width != bitWidth)
+		return fmt::sprintf("Share '%s' found with unexpected width (expected %d, found %d)",
+			name, width, bitWidth);
+	if (bytes != size)
+		return fmt::sprintf("Share '%s' found with unexpected size (expected %d, found %x)",
+			name, bytes, size);
+	if (type != this->type)
+		return fmt::sprintf("Share '%s' found with unexpected endian type (expected %s, found %s)",
+			name, type == LittleEndian ? "little" : "big",
+			this->type == LittleEndian ? "little" : "big");
+	return "";
 }

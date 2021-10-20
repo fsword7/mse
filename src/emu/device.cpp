@@ -101,6 +101,16 @@ mapMemoryRegion *Device::findMemoryRegion(ctag_t *name)
 	return ownMachine->getExternalBusManager().findRegion(name);
 }
 
+mapMemoryBank *Device::findMemoryBank(ctag_t *name)
+{
+	return ownMachine->getExternalBusManager().findBank(name);
+}
+
+mapMemoryShare *Device::findMemoryShare(ctag_t *name)
+{
+	return ownMachine->getExternalBusManager().findShare(name);
+}
+
 void Device::updateClock()
 {
 	for (auto &iface : ifList)
