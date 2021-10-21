@@ -111,6 +111,24 @@ mapMemoryShare *Device::findMemoryShare(ctag_t *name)
 	return ownMachine->getExternalBusManager().findShare(name);
 }
 
+void Device::registerObject(ObjectFinder *object)
+{
+	objectList.push_back(object);
+}
+
+bool Device::findObjects()
+{
+	bool allFound = true;
+	for (auto &object : objectList)
+		allFound &= object->find();
+	return allFound;
+}
+
+void Device::resolvePostMapping()
+{
+	findObjects();
+}
+
 void Device::updateClock()
 {
 	for (auto &iface : ifList)

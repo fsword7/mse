@@ -73,6 +73,10 @@ void Machine::start(Console *cty)
 
 	busManager.init(cty);
 
+	// Finding required objects to being linked
+	for (Device &dev : DeviceIterator(*system))
+		dev.resolvePostMapping();
+
 	// if (debugFlags & DBGFLG_ENABLED)
 	// 	initDebugger();
 

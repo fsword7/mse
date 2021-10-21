@@ -13,6 +13,8 @@ public:
     virtual ~ObjectFinder() = default;
 
     void setObjectName(ctag_t *name);
+    
+    virtual bool find() = 0;
 
 protected:
     ObjectFinder(Device &base, ctag_t *objName);
@@ -21,8 +23,6 @@ protected:
 
     void *findMemoryRegion(uint8_t width, size_t &size, bool required) const;
     void *findMemoryShared(uint8_t width, size_t &size, bool required) const;
-
-    virtual bool find() = 0;
 
     Device &base;
     ctag_t *objName;
@@ -99,7 +99,7 @@ private:
             (this->findMemoryRegion(sizeof(PointerType), size, Required));
         this->isResolved = true;
 
-        return this->validate("memory region");
+        return this->validate("region memory");
     }
 
     size_t size = 0;
@@ -131,7 +131,7 @@ private:
             (this->findMemoryShared(sizeof(PointerType), size, Required));
         this->isResolved = true;
 
-        return this->validate("memory share");
+        return this->validate("shared memory");
     }
 
     size_t size = 0;

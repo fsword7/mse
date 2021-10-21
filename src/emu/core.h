@@ -72,8 +72,9 @@ typedef const string cstag_t;
 #include "emu/map/romentry.h"
 #include "emu/map/map.h"
 #include "emu/sysconfig.h"
-#include "emu/device.h"
+#include "emu/devcall.h"
 #include "emu/devfinder.h"
+#include "emu/device.h"
 
 #include "emu/machine.h"
 

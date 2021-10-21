@@ -176,6 +176,7 @@ class diExecute;
 class diDebug;
 class Timer;
 // class mapMemoryRegion;
+class ObjectFinder;
 
 class Device
 : public BindedDelegate,
@@ -251,6 +252,10 @@ public:
 	mapMemoryBank *findMemoryBank(ctag_t *name);
 	mapMemoryShare *findMemoryShare(ctag_t *name);
 
+	void registerObject(ObjectFinder *object);
+	bool findObjects();
+	void resolvePostMapping();
+
 	// local device function calls
 	void configure(SystemConfig &config);
 	void start();
@@ -297,6 +302,8 @@ private:
 
 	// device interface section
 	ifList_t ifList;
+
+	vector<ObjectFinder *> objectList;
 
 protected:
 	friend class diExternalBus;
