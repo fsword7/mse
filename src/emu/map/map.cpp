@@ -179,32 +179,6 @@ void AddressSpace::allocate(Console *cty)
 
 // **********************************************************************
 
-oldMemoryBlock::oldMemoryBlock(mapAddressConfig &config, offs_t sAddr, offs_t eAddr, void *base)
-: config(config), addrStart(sAddr), addrEnd(eAddr),
-  dataBase(reinterpret_cast<uint8_t *>(base))
-{
-	maxSize  = config.convertAddressToByte(sAddr + 1 - eAddr);
-	dataSize = maxSize;
-
-	// allocate memory space as default
-	if (dataBase != nullptr)
-	{
-		allocated.reserve(dataSize);
-		memset(&allocated[0], 0, dataSize);
-		dataBase = &allocated[0];
-	}
-}
-
-void oldMemoryBlock::reserve(offs_t size)
-{
-	if (size > maxSize)
-		size = maxSize;
-	allocated.reserve(size);
-	memset(&allocated[0], 0, size);
-	dataBase = &allocated[0];
-	dataSize = size;
-}
-
 cstag_t MemoryShare::compare(size_t bytes, int width, endian_t type) const
 {
 	if (width != bitWidth)

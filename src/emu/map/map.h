@@ -931,31 +931,6 @@ namespace aspace
 		HandlerEntry *nopWrite = nullptr;
 	};
 
-	class oldMemoryBlock
-	{
-	public:
-		oldMemoryBlock(AddressConfig &config, offs_t sAddr, offs_t eAddr, void *base = nullptr);
-		~oldMemoryBlock() = default;
-
-		inline offs_t getStartAddress() const { return addrStart; }
-		inline offs_t getEndAddress() const   { return addrEnd; }
-		inline uint8_t *getData() const       { return dataBase; }
-		inline offs_t getSize() const         { return dataSize; }
-
-		void reserve(offs_t size);
-
-	private:
-		AddressConfig &config;
-
-		offs_t   addrStart;
-		offs_t   addrEnd;
-		uint8_t *dataBase;
-		offs_t   dataSize;
-		offs_t   maxSize;
-
-		vector<uint8_t> allocated;
-	};
-
 	class MemoryBlock
 	{
 	public:
