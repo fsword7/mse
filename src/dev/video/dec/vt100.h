@@ -18,16 +18,21 @@ namespace emu::video
 
             void setCharData(ctag_t *name) { romCharData.setObjectName(name); }
 
+            auto getReadRAMDataCallback() { return readRAMData.bind(); }
+
             // I/O access function calls
-            void write8_dc11(offs_t off, uint8_t data);
-            void write8_dc12(offs_t off, uint8_t data);
+            void write8_dc011(offs_t off, uint8_t data);
+            void write8_dc012(offs_t off, uint8_t data);
             void write8_brightness(offs_t off, uint8_t data);
+
+            void updateVideo(bitmap16_t &bitmap, const rect_t &clip);
 
         protected:
             vt100_videoDevice(const SystemConfig &config, const DeviceType &type,
 			    const string &tagName, Device *owner, uint64_t clock);
 
-            void updateVideo();
+            cbRead8_t readRAMData;
+
             void displayCharacter();
 
             RequiredRegionPointer<uint8_t> romCharData;

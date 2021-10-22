@@ -23,7 +23,7 @@ using namespace aspace;
 
 uint32_t vt100_vtDevice::vt100_updateScreen(ScreenDevice &screen, bitmap16_t &bitmap, const rect_t &clip)
 {
-    // crt->updateVideo();
+    crt->updateVideo(bitmap, clip);
     return 0;
 }
 
@@ -46,7 +46,7 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     crt = VT100_VIDEO(config, "crt", XTAL(24'073'400));
     crt->setScreenName("screen");
     crt->setCharData("chargen");
-    // crt->getReadRAMAccessCallback().set(FUNC(vt100_vtDevice::readData));
+    crt->getReadRAMDataCallback().set(FUNC(vt100_vtDevice::readData));
 }
 
 void vt100_vtDevice::vt100_init()
@@ -88,6 +88,10 @@ void vt100_vtDevice::vt100_mem(AddressList &map)
 void vt100_vtDevice::vt100_iomem(AddressList &map)
 {
     map.setUnmapHigh();
+
+    // map(0x42, 0x42).w(*crt, FUNC(vt100video_t::write8_brightness));
+    // map(0xA2, 0xA2).w(*crt, FUNC(vt100video_t::write8_dc012));
+    // map(0xC2, 0xC2).w(*crt, FUNC(vt100video_t::write8_dc011));
 }
 
 static const romEntry_t ROM_NAME(vt100)[] =

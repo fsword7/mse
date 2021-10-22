@@ -17,6 +17,7 @@ vt100_videoDevice::vt100_videoDevice(const SystemConfig &config, const DeviceTyp
 	const string &tagName, Device *owner, uint64_t clock)
 : Device(config, type, tagName, owner, clock),
   romCharData(*this, nullptr),
+  readRAMData(*this),
   diVideo(this)
 {
 
@@ -28,12 +29,12 @@ vt100_videoDevice::vt100_videoDevice(const SystemConfig &config, cstag_t &tagNam
 
 }
 
-void vt100_videoDevice::write8_dc11(offs_t off, uint8_t data)
+void vt100_videoDevice::write8_dc011(offs_t off, uint8_t data)
 {
 
 }
 
-void vt100_videoDevice::write8_dc12(offs_t off, uint8_t data)
+void vt100_videoDevice::write8_dc012(offs_t off, uint8_t data)
 {
 
 }
@@ -48,7 +49,7 @@ void vt100_videoDevice::displayCharacter()
 
 }
 
-void vt100_videoDevice::updateVideo()
+void vt100_videoDevice::updateVideo(bitmap16_t &bitmap, const rect_t &clip)
 {
 
 }
