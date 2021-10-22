@@ -44,17 +44,12 @@ namespace aspace
 		AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t end);
 
 		template <typename T, typename U>
-		static std::enable_if_t<std::is_convertible<std::add_pointer_t<U>, std::add_pointer_t<T>>::value, T *>
-			make_pointer(U &obj)
+		static T *make_pointer(U &object)
 		{
-			return &dynamic_cast<T &>(obj);
-		}
-
-		template <typename T, typename U>
-		static std::enable_if_t<!std::is_convertible<std::add_pointer_t<U>, std::add_pointer_t<T>>::value, T *>
-			make_pointer(U &obj)
-		{
-			return &static_cast<T &>(obj);
+			if constexpr (std::is_convertible_v< std::add_pointer_t<U>, std::add_pointer_t<T> >)
+				return &mse_static_cast<T &>(object);
+			else
+				return &dynamic_cast<T &>(object);
 		}
 
 		// RAM/ROM access list
