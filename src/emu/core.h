@@ -176,3 +176,19 @@ struct scale64_t {
 		uint8_t  b; // Byte access
 	};
 };
+
+template <typename Dest, typename Source>
+inline Dest mse_static_cast(Source *src)
+{
+#ifdef ENABLE_DEBUG
+#endif /* ENABLE_DEBUG */
+	return static_cast<Dest>(src);
+}
+
+template <class Dest, class Source>
+inline Dest mse_static_cast(Source &src)
+{
+#ifdef ENABLE_DEBUG
+#endif /* ENABLE_DEBUG */
+	return static_cast<Dest>(src);
+}
