@@ -96,6 +96,11 @@ cromEntry_t *Device::mapGetROMEntries()
 	return firmwareEntries;
 }
 
+Device *Device::findDevice(ctag_t *name)
+{
+	return nullptr;
+}
+
 mapMemoryRegion *Device::findMemoryRegion(ctag_t *name)
 {
 	return ownMachine->getExternalBusManager().findRegion(name);

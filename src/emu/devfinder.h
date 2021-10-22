@@ -63,6 +63,42 @@ protected:
 
 // };
 
+template <class DeviceClass, bool Required>
+class DeviceFinder : public ObjectFinderCommon<DeviceClass, Required>
+{
+public:
+    DeviceFinder(Device &base, ctag_t *name)
+    : ObjectFinderCommon<DeviceClass, Required>(base, name)
+    { }
+
+    template <typename T>
+    std::enable_if_t<std::is_convertible<T *, DeviceClass *>::value, T &> operator = (T &device)
+    {
+        assert (!this->isResolved);
+        // assert (is_expected_tag(device));
+        this->object = &device;
+        return device;
+    }
+
+private:
+
+    virtual bool find() override
+    {
+        assert(!this->isResolved);
+        this->isResolved = true;
+
+        Device *const device = this->base.findDevice(this->objName);
+        this->object = dynamic_cast<DeviceClass *>(device);
+        if (device && this->object == nullptr)
+            fmt::printf("%s: Device '%s' found but is of incorrect type (actual type = %s)\n",
+                this->base.getDeviceName(), device->getDeviceName(), device->getShortName());
+        return this->validate("device");
+    }
+};
+
+template <typename DeviceClass> using RequiredDevice = DeviceFinder<DeviceClass, true>;
+template <typename DeviceClass> using OptionalDevice = DeviceFinder<DeviceClass, false>;
+
 template <bool Required>
 class MemoryRegionFinder : ObjectFinderCommon<mapMemoryRegion, Required>
 {

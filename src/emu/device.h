@@ -155,6 +155,21 @@ public:
 #define DECLARE_DEVICE_TYPE(Type, Class) \
 	extern DeviceCreator<Class> const &Type;
 
+// #define DECLARE_DEVICE_TYPE(Type, Class)              \
+// 	extern DeviceCreator<Class> const &Type;          \
+// 	extern template class DeviceFinder<Class, false>; \
+// 	extern template class DeviceFinder<Class, true>;
+
+#define DECLARE_DEVICE_TYPE_NEW(Type, Class)          \
+	class Class;                                      \
+	extern template class DeviceFinder<Class, false>; \
+	extern template class DeviceFinder<Class, true>;
+
+#define DECLARE_DEVICE_TYPE_NS(Type, Namespace, Class)           \
+	namespace Namepace { class Class; }                          \
+	extern template class DeviceFinder<Namespace::Class, false>; \
+	extern template class DeviceFinder<Namespace::Class, true>;
+
 #define DEFINE_DEVICE_TYPE(Type, Class, ShortName, FullName)	\
 	struct Class##_device_traits {								\
 		static constexpr ctag_t shortName[] = ShortName;		\
@@ -251,6 +266,7 @@ public:
 	mapMemoryRegion *findMemoryRegion(ctag_t *name);
 	mapMemoryBank *findMemoryBank(ctag_t *name);
 	mapMemoryShare *findMemoryShare(ctag_t *name);
+	Device *findDevice(ctag_t *name);
 
 	void registerObject(ObjectFinder *object);
 	bool findObjects();
