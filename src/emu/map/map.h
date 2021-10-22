@@ -39,6 +39,73 @@ class diExternalBus;
 
 namespace aspace
 {
+	class AddressSpace;
+};
+
+using read8d_t      = DeviceDelegate<uint8_t ()>;
+using read16d_t     = DeviceDelegate<uint16_t ()>;
+using read32d_t     = DeviceDelegate<uint32_t ()>;
+using read64d_t     = DeviceDelegate<uint64_t ()>;
+
+using read8do_t     = DeviceDelegate<uint8_t  (offs_t)>;
+using read16do_t    = DeviceDelegate<uint16_t (offs_t)>;
+using read32do_t    = DeviceDelegate<uint32_t (offs_t)>;
+using read64do_t    = DeviceDelegate<uint64_t (offs_t)>;
+
+using read8dmo_t    = DeviceDelegate<uint8_t  (offs_t, uint8_t)>;
+using read16dmo_t   = DeviceDelegate<uint16_t (offs_t, uint16_t)>;
+using read32dmo_t   = DeviceDelegate<uint32_t (offs_t, uint32_t)>;
+using read64dmo_t   = DeviceDelegate<uint64_t (offs_t, uint64_t)>;
+
+using read8ds_t     = DeviceDelegate<uint8_t  (aspace::AddressSpace &)>;
+using read16ds_t    = DeviceDelegate<uint16_t (aspace::AddressSpace &)>;
+using read32ds_t    = DeviceDelegate<uint32_t (aspace::AddressSpace &)>;
+using read64ds_t    = DeviceDelegate<uint64_t (aspace::AddressSpace &)>;
+
+using read8dso_t    = DeviceDelegate<uint8_t  (aspace::AddressSpace &, offs_t)>;
+using read16dso_t   = DeviceDelegate<uint16_t (aspace::AddressSpace &, offs_t)>;
+using read32dso_t   = DeviceDelegate<uint32_t (aspace::AddressSpace &, offs_t)>;
+using read64dso_t   = DeviceDelegate<uint64_t (aspace::AddressSpace &, offs_t)>;
+
+using read8dsmo_t   = DeviceDelegate<uint8_t  (aspace::AddressSpace &, offs_t, uint8_t)>;
+using read16dsmo_t  = DeviceDelegate<uint16_t (aspace::AddressSpace &, offs_t, uint16_t)>;
+using read32dsmo_t  = DeviceDelegate<uint32_t (aspace::AddressSpace &, offs_t, uint32_t)>;
+using read64dsmo_t  = DeviceDelegate<uint64_t (aspace::AddressSpace &, offs_t, uint64_t)>;
+
+
+using write8d_t     = DeviceDelegate<void (uint8_t)>;
+using write16d_t    = DeviceDelegate<void (uint16_t)>;
+using write32d_t    = DeviceDelegate<void (uint32_t)>;
+using write64d_t    = DeviceDelegate<void (uint64_t)>;
+
+using write8do_t    = DeviceDelegate<void (offs_t, uint8_t)>;
+using write16do_t   = DeviceDelegate<void (offs_t, uint16_t)>;
+using write32do_t   = DeviceDelegate<void (offs_t, uint32_t)>;
+using write64do_t   = DeviceDelegate<void (offs_t, uint64_t)>;
+
+using write8dmo_t   = DeviceDelegate<void (offs_t, uint8_t, uint8_t)>;
+using write16dmo_t  = DeviceDelegate<void (offs_t, uint16_t, uint16_t)>;
+using write32dmo_t  = DeviceDelegate<void (offs_t, uint32_t, uint32_t)>;
+using write64dmo_t  = DeviceDelegate<void (offs_t, uint64_t, uint64_t)>;
+
+using write8ds_t    = DeviceDelegate<void (aspace::AddressSpace &, uint8_t)>;
+using write16ds_t   = DeviceDelegate<void (aspace::AddressSpace &, uint16_t)>;
+using write32ds_t   = DeviceDelegate<void (aspace::AddressSpace &, uint32_t)>;
+using write64ds_t   = DeviceDelegate<void (aspace::AddressSpace &, uint64_t)>;
+
+using write8dso_t   = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint8_t)>;
+using write16dso_t  = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint16_t)>;
+using write32dso_t  = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint32_t)>;
+using write64dso_t  = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint64_t)>;
+
+using write8dsmo_t  = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint8_t, uint8_t)>;
+using write16dsmo_t = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint16_t, uint16_t)>;
+using write32dsmo_t = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint32_t, uint32_t)>;
+using write64dsmo_t = DeviceDelegate<void (aspace::AddressSpace &, offs_t, uint64_t, uint64_t)>;
+
+
+namespace aspace
+{
 	template <int dWidth, int aShift> class HandlerReadUnmapped;
 	template <int dWidth, int aShift> class HandlerWriteUnmapped;
 	template <int dWidth, int aShift> class HandlerReadNop;
@@ -46,15 +113,505 @@ namespace aspace
 
 	using Constructor = NamedDelegate<void (AddressList &)>;
 
-	using read8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
-	using read16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
-	using read32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
-	using read64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
+	// using read8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
+	// using read16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
+	// using read32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
+	// using read64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
 
-	using write8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
-	using write16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
-	using write32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
-	using write64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
+	// using write8d_t  = DeviceDelegate<uint8_t(AddressList &, offs_t, uint8_t)>;
+	// using write16d_t = DeviceDelegate<uint16_t(AddressList &, offs_t, uint16_t)>;
+	// using write32d_t = DeviceDelegate<uint32_t(AddressList &, offs_t, uint32_t)>;
+	// using write64d_t = DeviceDelegate<uint64_t(AddressList &, offs_t, uint64_t)>;
+
+	template <typename D, typename T, typename Enable = void> struct device_class_rw { };
+
+	template <typename D, typename T, typename Ret, typename... Args>
+	struct device_class_rw<D, Ret (T::*)(Args...),
+		std::enable_if_t<std::is_constructible<D, Device &, ctag_t *, Ret (T::*)(Args...), ctag_t *>::value> > { using type = T; };
+	template <typename D, typename T, typename Ret, typename... Args>
+	struct device_class_rw<D, Ret (T::*)(Args...) const,
+		std::enable_if_t<std::is_constructible<D, Device &, ctag_t *, Ret (T::*)(Args...) const, ctag_t *>::value> > { using type = T; };
+	template <typename D, typename T, typename Ret, typename... Args>
+	struct device_class_rw<D, Ret (*)(T &, Args...),
+		std::enable_if_t<std::is_constructible<D, Device &, ctag_t *, Ret (*)(T &, Args...), ctag_t *>::value> > { using type = T; };
+
+	template <typename D, typename T> using device_class_rw_t = typename device_class_rw<D, T>::type;
+
+	template <typename T, typename Enable = void> struct delegate_rw_type;
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8d_t, std::remove_reference_t<T> > > >
+		{ using type = read8d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16d_t, std::remove_reference_t<T> > > >
+		{ using type = read16d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32d_t, std::remove_reference_t<T> > > >
+		{ using type = read32d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64d_t, std::remove_reference_t<T> > > >
+		{ using type = read64d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8do_t, std::remove_reference_t<T> > > >
+		{ using type = read8do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16do_t, std::remove_reference_t<T> > > >
+		{ using type = read16do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32do_t, std::remove_reference_t<T> > > >
+		{ using type = read32do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64do_t, std::remove_reference_t<T> > > >
+		{ using type = read64do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dmo_t, std::remove_reference_t<T> > > >
+		{ using type = read8dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dmo_t, std::remove_reference_t<T> > > >
+		{ using type = read16dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dmo_t, std::remove_reference_t<T> > > >
+		{ using type = read32dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dmo_t, std::remove_reference_t<T> > > >
+		{ using type = read64dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8ds_t, std::remove_reference_t<T> > > >
+		{ using type = read8ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16ds_t, std::remove_reference_t<T> > > >
+		{ using type = read16ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32ds_t, std::remove_reference_t<T> > > >
+		{ using type = read32ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64ds_t, std::remove_reference_t<T> > > >
+		{ using type = read64ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dso_t, std::remove_reference_t<T> > > >
+		{ using type = read8dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dso_t, std::remove_reference_t<T> > > >
+		{ using type = read16dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dso_t, std::remove_reference_t<T> > > >
+		{ using type = read32dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dso_t, std::remove_reference_t<T> > > >
+		{ using type = read64dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = read8dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = read16dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = read32dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = read64dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8d_t, std::remove_reference_t<T> > > >
+		{ using type = write8d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16d_t, std::remove_reference_t<T> > > >
+		{ using type = write16d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32d_t, std::remove_reference_t<T> > > >
+		{ using type = write32d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64d_t, std::remove_reference_t<T> > > >
+		{ using type = write64d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8do_t, std::remove_reference_t<T> > > >
+		{ using type = write8do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16do_t, std::remove_reference_t<T> > > >
+		{ using type = write16do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32do_t, std::remove_reference_t<T> > > >
+		{ using type = write32do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64do_t, std::remove_reference_t<T> > > >
+		{ using type = write64do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dmo_t, std::remove_reference_t<T> > > >
+		{ using type = write8dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dmo_t, std::remove_reference_t<T> > > >
+		{ using type = write16dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dmo_t, std::remove_reference_t<T> > > >
+		{ using type = write32dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dmo_t, std::remove_reference_t<T> > > >
+		{ using type = write64dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8ds_t, std::remove_reference_t<T> > > >
+		{ using type = write8ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16ds_t, std::remove_reference_t<T> > > >
+		{ using type = write16ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32ds_t, std::remove_reference_t<T> > > >
+		{ using type = write32ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64ds_t, std::remove_reference_t<T> > > >
+		{ using type = write64ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dso_t, std::remove_reference_t<T> > > >
+		{ using type = write8dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dso_t, std::remove_reference_t<T> > > >
+		{ using type = write16dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dso_t, std::remove_reference_t<T> > > >
+		{ using type = write32dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dso_t, std::remove_reference_t<T> > > >
+		{ using type = write64dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = write8dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = write16dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = write32dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dsmo_t, std::remove_reference_t<T> > > >
+		{ using type = write64dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
+
+	template <typename T> using delegate_rw_t = typename delegate_rw_type<T>::type;
+	template <typename T> using delegate_rw_device_class_t = typename delegate_rw_t<T>::device_class;
+
+
+	// template <typename T>
+	// inline delegate_rw_type<T> makeDelegate(Device &base, ctag_t *devName, T &&func, ctag_t *fncName)
+	// {
+	// 	return delegate_rw_type<T>(base, devName, std::forward<T>(func), fncName);
+	// }
+
+	template <typename T>
+	inline delegate_rw_type<T> makeDelegate(delegate_rw_device_class_t<T> &object, T &&func, ctag_t *fncName)
+	{
+		return delegate_rw_type<T>(object, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8d_t, Device &, T, ctag_t *>::value, read8d_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16d_t, Device &, T, ctag_t *>::value, read16d_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32d_t, Device &, T, ctag_t *>::value, read32d_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64d_t, Device &, T, ctag_t *>::value, read64d_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return raad64d_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8do_t, Device &, T, ctag_t *>::value, read8do_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16do_t, Device &, T, ctag_t *>::value, read16do_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32do_t, Device &, T, ctag_t *>::value, read32do_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64do_t, Device &, T, ctag_t *>::value, read64do_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read64do_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8dmo_t, Device &, T, ctag_t *>::value, read8dmo_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16dmo_t, Device &, T, ctag_t *>::value, read16dmo_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32dmo_t, Device &, T, ctag_t *>::value, read32dmo_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64dmo_t, Device &, T, ctag_t *>::value, read64dmo_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read64dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8ds_t, Device &, T, ctag_t *>::value, read8ds_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16ds_t, Device &, T, ctag_t *>::value, read16ds_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32ds_t, Device &, T, ctag_t *>::value, read32ds_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64ds_t, Device &, T, ctag_t *>::value, read64ds_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read64ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8dso_t, Device &, T, ctag_t *>::value, read8dso_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16dso_t, Device &, T, ctag_t *>::value, read16dso_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32dso_t, Device &, T, ctag_t *>::value, read32dso_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64dso_t, Device &, T, ctag_t *>::value, read64dso_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read64dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read8dsmo_t, Device &, T, ctag_t *>::value, read8dsmo_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read8dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read16dsmo_t, Device &, T, ctag_t *>::value, read16dsmo_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read16dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read32dsmo_t, Device &, T, ctag_t *>::value, read32dsmo_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read32dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<read64dsmo_t, Device &, T, ctag_t *>::value, read64dsmo_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return read64dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8d_t, Device &, T, ctag_t *>::value, write8d_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16d_t, Device &, T, ctag_t *>::value, write16d_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32d_t, Device &, T, ctag_t *>::value, write32d_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32d_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64d_t, Device &, T, ctag_t *>::value, write64d_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64d_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8do_t, Device &, T, ctag_t *>::value, write8do_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16do_t, Device &, T, ctag_t *>::value, write16do_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32do_t, Device &, T, ctag_t *>::value, write32do_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32do_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64do_t, Device &, T, ctag_t *>::value, write64do_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64do_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8dmo_t, Device &, T, ctag_t *>::value, write8dmo_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16dmo_t, Device &, T, ctag_t *>::value, write16dmo_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32dmo_t, Device &, T, ctag_t *>::value, write32dmo_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64dmo_t, Device &, T, ctag_t *>::value, write64dmo_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64dmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8ds_t, Device &, T, ctag_t *>::value, write8ds_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16ds_t, Device &, T, ctag_t *>::value, write16ds_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32ds_t, Device &, T, ctag_t *>::value, write32ds_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64ds_t, Device &, T, ctag_t *>::value, write64ds_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64ds_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8dso_t, Device &, T, ctag_t *>::value, write8dso_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16dso_t, Device &, T, ctag_t *>::value, write16dso_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32dso_t, Device &, T, ctag_t *>::value, write32dso_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64dso_t, Device &, T, ctag_t *>::value, write64dso_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64dso_t(owner, std::forward<T>(func), fncName);
+	}
+
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write8dsmo_t, Device &, T, ctag_t *>::value, write8dsmo_t>
+		makeDelegate8(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write8dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write16dsmo_t, Device &, T, ctag_t *>::value, write16dsmo_t>
+		makeDelegate16(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write16dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write32dsmo_t, Device &, T, ctag_t *>::value, write32dsmo_t>
+		makeDelegate32(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write32dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline std::enable_if_t<std::is_constructible<write64dsmo_t, Device &, T, ctag_t *>::value, write64dsmo_t>
+		makeDelegate64(Device &owner, T &&func, ctag_t *fncName)
+	{
+		return write64dsmo_t(owner, std::forward<T>(func), fncName);
+	}
+
 
 	enum SpaceType
 	{

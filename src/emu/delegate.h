@@ -281,17 +281,17 @@ public:
 		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
 };
 
-typedef DeviceDelegate<int ()> readDelegate;
-typedef DeviceDelegate<void (int)> writeDelegate;
+// typedef DeviceDelegate<int ()> readDelegate;
+// typedef DeviceDelegate<void (int)> writeDelegate;
 
-template <typename T>
-inline readDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
-{
-	return readDelegate(fncName, devName, func);
-}
+// template <typename T>
+// inline readDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
+// {
+// 	return readDelegate(fncName, devName, func);
+// }
 
-template <typename T>
-inline writeDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
-{
-	return writeDelegate(fncName, devName, func);
-}
+// template <typename T>
+// inline writeDelegate makeDelegate(T &&func, ctag_t *fncName, ctag_t *devName)
+// {
+// 	return writeDelegate(fncName, devName, func);
+// }

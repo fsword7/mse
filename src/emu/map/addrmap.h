@@ -54,7 +54,7 @@ namespace aspace
 		static std::enable_if_t<!std::is_convertible<std::add_pointer_t<U>, std::add_pointer_t<T>>::value, T *>
 			make_pointer(U &obj)
 		{
-			return &dynamic_cast<T &>(obj);
+			return &static_cast<T &>(obj);
 		}
 
 		// RAM/ROM access list
@@ -115,6 +115,104 @@ namespace aspace
 			return *this;
 		}
 
+		template <typename T, typename U, typename Ret, typename ... Args>
+		AddressEntry &r(T &&obj, Ret (U::*read)(Args...), ctag_t *readName)
+		{
+			return r(makeDelegate(*make_pointer<U>(obj), read, readName));
+		}
+
+		template <typename T, typename U, typename Ret, typename ... Args>
+		AddressEntry &w(T &&obj, Ret (U::*write)(Args...), ctag_t *writeName)
+		{
+			return w(makeDelegate(*make_pointer<U>(obj), write, writeName));
+		}
+
+		template <typename T, typename U, typename rRet, typename... rArgs, typename V, typename wRet, typename... wArgs>
+		AddressEntry &rw(T &&obj, rRet (U::*read)(rArgs...), ctag_t *readName, wRet (V::*write)(wArgs...), ctag_t *writeName)
+		{
+			return r(makeDelegate(*make_pointer<U>(obj), read, readName))
+				  .w(makeDelegate(*make_pointer<V>(obj), write, writeName));
+		}
+
+
+		template <typename T>
+		AddressEntry &dr8(T &&read, ctag_t *name)
+		{
+			return r(makeDelegate8(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dr16(T &&read, ctag_t *name)
+		{
+			return r(makeDelegate16(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dr32(T &&read, ctag_t *name)
+		{
+			return r(makeDelegate32(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dr64(T &&read, ctag_t *name)
+		{
+			return r(makeDelegate64(device, std::forward<T>(read), name));
+		}
+
+
+		template <typename T>
+		AddressEntry &dw8(T &&write, ctag_t *name)
+		{
+			return w(makeDelegate8(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dw16(T &&write, ctag_t *name)
+		{
+			return w(makeDelegate16(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dw32(T &&write, ctag_t *name)
+		{
+			return w(makeDelegate32(device, std::forward<T>(read), name));
+		}
+
+		template <typename T>
+		AddressEntry &dw64(T &&write, ctag_t *name)
+		{
+			return w(makeDelegate64(device, std::forward<T>(read), name));
+		}
+
+
+		template <typename T, typename U>
+		AddressEntry &drw8(T &&read, ctag_t *readName, U &&write, ctag_t *writeName)
+		{
+			return r(makeDelegate8(device, std::forward<T>(read), readName))
+			      .w(makeDelegate8(device, std::forward<U>(write), writeName));
+		}
+
+		template <typename T, typename U>
+		AddressEntry &drw16(T &&read, ctag_t *readName, U &&write, ctag_t *writeName)
+		{
+			return r(makeDelegate16(device, std::forward<T>(read), readName))
+				  .w(makeDelegate16(device, std::forward<U>(write), writeName));
+		}
+
+		template <typename T, typename U>
+		AddressEntry &drw32(T &&read, ctag_t *readName, U &&write, ctag_t *writeName)
+		{
+			return r(makeDelegate32(device, std::forward<T>(read), readName))
+				  .w(makeDelegate32(device, std::forward<U>(write), writeName));
+		}
+
+		template <typename T, typename U>
+		AddressEntry &drw64(T &&read, ctag_t *readName, U &&write, ctag_t *writeName)
+		{
+			return r(makeDelegate64(device, std::forward<T>(read), readName))
+				  .w(makeDelegate64(device, std::forward<U>(write), writeName));
+		}
+
 	public:
 		// Address entry information
 		AddressEntry  *mapNext = nullptr;
@@ -149,10 +247,62 @@ namespace aspace
 		read32d_t   read32;
 		read64d_t   read64;
 
+		read8do_t    read8o;
+		read16do_t   read16o;
+		read32do_t   read32o;
+		read64do_t   read64o;
+
+		read8dmo_t    read8mo;
+		read16dmo_t   read16mo;
+		read32dmo_t   read32mo;
+		read64dmo_t   read64mo;
+
+		read8ds_t    read8s;
+		read16ds_t   read16s;
+		read32ds_t   read32s;
+		read64ds_t   read64s;
+
+		read8dso_t    read8so;
+		read16dso_t   read16so;
+		read32dso_t   read32so;
+		read64dso_t   read64so;
+
+		read8dsmo_t    read8smo;
+		read16dsmo_t   read16smo;
+		read32dsmo_t   read32smo;
+		read64dsmo_t   read64smo;
+
+
 		write8d_t   write8;
 		write16d_t  write16;
 		write32d_t  write32;
 		write64d_t  write64;
+		
+		write8do_t   write8o;
+		write16do_t  write16o;
+		write32do_t  write32o;
+		write64do_t  write64o;
+
+		write8dmo_t   write8mo;
+		write16dmo_t  write16mo;
+		write32dmo_t  write32mo;
+		write64dmo_t  write64mo;
+
+		write8ds_t   write8s;
+		write16ds_t  write16s;
+		write32ds_t  write32s;
+		write64ds_t  write64s;
+		
+		write8dso_t   write8so;
+		write16dso_t  write16so;
+		write32dso_t  write32so;
+		write64dso_t  write64so;
+
+		write8dsmo_t   write8smo;
+		write16dsmo_t  write16smo;
+		write32dsmo_t  write32smo;
+		write64dsmo_t  write64smo;
+
 	};
 
 	class AddressList
