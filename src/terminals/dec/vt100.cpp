@@ -43,7 +43,7 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     screen->setScreenArea(XTAL(24'073'400) * 2/3,  102*10, 0, 80*10,  262, 0, 25*10);
     screen->setScreenUpdate(FUNC(vt100_vtDevice::vt100_updateScreen));
 
-    crt = VT100_VIDEO(config, "crt", XTAL(24'073'400));
+    crt = *VT100_VIDEO(config, "crt", XTAL(24'073'400));
     crt->setScreenName("screen");
     crt->setCharData("chargen");
     crt->getReadRAMDataCallback().set(FUNC(vt100_vtDevice::readData));

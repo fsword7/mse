@@ -12,7 +12,8 @@ class vt100_vtDevice : public sysDevice
     public:
         vt100_vtDevice(const SystemConfig &config, const DeviceType &type, cstag_t &tagName, uint64_t clock)
         : sysDevice(config, type, tagName, clock),
-          ramData(*this, "ram")
+          ramData(*this, "ram"),
+          crt(*this, "VT100_Video")
         {
 
         }
@@ -31,7 +32,9 @@ class vt100_vtDevice : public sysDevice
         
     private:
         i8080_cpuDevice *cpu = nullptr;
-        vt100video_t *crt = nullptr;
+        // vt100video_t *crt = nullptr;
 
         RequiredSharedPointer<uint8_t> ramData;
+
+        RequiredDevice<vt100video_t> crt;
 };
