@@ -16,6 +16,8 @@ public:
     
     virtual bool find() = 0;
 
+    inline Device &getOwnerDevice() const { return base; }
+
 protected:
     ObjectFinder(Device &base, ctag_t *objName);
 

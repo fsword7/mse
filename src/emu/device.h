@@ -17,6 +17,8 @@ class SystemConfig;
 class Device;
 class DeviceInterface;
 
+template <typename Exposed, bool Required> class DeviceFinder; //<Exposed, Required>;
+
 constexpr uint64_t CLK_NOEXECUTE = 0;
 constexpr uint64_t CLK_FULLSPEED = ~0ull;
 
@@ -150,6 +152,10 @@ public:
 
 	template <typename... Args>
 	DeviceClass *operator ()(SystemConfig &config, cstag_t &devName, Args&&... args) const;
+
+	template <typename Exposed, bool Required, typename ... Args>
+	DeviceClass &operator ()(SystemConfig &config, DeviceFinder<Exposed, Required> &finder, cstag_t &devName, Args &&... args) const;
+
 };
 
 #define DECLARE_DEVICE_TYPE(Type, Class) \
