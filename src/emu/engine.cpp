@@ -605,7 +605,7 @@ CommandStatus SystemEngine::cmdLoad(Console *user, args_t &args)
 
 	catch (system_error &e)
 	{
-		user->printf("%s: file error: %s\n", fname, e.code().message());
+		// user->printf("%s: file error: %s\n", fname, e.code().message());
 		cout << flush;
 
 		return cmdOk;

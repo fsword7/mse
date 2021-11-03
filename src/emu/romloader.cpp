@@ -43,12 +43,12 @@ emu::ioFile *romLoader::processImageFile(fs::path pathName, cromEntry_t *entry)
 
 	if (!imageFile->open(fileName))
 	{
-		cty.printf("Failed to open %s\n", fileName);
+		// cty.printf("Failed to open %s\n", fileName);
 
 		delete imageFile;
 		imageFile = nullptr;
 	}
-	cty.printf("Opening '%s'...\n", fileName);
+	// cty.printf("Opening '%s'...\n", fileName);
 	return imageFile;
 }
 

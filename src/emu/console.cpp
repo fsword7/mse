@@ -77,7 +77,7 @@ CommandStatus CommandHandler::execute(Console *cty, string cmdLine)
 
 void Console::script(fs::path fname)
 {
-	fmt::printf("Script: %s\n", fname);
+	// fmt::printf("Script: %s\n", fname);
 
 	string   cmdLine;
 	int      noLine = 0;
@@ -112,7 +112,7 @@ void Console::script(fs::path fname)
 
 	catch (system_error &e)
 	{
-		fmt::fprintf(cerr, "%s: file error: %s\n", fname, e.code().message());
+		// cerr << fmt::sprintf("%s: file error: %s\n", fname, e.code().message());
 		cout << flush;
 	}
 }

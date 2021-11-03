@@ -89,11 +89,15 @@ private:
         assert(!this->isResolved);
         this->isResolved = true;
 
-        Device *const device = this->base.findDevice(this->objName);
-        this->object = dynamic_cast<DeviceClass *>(device);
-        if (device && this->object == nullptr)
-            fmt::printf("%s: Device '%s' found but is of incorrect type (actual type = %s)\n",
-                this->base.getDeviceName(), device->getDeviceName(), device->getShortName());
+        if (Required && this->object != nullptr)
+        {
+            Device *const device = this->base.findDevice(this->objName);
+            this->object = dynamic_cast<DeviceClass *>(device);
+            if (device != nullptr && this->object == nullptr)
+                fmt::printf("%s: Device '%s' found but is of incorrect type (actual type = %s)\n",
+                    this->base.getDeviceName(), device->getDeviceName(), device->getShortName());
+        }
+
         return this->validate("device");
     }
 };

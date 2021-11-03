@@ -96,9 +96,9 @@ void Machine::stop(Console *cty)
 // Launching system in separated threading process
 void Machine::launch()
 {
-	logFile.log(LOG_CONSOLE, "Started system at thread ID %X\n",
-		std::this_thread::get_id());
-	logFile.flushAll();
+	// logFile.log(LOG_CONSOLE, "Started system at thread ID %llX\n",
+	// 	std::this_thread::get_id());
+	// logFile.flushAll();
 
 	running = true;
 
@@ -120,13 +120,13 @@ void Machine::launch()
 
 	// stopping system
 
-	logFile.log(LOG_CONSOLE, "Halted system at thread ID %X\n",
-		std::this_thread::get_id());
+// 	logFile.log(LOG_CONSOLE, "Halted system at thread ID %X\n",
+// 		std::this_thread::get_id());
 }
 
 void Machine::halt(Console *user)
 {
-	user->printf("Halting thread process ID %X\n", thisThread.get_id());
+	// user->printf("Halting thread process ID %X\n", thisThread.get_id());
 
 	flags |= SYSTEM_HALT;
 	running = false;
@@ -143,7 +143,7 @@ void Machine::run(Console *user)
 
 	// Starting separating process
 	thisThread = thread(&Machine::launch, this);
-	user->printf("Started thread process ID %X\n", thisThread.get_id());
+	// user->printf("Started thread process ID %X\n", thisThread.get_id());
 
 	// thisThread.detach();
 }
