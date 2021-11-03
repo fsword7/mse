@@ -90,6 +90,7 @@ namespace aspace
 		uint32_t      flags;
 		mutable int   refCount = 0;
 
+	public:
 		struct range
 		{
 			offs_t start;
