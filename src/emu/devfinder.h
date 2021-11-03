@@ -89,7 +89,7 @@ private:
         assert(!this->isResolved);
         this->isResolved = true;
 
-        if (Required && this->object != nullptr)
+        if (Required && this->object == nullptr)
         {
             Device *const device = this->base.findDevice(this->objName);
             this->object = dynamic_cast<DeviceClass *>(device);
