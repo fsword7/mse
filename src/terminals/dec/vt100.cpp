@@ -35,7 +35,7 @@ uint8_t vt100_vtDevice::readData(offs_t addr)
 void vt100_vtDevice::vt100(SystemConfig &config)
 {
 
-    cpu = i8080(config, "cpu", XTAL(24'883'200) / 9);
+    i8080(config, cpu, "cpu", XTAL(24'883'200) / 9);
     cpu->setAddressMap(AS_PROGRAM, &vt100_vtDevice::vt100_mem);
     cpu->setAddressMap(AS_IOPORT, &vt100_vtDevice::vt100_iomem);
 
@@ -43,7 +43,6 @@ void vt100_vtDevice::vt100(SystemConfig &config)
     screen->setScreenArea(XTAL(24'073'400) * 2/3,  102*10, 0, 80*10,  262, 0, 25*10);
     screen->setScreenUpdate(FUNC(vt100_vtDevice::vt100_updateScreen));
 
-    // crt = *VT100_VIDEO(config, "crt", XTAL(24'073'400));
     VT100_VIDEO(config, crt, "crt", XTAL(24'073'400));
     crt->setScreenName("screen");
     crt->setCharData("chargen");
