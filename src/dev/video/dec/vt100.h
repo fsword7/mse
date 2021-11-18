@@ -20,6 +20,8 @@ namespace emu::video
 
             auto getReadRAMDataCallback() { return readRAMData.bind(); }
 
+            void resolveDeviceObjects() override;
+            
             // I/O access function calls
             void write8_dc011(offs_t off, uint8_t data);
             void write8_dc012(offs_t off, uint8_t data);
@@ -31,7 +33,7 @@ namespace emu::video
             vt100_videoDevice(const SystemConfig &config, const DeviceType &type,
 			    const string &tagName, Device *owner, uint64_t clock);
 
-            cbRead8_t readRAMData;
+            read8cb_t readRAMData;
 
             void displayCharacter();
 

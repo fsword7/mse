@@ -29,6 +29,11 @@ vt100_videoDevice::vt100_videoDevice(const SystemConfig &config, cstag_t &tagNam
 
 }
 
+void vt100_videoDevice::resolveDeviceObjects()
+{
+    readRAMData.resolveSafe(0);
+}
+
 void vt100_videoDevice::write8_dc011(offs_t off, uint8_t data)
 {
 
