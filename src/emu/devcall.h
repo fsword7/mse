@@ -135,7 +135,71 @@ protected:
             return std::make_unsigned_t<read_result_t<Result, T>>(cb());
         }
 
+
+    template <typename T, typename Enable = void>
+        struct is_read_method : public std::false_type { };
+
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read8d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read16d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read32d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read64d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read8do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read16do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read32do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read64do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read8dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read16dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read32dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<read64dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    // template <typename T> struct is_read_method<T, std::void_t<aspace::device_class_rw_t<readLineDelegate_t, std::remove_reference_t<T> > > >
+    //     : public std::true_type { };
+
     template <typename T, typename Dummy = void> struct delegate_traits;
+
+    template <typename Dummy> struct delegate_traits<read8d_t, Dummy>
+        { static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<read16d_t, Dummy>
+        { static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<read32d_t, Dummy>
+        { static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<read64d_t, Dummy>
+        { static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    template <typename Dummy> struct delegate_traits<read8do_t, Dummy>
+        { static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<read16do_t, Dummy>
+        { static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<read32do_t, Dummy>
+        { static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<read64do_t, Dummy>
+        { static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    template <typename Dummy> struct delegate_traits<read8dmo_t, Dummy>
+        { static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<read16dmo_t, Dummy>
+        { static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<read32dmo_t, Dummy>
+        { static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<read64dmo_t, Dummy>
+        { static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    // template <typename Dummy> struct delegate_traits<readLineDelegate_t, Dummy>
+    //     { static constexpr unsigned default_mask = 1u; };
 
 };
 
@@ -152,6 +216,98 @@ protected:
     template <typename Input, typename Func> struct is_write_form2<Input, Func, void_t<std::invoke_result_t<Func, offs_t, Input> > > : public std::true_type { };
     template <typename Input, typename Func> struct is_write_form3<Input, Func, void_t<std::invoke_result_t<Func> > > : public std::true_type { };
     template <typename Input, typename Func> struct is_write : public std::bool_constant<is_write_form1<Input, Func>::value || is_write_form2<Input, Func>::value || is_write_form3<Input, Func>::value> {};
+
+    // template <typename Input, typename Func, typename Enable = void> struct write_result;
+    // template <typename Input, typename Func> struct write_result<Input, Func, std::enable_if_t<is_write_form1<Input, Func>::value>>
+    //     { using type = std::invoke_result_t<Func, offs_t, std::make_unsigned<Result>>; };
+    // template <typename Input, typename Func> struct write_result<Input, Func, std::enable_if_t<is_write_form2<Input, Func>::value>>
+    //     { using type = std::invoke_result_t<Func, offs_t>; };
+    // template <typename Input, typename Func> struct write_result<Input, Func, std::enable_if_t<is_write_form3<Input, Func>::value>>
+    //     { using type = std::invoke_result_t<Func>; };
+    // template <typename Input, typename Func> using write_result_t = typename write_result<Input, Func>::type;
+
+    template <typename Input, typename T> static std::enable_if_t<is_write_form1<Input, T>::value>
+        invokeWrite(T const &cb, offs_t &offset, Input data, std::make_unsigned_t<Input> memMask)
+        {
+            return cb(offset, data, memMask);
+        }
+
+    template <typename Input, typename T> static std::enable_if_t<is_write_form2<Input, T>::value>
+        invokeWrite(T const &cb, offs_t &offset, Input data, std::make_unsigned_t<Input> memMask)
+        {
+            return cb(offset, data);
+        }
+
+    template <typename Input, typename T> static std::enable_if_t<is_write_form3<Input, T>::value>
+        invokeWrite(T const &cb, offs_t &offset, Input data, std::make_unsigned_t<Input> memMask)
+        {
+            return cb(data);
+        }
+
+    template <typename T, typename Enable = void>
+        struct is_write_method : public std::false_type { };
+
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write8d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write16d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write32d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write64d_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write8do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write16do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write32do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write64do_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write8dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write16dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write32dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+    template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<write64dmo_t, std::remove_reference_t<T> > > >
+        : public std::true_type { };
+
+    // template <typename T> struct is_write_method<T, std::void_t<aspace::device_class_rw_t<writeLineDelegate_t, std::remove_reference_t<T> > > >
+    //     : public std::true_type { };
+
+    template <typename T, typename Dummy = void> struct delegate_traits;
+
+    template <typename Dummy> struct delegate_traits<write8d_t, Dummy>
+        { using input_t = uint8_t; static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<write16d_t, Dummy>
+        { using input_t = uint16_t; static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<write32d_t, Dummy>
+        { using input_t = uint32_t; static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<write64d_t, Dummy>
+        { using input_t = uint64_t; static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    template <typename Dummy> struct delegate_traits<write8do_t, Dummy>
+        { using input_t = uint8_t; static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<write16do_t, Dummy>
+        { using input_t = uint16_t; static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<write32do_t, Dummy>
+        { using input_t = uint32_t; static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<write64do_t, Dummy>
+        { using input_t = uint64_t; static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    template <typename Dummy> struct delegate_traits<write8dmo_t, Dummy>
+        { using input_t = uint8_t; static constexpr uint8_t default_mask = ~uint8_t(0); };
+    template <typename Dummy> struct delegate_traits<write16dmo_t, Dummy>
+        { using input_t = uint16_t; static constexpr uint16_t default_mask = ~uint16_t(0); };
+    template <typename Dummy> struct delegate_traits<write32dmo_t, Dummy>
+        { using input_t = uint32_t; static constexpr uint32_t default_mask = ~uint32_t(0); };
+    template <typename Dummy> struct delegate_traits<write64dmo_t, Dummy>
+        { using input_t = uint64_t; static constexpr uint64_t default_mask = ~uint64_t(0); };
+
+    // template <typename Dummy> struct delegate_traits<writeLineDelegate_t, Dummy>
+    //     { using input_t = int; static constexpr unsigned default_mask = 1u; };
 
 };
 
@@ -277,7 +433,7 @@ private:
         template <typename T>
         DelegateBuilder(cbRead_t &cb, bool append, Device &device, ctag_t *devName, T &&func, ctag_t *funcName)
         : BuilderBase(cb, append), 
-          TransformBase<output_t, DelegateBuilder<Delegate>>(DefaultMask),
+          TransformBase<output_t, DelegateBuilder<Delegate>>(DefaultMask &delegate_traits<Delegate>::default_mask),
           delegate(device, devName, std::forward<T>(func), funcName)
         {
         }
@@ -387,12 +543,6 @@ private:
     vector<func_t> functions;
 };
 
-// template <typename Result, std::make_unsigned_t<Result> DefaultMask>
-// cbRead_t<Result, DefaultMask>::cbRead_t(Device &owner)
-// : DeviceCallbackReadBase(owner)
-// { }
-
-
 // **********************************************************************
 
 template <typename Input, std::make_unsigned_t<Input> DefaultMask
@@ -405,24 +555,119 @@ private:
     class Creator
     {
     public:
+        using ptr = std::unique_ptr<Creator>;
+
         virtual ~Creator() = default;
 
         virtual func_t create() = 0;
+
+        std::make_unsigned_t<Input> getMask() const { return mask; }
+
+    protected:
+        Creator(std::make_unsigned_t<Input> mssk) : mask(mask) {}
+
+        std::make_unsigned_t<Input> mask;
     };
 
     template <typename T>
     class CreatorBase : public Creator
     {
     public:
-        CreatorBase(T &&builder) : builder(builder) {}
+        CreatorBase(T &&builder) : Creator(builder.getMask()), builder(std::move(builder)) {}
 
         virtual func_t create() override
         {
-            return nullptr;
+            func_t newFunc = nullptr;
+            builder.build(
+                [&newFunc](auto &&f)
+                {
+                    newFunc = [cb = std::move(f)](offs_t offset, Input data, std::make_unsigned_t<Input> memMask)
+                    {
+                        cb(offset, data, memMask);
+                    };
+                }
+            );
+            return newFunc;
         }
 
     private:
-        T &builder;
+        T builder;
+    };
+
+    class BuilderBase
+    {
+    protected:
+        BuilderBase(cbWrite_t &cb, bool append)
+        : target(cb), append(append)
+        { }
+        BuilderBase(BuilderBase &&) = default;
+        BuilderBase(BuilderBase const &) = delete;
+        ~BuilderBase() { assert(consumed); }
+
+        void consume() { consumed = true; }
+
+        template <typename T>
+        void registerCreator()
+        {
+            if (consumed == false)
+            {
+                if (append == false)
+                    target.creators.clear();
+                consumed = true;
+                target.creators.emplace_back(std::make_unique<CreatorBase<T>>(std::move(static_cast<T &>(*this))));
+            }
+        }
+
+        cbWrite_t &target;
+        bool append;
+        bool consumed = false;
+    };
+
+    template <typename Delegate>
+    class DelegateBuilder
+    : public BuilderBase,
+      public TransformBase<mask_t<Input, typename delegate_traits<Delegate>::input_t>, DelegateBuilder<Delegate>>
+    {
+    public:
+        using input_t = intermediate_t<Input, typename delegate_traits<Delegate>::input_t>;
+
+        template <typename T>
+        DelegateBuilder(cbWrite_t &cb, bool append, Device &device, ctag_t *devName, T &&func, ctag_t *funcName)
+        : BuilderBase(cb, append), 
+          TransformBase<mask_t<Input, typename delegate_traits<Delegate>::input_t>,
+            DelegateBuilder>(DefaultMask &delegate_traits<Delegate>::default_mask),
+          delegate(device, devName, std::forward<T>(func), funcName)
+        {
+        }
+
+        DelegateBuilder(DelegateBuilder &&that)
+        : BuilderBase(std::move(that)),
+          TransformBase<mask_t<Input, typename delegate_traits<Delegate>::input_t>, DelegateBuilder>(std::move(that)),
+          delegate(std::move(that.delegate))
+        {
+            that.consume();
+        }
+
+        ~DelegateBuilder()
+        {
+            this->template registerCreator<DelegateBuilder>();
+        }
+
+        template <typename T>
+        void build(T &&chain)
+        {
+            assert(this->consumed);
+            delegate.resolve();
+            chain(
+                [cb = std::move(this->delegate), mask = this->getMask(), exor = this->getXOR()](offs_t offset, Input data, input_t memMask)
+                {
+                    cbWrite_t::invokeWrite<Input>(cb, offset, (data ^ exor) & mask, memMask & mask);
+                }
+            );
+        }
+
+    private:
+        Delegate delegate;
     };
 
     class Binder
@@ -430,12 +675,23 @@ private:
     public:
         Binder(cbWrite_t &cb) : target(cb) {}
         
+        template <typename T> void set(T &&func, ctag_t *name)
+        {
+            setUsed();
+
+            Device &dev  = target.getOwner();
+            Device &cdev = *dev.getSystemConfig().getConfigDevice();
+            fmt::printf("%s(%llx): Setting %s on device %s\n", cdev.getDeviceName(), offs_t(&cdev), name, dev.getDeviceName());
+            DelegateBuilder<delegate_type_t<T>>(target, append, cdev, "", std::forward<T>(func), name);
+        }
+
     private:
         void setUsed() { assert(!flagUsed); flagUsed = true; }
 
     private:
         cbWrite_t &target;
 
+        bool append = false;
         bool flagUsed = false;
     };
 
@@ -448,14 +704,10 @@ public:
     void resolve() {}
 
 private:
-    vector<Creator> creators;
+    vector<typename Creator::ptr> creators;
     vector<func_t> functions;
 };
 
-// template <typename Input, std::make_unsigned_t<Input> DefaultMask>
-// cbWrite_t<Input, DefaultMask>::cbWrite_t(Device &owner)
-// : DeviceCallbackWriteBase(owner)
-// { }
 
 using read8cb_t = cbRead_t<uint8_t>;
 using read16cb_t = cbRead_t<uint16_t>;
