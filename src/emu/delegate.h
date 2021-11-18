@@ -28,6 +28,31 @@ struct DelegateTraits
 	using member_ptr_cfunc = Return (Class::*)(Args...) const;
 };
 
+class BindingBadCastException : public std::bad_cast
+{
+public:
+	BindingBadCastException(std::type_info const &targetType, std::type_info const &actualType)
+	: targetType(&targetType), actualType(&actualType)
+	{
+		// std::ostringstream os;
+		// os << "Error performing late bind of function expecting type "
+		//    << targetType.name() << " to instance of type " << actualType.name();
+		// whatMessage = os.str();
+		whatMessage = fmt::sprintf("Bad cast exception: Expecting type %s (actual type %s)\n",
+			targetType.name(), actualType.name());
+	}
+
+	virtual char const *what() const noexcept override { return whatMessage.c_str(); }
+
+	std::type_info const &getTargetType() const noexcept { return *targetType; }
+	std::type_info const &getActualType() const noexcept { return *actualType; }
+
+private:
+	std::string whatMessage;
+	std::type_info const *targetType;
+	std::type_info const *actualType;
+};
+
 class mfpDelegate
 {
 public:
@@ -45,8 +70,9 @@ public:
 	void update(FunctionType &func, GenericClass *&obj)
 	{
 		func = reinterpret_cast<FunctionType>(convertGeneric(obj));
-
+		// fmt::printf("Updated member function call done.\n");
 	}
+
 private:
 	GenericFunc convertGeneric(GenericClass *&obj) const
 	{
@@ -64,7 +90,53 @@ private:
 	int       thisDelta = 0;
 };
 
-template <typename Return, typename... Args>
+template <class LateBindBase>
+class DelegateLateBindHelper
+{
+public:
+	DelegateLateBindHelper() = default;
+
+	DelegateLateBindHelper(DelegateLateBindHelper &&) = default;
+	DelegateLateBindHelper(DelegateLateBindHelper const &) = default;
+	DelegateLateBindHelper &operator = (DelegateLateBindHelper const &) = default;
+	DelegateLateBindHelper &operator = (DelegateLateBindHelper &&) = default;
+
+	template <class FunctionClass>
+	DelegateLateBindHelper(FunctionClass *)
+	: binder(&DelegateLateBindHelper::bindLate<FunctionClass>)
+	{
+		test = offs_t(binder);
+	}
+
+	GenericClass *operator ()(LateBindBase &object)
+	{
+		return binder(object);
+	}
+
+	explicit operator bool() const { return bool(binder); }
+
+private:
+	using LateBindFunc = GenericClass*(*)(LateBindBase &object);
+
+	template <class FunctionClass>
+	static GenericClass *bindLate(LateBindBase &object)
+	{
+		fmt::printf("Attempting to bind member function (%llx)...\n", offs_t(&object));
+		FunctionClass *result = dynamic_cast<FunctionClass *>(&object);
+		if (result != nullptr)
+			return reinterpret_cast<GenericClass *>(result);
+		// bad cast exception
+		fmt::printf("Binding Exception: Expecting type %s (actual type %s)\n",
+			typeid(FunctionClass).name(), typeid(&object).name());
+		// throw BindingBadCastException(typeid(FunctionClass), typeid(object));
+		return nullptr;
+	}
+
+	offs_t test;
+	LateBindFunc binder = nullptr;
+};
+
+template <class LateBindBase, typename Return, typename... Args>
 class DelegateBase
 {
 public:
@@ -81,34 +153,35 @@ public:
 	template <class FunctionClass>
 	DelegateBase(typename traits<FunctionClass>::member_ptr_func func, FunctionClass *obj)
 	: mfp(func, obj, static_cast<Return *>(nullptr), static_cast<GenericStaticFunc>(nullptr)),
-	  binder(&bindHelper<FunctionClass>)
+	  lateBinder(obj)
 	{
-		bind(reinterpret_cast<GenericClass *>(obj));
+		bind(obj);
 	}
 
 	template <class FunctionClass>
 	DelegateBase(typename traits<FunctionClass>::member_ptr_cfunc func, FunctionClass *obj)
 	: mfp(func, obj, static_cast<Return *>(nullptr), static_cast<GenericStaticFunc>(nullptr)),
-	  binder(&bindHelper<FunctionClass>)
+	  lateBinder(obj)
 	{
-		bind(reinterpret_cast<GenericClass *>(obj));
+		bind(obj);
 	}
 
 	template <class FunctionClass>
 	DelegateBase(typename traits<FunctionClass>::static_ref_func func, FunctionClass *obj)
 	: function(reinterpret_cast<GenericStaticFunc>(func)),
-	  binder(&bindHelper<FunctionClass>)
+	  lateBinder(obj)
 	{
-		bind(reinterpret_cast<GenericClass *>(obj));
+		bind(obj);
 	}
 
-	bool isMFP()  { return !mfp.isNull(); }
-	bool isNull() { return (function == nullptr) && (stdfunc == nullptr) && mfp.isNull(); }
+	bool isMFP()     { return !mfp.isNull(); }
+	bool isNull()    { return (function == nullptr) && (stdfunc == nullptr) && mfp.isNull(); }
+	bool hasObject() { return object != nullptr; }
 
-	void bind(BindedDelegate &obj)
+	void bindLate(BindedDelegate &obj)
 	{
-		if (binder != nullptr)
-			bind((*binder)(obj));
+		if (lateBinder)
+			bind(lateBinder(obj));
 	}
 
 	Return operator ()(Args... args) const
@@ -120,40 +193,33 @@ public:
 	}
 
 protected:
-	using BindFunc = GenericClass*(*)(BindedDelegate &obj);
+	using LateBindFunc = DelegateLateBindHelper<LateBindBase>;
 
-	template <class FunctionClass>
-	static GenericClass *bindHelper(BindedDelegate &obj)
+	template <typename FunctionClass>
+	void bind(FunctionClass *obj)
 	{
-		FunctionClass *result = dynamic_cast<FunctionClass *>(&obj);
-//		if (result == nullptr);
-
-		return reinterpret_cast<GenericClass *>(result);
-	}
-
-	void bind(GenericClass *obj)
-	{
-		object = obj;
+		object = reinterpret_cast<GenericClass *>(obj);
 		if (object != nullptr && !mfp.isNull())
 			mfp.update(function, object);
+		// fmt::printf("Updated binded object done.\n");
 	}
 
 protected:
-	GenericClass      *object = nullptr;
-	GenericStaticFunc  function = nullptr;
-	stdFuncType        stdfunc = nullptr; // std::function
-	BindFunc           binder = nullptr;
-	mfpDelegate        mfp;
+	GenericClass		*object = nullptr;
+	GenericStaticFunc	function = nullptr;
+	stdFuncType     	stdfunc = nullptr; // std::function
+	LateBindFunc		lateBinder;
+	mfpDelegate     	mfp;
 };
 
-template <typename Signature>
+template <typename Signature, class LateBindBase = BindedDelegate>
 class Delegate;
 
-template <typename Return, typename... Args>
-class Delegate<Return (Args...)> : public DelegateBase<Return, Args...>
+template <class LateBindBase, typename Return, typename... Args>
+class Delegate<Return (Args...), LateBindBase> : public DelegateBase<LateBindBase, Return, Args...>
 {
 private:
-	using base = DelegateBase<Return, Args...>;
+	using base = DelegateBase<LateBindBase, Return, Args...>;
 
 protected:
 	template <class FunctionClass> using traits = typename base::template traits<FunctionClass>;
@@ -227,14 +293,23 @@ private:
 class DeviceDelegateHelper
 {
 public:
-	DeviceDelegateHelper(Device *owner = nullptr, ctag_t *name = nullptr)
-	: base(owner), devName(name)
+	DeviceDelegateHelper(Device *owner, ctag_t *name = nullptr)
+	: base(owner), base2(*owner), devName(name)
 	{ }
 
 	void setName(ctag_t *name) { devName = name; }
 
+	BindedDelegate &getBoundObject() const
+	{
+		// if (devName == nullptr)
+		// 	return reinterpret_cast<BindedDelegate &>(base2.get());
+		// Device *device = nullptr;
+		// return reinterpret_cast<BindedDelegate &>(*device);
+		return reinterpret_cast<BindedDelegate &>(base2.get());
+	}
+
 private:
-	// std::reference_wrapper<Device> base;
+	std::reference_wrapper<Device> base2;
 	Device *base;
 	ctag_t *devName;
 };
@@ -253,7 +328,7 @@ public:
 	template <typename T>
 	using supportCallback = std::bool_constant<std::is_constructible_v<DeviceDelegate, Device &, ctag_t *, T, ctag_t *>>;
 
-	DeviceDelegate() : nbase(), DeviceDelegateHelper() {}
+	DeviceDelegate() : nbase(), DeviceDelegateHelper(nullptr) {}
 	DeviceDelegate(Device &owner) : nbase(), DeviceDelegateHelper(&owner) {}
 	DeviceDelegate(const nbase &src)
 	: nbase(src) {}
@@ -279,6 +354,12 @@ public:
 		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
 	template <class D> void set(ReturnType (*func)(D &, Args ...), ctag_t *name)
 		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }
+
+	void resolve()
+	{
+		if (!nbase::isNull() && !nbase::hasObject())
+			nbase::bindLate(getBoundObject());
+	}
 };
 
 // typedef DeviceDelegate<int ()> readDelegate;

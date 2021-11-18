@@ -132,6 +132,7 @@ bool Device::findObjects()
 void Device::resolvePostMapping()
 {
 	findObjects();
+	resolveDeviceObjects();
 }
 
 void Device::updateClock()

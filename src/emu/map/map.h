@@ -139,112 +139,112 @@ namespace aspace
 
 	template <typename T, typename Enable = void> struct delegate_rw_type;
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8d_t, std::remove_reference_t<T> > > >
 		{ using type = read8d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16d_t, std::remove_reference_t<T> > > >
 		{ using type = read16d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32d_t, std::remove_reference_t<T> > > >
 		{ using type = read32d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64d_t, std::remove_reference_t<T> > > >
 		{ using type = read64d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8do_t, std::remove_reference_t<T> > > >
 		{ using type = read8do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16do_t, std::remove_reference_t<T> > > >
 		{ using type = read16do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32do_t, std::remove_reference_t<T> > > >
 		{ using type = read32do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64do_t, std::remove_reference_t<T> > > >
 		{ using type = read64do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8dmo_t, std::remove_reference_t<T> > > >
 		{ using type = read8dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16dmo_t, std::remove_reference_t<T> > > >
 		{ using type = read16dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32dmo_t, std::remove_reference_t<T> > > >
 		{ using type = read32dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64dmo_t, std::remove_reference_t<T> > > >
 		{ using type = read64dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8ds_t, std::remove_reference_t<T> > > >
 		{ using type = read8ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16ds_t, std::remove_reference_t<T> > > >
 		{ using type = read16ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32ds_t, std::remove_reference_t<T> > > >
 		{ using type = read32ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64ds_t, std::remove_reference_t<T> > > >
 		{ using type = read64ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8dso_t, std::remove_reference_t<T> > > >
 		{ using type = read8dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16dso_t, std::remove_reference_t<T> > > >
 		{ using type = read16dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32dso_t, std::remove_reference_t<T> > > >
 		{ using type = read32dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64dso_t, std::remove_reference_t<T> > > >
 		{ using type = read64dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read8dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read8dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = read8dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read16dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read16dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = read16dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read32dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read32dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = read32dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<read64dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<read64dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = read64dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8d_t, std::remove_reference_t<T> > > >
 		{ using type = write8d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16d_t, std::remove_reference_t<T> > > >
 		{ using type = write16d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32d_t, std::remove_reference_t<T> > > >
 		{ using type = write32d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64d_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64d_t, std::remove_reference_t<T> > > >
 		{ using type = write64d_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8do_t, std::remove_reference_t<T> > > >
 		{ using type = write8do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16do_t, std::remove_reference_t<T> > > >
 		{ using type = write16do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32do_t, std::remove_reference_t<T> > > >
 		{ using type = write32do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64do_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64do_t, std::remove_reference_t<T> > > >
 		{ using type = write64do_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8dmo_t, std::remove_reference_t<T> > > >
 		{ using type = write8dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16dmo_t, std::remove_reference_t<T> > > >
 		{ using type = write16dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32dmo_t, std::remove_reference_t<T> > > >
 		{ using type = write32dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64dmo_t, std::remove_reference_t<T> > > >
 		{ using type = write64dmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8ds_t, std::remove_reference_t<T> > > >
 		{ using type = write8ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16ds_t, std::remove_reference_t<T> > > >
 		{ using type = write16ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32ds_t, std::remove_reference_t<T> > > >
 		{ using type = write32ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64ds_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64ds_t, std::remove_reference_t<T> > > >
 		{ using type = write64ds_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8dso_t, std::remove_reference_t<T> > > >
 		{ using type = write8dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16dso_t, std::remove_reference_t<T> > > >
 		{ using type = write16dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32dso_t, std::remove_reference_t<T> > > >
 		{ using type = write32dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dso_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64dso_t, std::remove_reference_t<T> > > >
 		{ using type = write64dso_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write8dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write8dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = write8dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write16dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write16dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = write16dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write32dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write32dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = write32dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
-	template <typename T> struct delegate_rw_type<T, void_t<device_class_rw_t<write64dsmo_t, std::remove_reference_t<T> > > >
+	template <typename T> struct delegate_rw_type<T, std::void_t<device_class_rw_t<write64dsmo_t, std::remove_reference_t<T> > > >
 		{ using type = write64dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
 	template <typename T> using delegate_rw_t = typename delegate_rw_type<T>::type;

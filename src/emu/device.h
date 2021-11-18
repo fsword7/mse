@@ -299,6 +299,7 @@ public:
 	virtual void stopDevice() {}
 	virtual void resetDevice() {}
 	virtual void updateDeviceClock() {}
+	virtual void resolveDeviceObjects() {}
 	virtual void executeTimerDevice(Timer &timer, TimerDeviceID_t id, void *data, int32_t param) {}
 	virtual cromEntry_t *getDeviceFirmwareEntries() { return nullptr; }
 

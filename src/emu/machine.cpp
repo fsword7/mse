@@ -58,30 +58,45 @@ void Machine::reset(Console *cty)
 }
 
 // Final system configuration initialization
-void Machine::start(Console *cty)
+void Machine::start(Console *user)
 {
 	assert(system != nullptr);
 
-	// Assign machine handler to all devices
-//	for (Device &dev : DeviceIterator(*sysDevice))
-//		dev.setMachine(this);
-//	for (Device &dev : DeviceIterator(*sysDevice))
-//		dev.completeConfig();
+	logFile.setConsole(user);
 
-	// Iniitalize ROM entries
-	loader = new romLoader(this, *cty);
+	try {
+		// Assign machine handler to all devices
+//		for (Device &dev : DeviceIterator(*sysDevice))
+//			dev.setMachine(this);
+//		for (Device &dev : DeviceIterator(*sysDevice))
+//			dev.completeConfig();
 
-	busManager.init(cty);
+		// Iniitalize ROM entries
+		loader = new romLoader(this, *user);
 
-	// Finding required objects to being linked
-	for (Device &dev : DeviceIterator(*system))
-		dev.resolvePostMapping();
+		busManager.init(user);
 
-	// if (debugFlags & DBGFLG_ENABLED)
-	// 	initDebugger();
+		// Finding required objects to being linked
+		for (Device &dev : DeviceIterator(*system))
+			dev.resolvePostMapping();
 
-	// Now start all devices
-	startAllDevices(cty);
+		// if (debugFlags & DBGFLG_ENABLED)
+		// 	initDebugger();
+
+		// Now start all devices
+		startAllDevices(user);
+	}
+
+	catch (BindingBadCastException &badCast)
+	{
+		logFile.log(LOG_CONSOLE, "%s\n", badCast.what());
+	}
+
+	catch (...)
+	{
+		logFile.log(LOG_CONSOLE, "Caught unhandled exception\n");
+	}
+
 }
 
 void Machine::stop(Console *cty)
@@ -111,6 +126,11 @@ void Machine::launch()
 			// execute CPU processors intervally.
 			scheduler.timeslice();
 		}
+	}
+
+	catch (BindingBadCastException &badCast)
+	{
+		fmt::printf("%s\n", badCast.what());
 	}
 
 	catch (...)
