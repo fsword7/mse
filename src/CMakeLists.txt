@@ -39,6 +39,7 @@ set(MSE_CPP_SRCS
 	emu/debugger/symbols.cpp
 	emu/map/addrmap.cpp
 	emu/map/busmgr.cpp
+	emu/map/hedp.cpp
 	emu/map/hedr0.cpp
 	emu/map/hedr1.cpp
 	emu/map/hedr2.cpp
@@ -133,9 +134,10 @@ set(MSE_H_SRCS
 	emu/map/addrmap.h
 	emu/map/he.h
 	emu/map/hea.h
+	emu/map/hedp.h
 	emu/map/hedr.h
 	emu/map/hedw.h
-	emu/map/hem.cpp
+	emu/map/hem.h
 	emu/map/map.h
 	emu/command.h
 	emu/console.h

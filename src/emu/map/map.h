@@ -1665,6 +1665,7 @@ namespace aspace
 #include "emu/map/hedr.h"
 #include "emu/map/hedw.h"
 #include "emu/map/hea.h"
+#include "emu/map/hedp.h"
 #include "emu/map/hem.h"
 #include "emu/map/hep.h"
 
