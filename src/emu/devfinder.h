@@ -18,6 +18,9 @@ public:
 
     inline Device &getOwnerDevice() const { return base; }
 
+    inline Device &getDevice() const { return base; }
+    inline ctag_t *getName() const   { return objName; }
+    
 protected:
     ObjectFinder(Device &base, ctag_t *objName);
 

@@ -89,9 +89,9 @@ void vt100_vtDevice::vt100_iomem(AddressList &map)
 {
     map.setUnmapHigh();
 
-    // map(0x42, 0x42).w(*crt, FUNC(vt100video_t::write8_brightness));
-    // map(0xA2, 0xA2).w(*crt, FUNC(vt100video_t::write8_dc012));
-    // map(0xC2, 0xC2).w(*crt, FUNC(vt100video_t::write8_dc011));
+    map(0x42, 0x42).w(crt, FUNC(vt100video_t::write8_brightness));
+    map(0xA2, 0xA2).w(crt, FUNC(vt100video_t::write8_dc012));
+    map(0xC2, 0xC2).w(crt, FUNC(vt100video_t::write8_dc011));
 }
 
 static const romEntry_t ROM_NAME(vt100)[] =

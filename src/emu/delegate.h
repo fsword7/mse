@@ -8,6 +8,7 @@
 #pragma once
 
 class Device;
+class DeviceInterface;
 
 using GenericFunc = void(*)();
 class GenericClass;
@@ -324,6 +325,16 @@ class DeviceDelegate<ReturnType (Args...)>
 private:
 	using nbase = NamedDelegate<ReturnType (Args ...)>;
 
+	template <class T, class D>
+	using is_related_device = std::bool_constant<std::is_base_of_v<T, D> && std::is_base_of_v<Device, D>>;
+	template <class T, class D>
+	using is_related_interface = std::bool_constant<std::is_base_of_v<T, D> && std::is_base_of_v<DeviceInterface, D> && !std::is_base_of_v<Device, D>>;
+
+	template <class T> static std::enable_if_t<is_related_device<T, T>::value, Device &>
+		getDevice(T &object) { return object; }
+	template <class T> static std::enable_if_t<is_related_interface<T, T>::value, Device &>
+		getDevice(T &object) { return object.getDevice(); }
+
 public:
 	template <typename T>
 	using supportCallback = std::bool_constant<std::is_constructible_v<DeviceDelegate, Device &, ctag_t *, T, ctag_t *>>;
@@ -347,6 +358,23 @@ public:
 	DeviceDelegate(Device &dev, ctag_t *devName, ReturnType (*func)(D &, Args...), ctag_t *fncName)
 	: nbase(func, fncName, static_cast<D *>(nullptr)), DeviceDelegateHelper(&dev, devName)
 	{ }
+
+
+	template <class T, class D>
+	DeviceDelegate(T &object, ReturnType (D::*func)(Args...), ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(&object)), DeviceDelegateHelper(&getDevice(object))
+	{ }
+
+	template <class T, class D>
+	DeviceDelegate(T &object, ReturnType (D::*func)(Args...) const, ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(&object)), DeviceDelegateHelper(&getDevice(object))
+	{ }
+
+	template <class T, class D>
+	DeviceDelegate(T &object, ReturnType (*func)(D &, Args...), ctag_t *fncName)
+	: nbase(func, fncName, static_cast<D *>(&object)), DeviceDelegateHelper(&getDevice(object))
+	{ }
+
 
 	template <class D> void set(ReturnType (D::*func)(Args ...), ctag_t *name)
 		{ nbase::operator = (nbase(func, name, static_cast<D *>(nullptr))); setName(nullptr); }

@@ -61,19 +61,19 @@ AddressSpace *diExternalBus::getAddressSpace(int space) const
 
 Constructor diExternalBus::getAddressMap(int space) const
 {
-	if (space < AddressMapList.size())
+	if (space >= 0 && space < AddressMapList.size())
 		return AddressMapList[space];
 	return Constructor();
 }
 
 void diExternalBus::setAddressMap(int space, Constructor map)
 {
-	ctag_t *name = map.getName();
+	// ctag_t *name = map.getName();
+	// fmt::printf("Binded object = %s\n", name);
 
-	fmt::printf("Binded object = %s\n", name);
 	if (space >= AddressMapList.size())
 		AddressMapList.resize(space+1);
-	AddressMapList[space] = move(map);
+	AddressMapList[space] = std::move(map);
 }
 
 //void diBus::registerMemory(mapMemoryBlock *block, offs_t base, offs_t size, int prio)

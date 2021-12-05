@@ -248,19 +248,19 @@ namespace aspace
 		{ using type = write64dsmo_t; using device_class = device_class_rw_t<type, std::remove_reference_t<T> >; };
 
 	template <typename T> using delegate_rw_t = typename delegate_rw_type<T>::type;
-	template <typename T> using delegate_rw_device_class_t = typename delegate_rw_t<T>::device_class;
+	template <typename T> using delegate_rw_device_class_t = typename delegate_rw_type<T>::device_class;
 
-
-	// template <typename T>
-	// inline delegate_rw_type<T> makeDelegate(Device &base, ctag_t *devName, T &&func, ctag_t *fncName)
-	// {
-	// 	return delegate_rw_type<T>(base, devName, std::forward<T>(func), fncName);
-	// }
 
 	template <typename T>
-	inline delegate_rw_type<T> makeDelegate(delegate_rw_device_class_t<T> &object, T &&func, ctag_t *fncName)
+	inline delegate_rw_t<T> makeDelegate(Device &base, ctag_t *devName, T &&func, ctag_t *fncName)
 	{
-		return delegate_rw_type<T>(object, std::forward<T>(func), fncName);
+		return delegate_rw_t<T>(base, devName, std::forward<T>(func), fncName);
+	}
+
+	template <typename T>
+	inline delegate_rw_t<T> makeDelegate(delegate_rw_device_class_t<T> &object, T &&func, ctag_t *fncName)
+	{
+		return delegate_rw_t<T>(object, std::forward<T>(func), fncName);
 	}
 
 

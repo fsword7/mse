@@ -43,6 +43,15 @@ namespace aspace
 
 		AddressEntry(device_t &dev, AddressList &map, offs_t start, offs_t end);
 
+		template <typename T, bool Required>
+		static Device &findDevice(const DeviceFinder<T, Required> &finder)
+		{
+			Device *device = &finder.getDevice();
+
+			assert(device != nullptr);
+			return *device;
+		}
+
 		template <typename T, typename U>
 		static T *make_pointer(U &object)
 		{
@@ -82,11 +91,53 @@ namespace aspace
 		AddressEntry &r(read16d_t func);
 		AddressEntry &r(read32d_t func);
 		AddressEntry &r(read64d_t func);
+		AddressEntry &r(read8do_t func);
+		AddressEntry &r(read16do_t func);
+		AddressEntry &r(read32do_t func);
+		AddressEntry &r(read64do_t func);
+		AddressEntry &r(read8dmo_t func);
+		AddressEntry &r(read16dmo_t func);
+		AddressEntry &r(read32dmo_t func);
+		AddressEntry &r(read64dmo_t func);
+
+		AddressEntry &r(read8ds_t func);
+		AddressEntry &r(read16ds_t func);
+		AddressEntry &r(read32ds_t func);
+		AddressEntry &r(read64ds_t func);
+		AddressEntry &r(read8dso_t func);
+		AddressEntry &r(read16dso_t func);
+		AddressEntry &r(read32dso_t func);
+		AddressEntry &r(read64dso_t func);
+		AddressEntry &r(read8dsmo_t func);
+		AddressEntry &r(read16dsmo_t func);
+		AddressEntry &r(read32dsmo_t func);
+		AddressEntry &r(read64dsmo_t func);
 
 		AddressEntry &w(write8d_t func);
 		AddressEntry &w(write16d_t func);
 		AddressEntry &w(write32d_t func);
 		AddressEntry &w(write64d_t func);
+		AddressEntry &w(write8do_t func);
+		AddressEntry &w(write16do_t func);
+		AddressEntry &w(write32do_t func);
+		AddressEntry &w(write64do_t func);
+		AddressEntry &w(write8dmo_t func);
+		AddressEntry &w(write16dmo_t func);
+		AddressEntry &w(write32dmo_t func);
+		AddressEntry &w(write64dmo_t func);
+
+		AddressEntry &w(write8ds_t func);
+		AddressEntry &w(write16ds_t func);
+		AddressEntry &w(write32ds_t func);
+		AddressEntry &w(write64ds_t func);
+		AddressEntry &w(write8dso_t func);
+		AddressEntry &w(write16dso_t func);
+		AddressEntry &w(write32dso_t func);
+		AddressEntry &w(write64dso_t func);
+		AddressEntry &w(write8dsmo_t func);
+		AddressEntry &w(write16dsmo_t func);
+		AddressEntry &w(write32dsmo_t func);
+		AddressEntry &w(write64dsmo_t func);
 
 		// Implicit delegate calls
 		template <typename T, typename rRet, typename ... rArgs>
@@ -111,22 +162,46 @@ namespace aspace
 		}
 
 		template <typename T, typename U, typename Ret, typename ... Args>
-		AddressEntry &r(T &&obj, Ret (U::*read)(Args...), ctag_t *readName)
+		AddressEntry &r(T &obj, Ret (U::*read)(Args...), ctag_t *readName)
 		{
 			return r(makeDelegate(*make_pointer<U>(obj), read, readName));
 		}
 
 		template <typename T, typename U, typename Ret, typename ... Args>
-		AddressEntry &w(T &&obj, Ret (U::*write)(Args...), ctag_t *writeName)
+		AddressEntry &w(T &obj, Ret (U::*write)(Args...), ctag_t *writeName)
 		{
 			return w(makeDelegate(*make_pointer<U>(obj), write, writeName));
 		}
 
 		template <typename T, typename U, typename rRet, typename... rArgs, typename V, typename wRet, typename... wArgs>
-		AddressEntry &rw(T &&obj, rRet (U::*read)(rArgs...), ctag_t *readName, wRet (V::*write)(wArgs...), ctag_t *writeName)
+		AddressEntry &rw(T &obj, rRet (U::*read)(rArgs...), ctag_t *readName, wRet (V::*write)(wArgs...), ctag_t *writeName)
 		{
 			return r(makeDelegate(*make_pointer<U>(obj), read, readName))
 				  .w(makeDelegate(*make_pointer<V>(obj), write, writeName));
+		}
+
+
+		// read/write function calls with device finder
+		template <typename T, bool Required, typename U, typename Ret, typename ... Args>
+		AddressEntry &r(DeviceFinder<T, Required> &finder, Ret (U::*read)(Args...), ctag_t *readName)
+		{
+			Device &device(findDevice(finder));
+			return r(makeDelegate(device, "", read, readName));
+		}
+
+		template <typename T, bool Required, typename U, typename Ret, typename ... Args>
+		AddressEntry &w(DeviceFinder<T, Required> &finder, Ret (U::*write)(Args...), ctag_t *writeName)
+		{
+			Device &device(findDevice(finder));
+			return w(makeDelegate(device, "", write, writeName));
+		}
+
+		template <typename T, bool Required, typename U, typename rRet, typename... rArgs, typename V, typename wRet, typename... wArgs>
+		AddressEntry &rw(DeviceFinder<T, Required> &finder, rRet (U::*read)(rArgs...), ctag_t *readName, wRet (V::*write)(wArgs...), ctag_t *writeName)
+		{
+			Device &device(findDevice(finder));
+			return r(makeDelegate(device, "", read, readName))
+				  .w(makeDelegate(device, "", write, writeName));
 		}
 
 
